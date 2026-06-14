@@ -1,65 +1,387 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import Link from "next/link";
+import { motion } from "framer-motion";
+import {
+  Rocket, Globe2, Users, Building2, Newspaper, ArrowRight,
+  Zap, Target, Timer, TrendingUp, ChevronRight, Telescope, BrainCircuit,
+} from "lucide-react";
+
+import { SectionHeading, StatCard } from "@/components/ui/Cards";
+import NasaApod from "@/components/ui/NasaApod";
+import { rockets, agencies, planets, missions, upcomingLaunches, spaceNews } from "@/lib/data";
+
+export default function HomePage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div className="relative">
+      {/* ═══════════ HERO SECTION ═══════════ */}
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        {/* Background Image */}
+        <div
+          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('/hero-bg.jpg')" }}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+
+        <div className="relative z-10 w-full max-w-6xl mx-auto px-6 text-center pt-40 pb-20">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-space-500 text-white text-sm font-micro mb-12 uppercase tracking-widest bg-black/30 backdrop-blur-md">
+              <Zap className="w-4 h-4" />
+              Your Gateway to the Cosmos
+            </span>
+          </motion.div>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.1 }}
+            className="text-5xl md:text-7xl lg:text-8xl font-display gradient-text mb-10 leading-[1.1]"
           >
-            Documentation
-          </a>
+            Explore the
+            <br />
+            Universe
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="mt-10 text-lg md:text-xl text-[#e2e8f0] max-w-3xl mx-auto leading-relaxed font-light tracking-wide bg-black/20 backdrop-blur-sm p-6 rounded-2xl"
+          >
+            Comprehensive information about rockets, spacecraft, planets,
+            space missions, astronauts, and the latest discoveries.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="mt-16 flex flex-col sm:flex-row items-center justify-center gap-8"
+          >
+            <Link href="/rockets" className="btn-primary flex items-center gap-3 text-lg px-8 py-4">
+              <Rocket className="w-5 h-5" />
+              Explore Rockets
+              <ArrowRight className="w-5 h-5" />
+            </Link>
+            <Link href="/solar-system" className="btn-outline flex items-center gap-3 text-lg px-8 py-4">
+              <Globe2 className="w-5 h-5" />
+              Solar System
+            </Link>
+          </motion.div>
+
+          {/* Quick stats strip */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+            className="mt-32 grid grid-cols-2 md:grid-cols-4 gap-12 max-w-4xl mx-auto bg-black/40 backdrop-blur-md p-10 rounded-3xl border border-white/10"
+          >
+            {[
+              { val: `${rockets.length}+`, label: "Rockets" },
+              { val: `${planets.length}`, label: "Celestial Bodies" },
+              { val: `${missions.length}+`, label: "Missions" },
+              { val: `${agencies.length}`, label: "Agencies" },
+            ].map((s, i) => (
+              <div key={i} className="text-center">
+                <div className="text-2xl md:text-3xl font-bold gradient-text mb-2">{s.val}</div>
+                <div className="text-xs text-space-400 uppercase tracking-widest font-bold">{s.label}</div>
+              </div>
+            ))}
+          </motion.div>
         </div>
-      </main>
+
+        {/* Scroll indicator */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.5 }}
+          className="absolute bottom-10 left-1/2 -translate-x-1/2"
+        >
+          <motion.div
+            animate={{ y: [0, 10, 0] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="w-6 h-10 rounded-full border-2 border-space-500 flex items-start justify-center p-2"
+          >
+            <div className="w-1.5 h-1.5 rounded-full bg-space-400" />
+          </motion.div>
+        </motion.div>
+      </section>
+
+      {/* ═══════════ STATS DASHBOARD ═══════════ */}
+      <section className="relative py-32 px-6">
+        <div className="max-w-7xl mx-auto">
+          <SectionHeading
+            badge="Dashboard"
+            title="Space by the Numbers"
+            subtitle="Key statistics about humanity's journey beyond Earth"
+          />
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            <StatCard icon={<Rocket className="w-7 h-7 text-white" />} value="600+" label="Total Launches" delay={0} />
+            <StatCard icon={<Target className="w-7 h-7 text-white" />} value="98.5%" label="Success Rate" color="from-accent-green to-accent-cyan" delay={0.1} />
+            <StatCard icon={<Users className="w-7 h-7 text-white" />} value="580+" label="Astronauts" color="from-accent-purple to-accent-pink" delay={0.2} />
+            <StatCard icon={<TrendingUp className="w-7 h-7 text-white" />} value="$50B+" label="Global Budget" color="from-accent-amber to-accent-pink" delay={0.3} />
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════ NASA APOD ═══════════ */}
+      <NasaApod />
+
+      {/* ═══════════ FEATURED ROCKETS ═══════════ */}
+      <section className="relative py-32 px-6">
+        <div className="max-w-7xl mx-auto">
+          <SectionHeading
+            badge="Rocket Database"
+            title="Featured Rockets"
+            subtitle="The most powerful launch vehicles ever built"
+          />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {rockets.slice(0, 6).map((rocket, i) => (
+              <motion.div
+                key={rocket.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+                className="h-full"
+              >
+                <Link href={`/rockets/${rocket.slug}`} className="glass-card glass-card-hover p-8 flex flex-col h-full group">
+                  <div className="flex items-start justify-between mb-6">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-accent-blue/20 to-accent-purple/20 flex items-center justify-center border border-accent-blue/20">
+                      <Rocket className="w-5 h-5 text-accent-blue" />
+                    </div>
+                    <span className={`badge ${rocket.status === "ACTIVE" ? "badge-active" : rocket.status === "RETIRED" ? "badge-retired" : "badge-development"}`}>
+                      {rocket.status.replace("_", " ")}
+                    </span>
+                  </div>
+                  <h3 className="text-xl font-semibold text-white group-hover:text-accent-blue transition-colors mb-2">
+                    {rocket.name}
+                  </h3>
+                  <p className="text-sm text-space-400 mb-4">{rocket.manufacturer} · {rocket.country}</p>
+                  <p className="text-sm text-space-500 line-clamp-2 mb-8 flex-grow">{rocket.description}</p>
+                  
+                  <div className="grid grid-cols-3 gap-4 pt-6 border-t border-space-700 mt-auto">
+                    <div>
+                      <div className="text-[10px] text-space-500 uppercase tracking-wider mb-1">Height</div>
+                      <div className="text-sm font-semibold text-white">{rocket.height}m</div>
+                    </div>
+                    <div>
+                      <div className="text-[10px] text-space-500 uppercase tracking-wider mb-1">Payload</div>
+                      <div className="text-sm font-semibold text-white">{(rocket.payloadToLEO / 1000).toFixed(0)}t LEO</div>
+                    </div>
+                    <div>
+                      <div className="text-[10px] text-space-500 uppercase tracking-wider mb-1">Launches</div>
+                      <div className="text-sm font-semibold text-white">{rocket.totalLaunches}</div>
+                    </div>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+          <div className="text-center mt-16">
+            <Link href="/rockets" className="btn-outline inline-flex items-center gap-2 py-3 px-6 text-base">
+              View All Rockets <ChevronRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════ UPCOMING LAUNCHES ═══════════ */}
+      <section className="relative py-32 px-6">
+        <div className="max-w-7xl mx-auto">
+          <SectionHeading
+            badge="Launch Tracker"
+            title="Upcoming Launches"
+            subtitle="Don't miss the next liftoff"
+          />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {upcomingLaunches.map((launch, i) => {
+              const launchDate = new Date(launch.date);
+              const now = new Date();
+              const diff = launchDate.getTime() - now.getTime();
+              const days = Math.max(0, Math.floor(diff / (1000 * 60 * 60 * 24)));
+
+              return (
+                <motion.div
+                  key={launch.id}
+                  initial={{ opacity: 0, x: i % 2 === 0 ? -20 : 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: i * 0.1 }}
+                  className="glass-card p-8"
+                >
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h3 className="text-xl font-semibold text-white mb-2">{launch.name}</h3>
+                      <p className="text-sm text-space-400">{launch.rocket} · {launch.agency}</p>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-3xl font-bold gradient-text">{days}</div>
+                      <div className="text-xs text-space-500 uppercase tracking-widest mt-1">days away</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-6 mt-8 pt-6 border-t border-space-700">
+                    <div className="flex items-center gap-2 text-sm text-space-400">
+                      <Timer className="w-4 h-4 text-accent-blue" />
+                      {launchDate.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-space-400">
+                      <Target className="w-4 h-4 text-accent-blue" />
+                      {launch.location}
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+          <div className="text-center mt-16">
+            <Link href="/launches" className="btn-outline inline-flex items-center gap-2 py-3 px-6 text-base">
+              All Launches <ChevronRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════ SPACE NEWS ═══════════ */}
+      <section className="relative py-32 px-6">
+        <div className="max-w-7xl mx-auto">
+          <SectionHeading
+            badge="Latest News"
+            title="Space News"
+            subtitle="Stay updated with the latest from the cosmos"
+          />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {spaceNews.map((news, i) => (
+              <motion.div
+                key={news.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+                className="glass-card glass-card-hover p-8 group flex flex-col h-full"
+              >
+                <div>
+                  <span className="badge badge-active mb-4 inline-block">{news.category}</span>
+                  <h3 className="text-base font-semibold text-white group-hover:text-accent-blue transition-colors mb-3 leading-snug">
+                    {news.title}
+                  </h3>
+                  <p className="text-sm text-space-500 line-clamp-3 mb-6">{news.summary}</p>
+                </div>
+                <div className="flex items-center justify-between text-xs text-space-500 mt-auto pt-4 border-t border-space-700">
+                  <span className="font-medium text-white/70">{news.source}</span>
+                  <span>{new Date(news.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+          <div className="text-center mt-16">
+            <Link href="/news" className="btn-outline inline-flex items-center gap-2 py-3 px-6 text-base">
+              All News <ChevronRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════ EXPLORE SECTIONS ═══════════ */}
+      <section className="relative py-32 px-6">
+        <div className="max-w-7xl mx-auto">
+          <SectionHeading
+            badge="Explore"
+            title="Discover the Cosmos"
+            subtitle="Navigate through our comprehensive space database"
+          />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {[
+              { href: "/solar-system", icon: Globe2, title: "Solar System", desc: "Planets, moons, and dwarf planets" },
+              { href: "/missions", icon: Telescope, title: "Missions", desc: "Apollo, Artemis, Chandrayaan & more" },
+              { href: "/astronauts", icon: Users, title: "Astronauts", desc: "The heroes who explore space" },
+              { href: "/quiz", icon: BrainCircuit, title: "Space Quiz", desc: "Test your cosmic knowledge" },
+            ].map((item, i) => (
+              <motion.div
+                key={item.href}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+                className="h-full"
+              >
+                <Link href={item.href} className="glass-card glass-card-hover p-10 flex flex-col items-center justify-center h-full group text-center border-t-2 border-space-500">
+                  <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 mb-6 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <item.icon className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-xl font-display text-white group-hover:text-[#38bdf8] transition-colors mb-3">
+                    {item.title}
+                  </h3>
+                  <p className="text-sm font-micro text-space-400 leading-relaxed">{item.desc}</p>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════ AGENCIES ═══════════ */}
+      <section className="relative py-32 px-6 pb-48">
+        <div className="max-w-7xl mx-auto">
+          <SectionHeading
+            badge="Agencies"
+            title="Space Organizations"
+            subtitle="The world's leading space agencies"
+          />
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+            {agencies.map((agency, i) => (
+              <motion.div
+                key={agency.id}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, delay: i * 0.05 }}
+              >
+                <Link href={`/agencies/${agency.slug}`} className="glass-card glass-card-hover p-8 flex flex-col items-center justify-center h-full text-center group border-t-2 border-space-500">
+                  <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 mb-5 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <Building2 className="w-7 h-7 text-white" />
+                  </div>
+                  <h3 className="font-display text-white text-base group-hover:text-[#38bdf8] transition-colors">
+                    {agency.abbreviation}
+                  </h3>
+                  <p className="text-xs font-micro text-space-400 mt-2 tracking-widest">{agency.country}</p>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ═══════════ CTA ═══════════ */}
+      <section className="relative pb-32 px-6 z-20">
+        <div className="max-w-5xl mx-auto text-center -mt-20">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="glass-card p-16 md:p-20 relative overflow-hidden shadow-2xl bg-[#0f172a]/90 backdrop-blur-2xl"
+          >
+            <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#38bdf8] via-[#818cf8] to-[#c084fc]" />
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Ready to Explore?</h2>
+            <p className="text-space-300 text-lg mb-12 max-w-2xl mx-auto leading-relaxed">
+              Dive into our comprehensive database of space knowledge. Compare rockets,
+              track launches, and test your knowledge.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+              <Link href="/rockets" className="btn-primary flex items-center justify-center gap-3 px-8 py-4 text-lg w-full sm:w-auto">
+                Get Started <ArrowRight className="w-5 h-5" />
+              </Link>
+              <Link href="/quiz" className="btn-outline flex items-center justify-center gap-3 px-8 py-4 text-lg w-full sm:w-auto">
+                <BrainCircuit className="w-5 h-5" />
+                Take a Quiz
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+      </section>
     </div>
   );
 }

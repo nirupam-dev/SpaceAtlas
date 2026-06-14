@@ -1,0 +1,407 @@
+// SpaceAtlas Database Schema
+// Comprehensive schema for space encyclopedia platform
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Authentication ────────────────────────────────────────
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  role          Role      @default(USER)
+  favorites     Favorite[]
+  quizScores    QuizScore[]
+  accounts      Account[]
+  sessions      Session[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+// ─── Rockets ───────────────────────────────────────────────
+model Rocket {
+  id              String    @id @default(cuid())
+  name            String    @unique
+  slug            String    @unique
+  manufacturer    String
+  country         String
+  firstLaunchDate DateTime?
+  status          RocketStatus @default(ACTIVE)
+  height          Float?    // meters
+  diameter        Float?    // meters
+  mass            Float?    // kg
+  payloadToLEO    Float?    // kg - Low Earth Orbit
+  payloadToGTO    Float?    // kg - Geostationary Transfer Orbit
+  stages          Int?
+  boosters        Int?
+  engines         String?
+  engineType      String?
+  thrust          Float?    // kN
+  costPerLaunch   Float?    // USD
+  successRate     Float?    // percentage
+  totalLaunches   Int       @default(0)
+  successfulLaunches Int    @default(0)
+  description     String    @db.Text
+  imageUrl        String?
+  wikiUrl         String?
+  images          RocketImage[]
+  launches        Launch[]
+  favorites       Favorite[]
+  agencyId        String?
+  agency          Agency?   @relation(fields: [agencyId], references: [id])
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model RocketImage {
+  id       String @id @default(cuid())
+  url      String
+  caption  String?
+  rocketId String
+  rocket   Rocket @relation(fields: [rocketId], references: [id], onDelete: Cascade)
+}
+
+enum RocketStatus {
+  ACTIVE
+  RETIRED
+  IN_DEVELOPMENT
+  CANCELLED
+}
+
+// ─── Space Missions ────────────────────────────────────────
+model Mission {
+  id          String        @id @default(cuid())
+  name        String
+  slug        String        @unique
+  description String        @db.Text
+  objectives  String?       @db.Text
+  destination String?
+  launchDate  DateTime?
+  endDate     DateTime?
+  status      MissionStatus @default(PLANNED)
+  type        MissionType   @default(EXPLORATION)
+  imageUrl    String?
+  wikiUrl     String?
+  agencyId    String?
+  agency      Agency?       @relation(fields: [agencyId], references: [id])
+  astronauts  AstronautMission[]
+  timeline    MissionTimeline[]
+  favorites   Favorite[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model MissionTimeline {
+  id          String   @id @default(cuid())
+  missionId   String
+  mission     Mission  @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  date        DateTime
+  title       String
+  description String   @db.Text
+  order       Int      @default(0)
+}
+
+enum MissionStatus {
+  PLANNED
+  ACTIVE
+  COMPLETED
+  FAILED
+  PARTIAL_FAILURE
+  CANCELLED
+}
+
+enum MissionType {
+  CREWED
+  ROBOTIC
+  SATELLITE
+  EXPLORATION
+  SCIENCE
+  COMMERCIAL
+  MILITARY
+}
+
+// ─── Space Agencies ────────────────────────────────────────
+model Agency {
+  id              String   @id @default(cuid())
+  name            String   @unique
+  slug            String   @unique
+  abbreviation    String
+  country         String
+  foundedYear     Int
+  headquarters    String
+  administrator   String?
+  budget          Float?   // USD billions
+  employees       Int?
+  description     String   @db.Text
+  history         String?  @db.Text
+  achievements    String?  @db.Text
+  imageUrl        String?
+  logoUrl         String?
+  website         String?
+  wikiUrl         String?
+  rockets         Rocket[]
+  missions        Mission[]
+  astronauts      Astronaut[]
+  launches        Launch[]
+  favorites       Favorite[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ─── Astronauts ────────────────────────────────────────────
+model Astronaut {
+  id           String   @id @default(cuid())
+  name         String
+  slug         String   @unique
+  nationality  String
+  birthDate    DateTime?
+  biography    String   @db.Text
+  achievements String?  @db.Text
+  status       AstronautStatus @default(ACTIVE)
+  spaceWalks   Int      @default(0)
+  timeInSpace  Int?     // hours
+  imageUrl     String?
+  wikiUrl      String?
+  agencyId     String?
+  agency       Agency?  @relation(fields: [agencyId], references: [id])
+  missions     AstronautMission[]
+  favorites    Favorite[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model AstronautMission {
+  id          String    @id @default(cuid())
+  astronautId String
+  astronaut   Astronaut @relation(fields: [astronautId], references: [id], onDelete: Cascade)
+  missionId   String
+  mission     Mission   @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  role        String?
+
+  @@unique([astronautId, missionId])
+}
+
+enum AstronautStatus {
+  ACTIVE
+  RETIRED
+  DECEASED
+  IN_TRAINING
+}
+
+// ─── Celestial Bodies ──────────────────────────────────────
+model Planet {
+  id              String     @id @default(cuid())
+  name            String     @unique
+  slug            String     @unique
+  type            PlanetType
+  orderFromSun    Int?
+  mass            Float?     // 10^24 kg
+  diameter        Float?     // km
+  density         Float?     // g/cm³
+  gravity         Float?     // m/s²
+  escapeVelocity  Float?     // km/s
+  rotationPeriod  Float?     // hours
+  dayLength       Float?     // hours
+  distanceFromSun Float?     // 10^6 km
+  orbitalPeriod   Float?     // days
+  orbitalVelocity Float?     // km/s
+  meanTemperature Float?     // °C
+  numberOfMoons   Int        @default(0)
+  hasRings        Boolean    @default(false)
+  atmosphere      String?    @db.Text
+  description     String     @db.Text
+  imageUrl        String?
+  wikiUrl         String?
+  moons           Moon[]
+  favorites       Favorite[]
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+}
+
+model Moon {
+  id              String   @id @default(cuid())
+  name            String
+  slug            String   @unique
+  planetId        String
+  planet          Planet   @relation(fields: [planetId], references: [id], onDelete: Cascade)
+  diameter        Float?   // km
+  mass            Float?   // 10^20 kg
+  orbitalPeriod   Float?   // days
+  distanceFromPlanet Float? // km
+  discoveryYear   Int?
+  discoveredBy    String?
+  description     String?  @db.Text
+  imageUrl        String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+enum PlanetType {
+  TERRESTRIAL
+  GAS_GIANT
+  ICE_GIANT
+  DWARF
+}
+
+// ─── Launches ──────────────────────────────────────────────
+model Launch {
+  id           String       @id @default(cuid())
+  name         String
+  slug         String       @unique
+  launchDate   DateTime
+  window       DateTime?
+  status       LaunchStatus @default(UPCOMING)
+  location     String?
+  pad          String?
+  description  String?      @db.Text
+  webcastUrl   String?
+  imageUrl     String?
+  rocketId     String?
+  rocket       Rocket?      @relation(fields: [rocketId], references: [id])
+  agencyId     String?
+  agency       Agency?      @relation(fields: [agencyId], references: [id])
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+enum LaunchStatus {
+  UPCOMING
+  IN_FLIGHT
+  SUCCESS
+  FAILURE
+  PARTIAL_FAILURE
+  TBD
+}
+
+// ─── News ──────────────────────────────────────────────────
+model News {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  summary     String   @db.Text
+  content     String   @db.Text
+  source      String
+  sourceUrl   String?
+  imageUrl    String?
+  category    String?
+  publishedAt DateTime @default(now())
+  featured    Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// ─── Favorites ─────────────────────────────────────────────
+model Favorite {
+  id          String     @id @default(cuid())
+  userId      String
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rocketId    String?
+  rocket      Rocket?    @relation(fields: [rocketId], references: [id], onDelete: Cascade)
+  missionId   String?
+  mission     Mission?   @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  agencyId    String?
+  agency      Agency?    @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  astronautId String?
+  astronaut   Astronaut? @relation(fields: [astronautId], references: [id], onDelete: Cascade)
+  planetId    String?
+  planet      Planet?    @relation(fields: [planetId], references: [id], onDelete: Cascade)
+  createdAt   DateTime   @default(now())
+
+  @@unique([userId, rocketId])
+  @@unique([userId, missionId])
+  @@unique([userId, agencyId])
+  @@unique([userId, astronautId])
+  @@unique([userId, planetId])
+}
+
+// ─── Quiz ──────────────────────────────────────────────────
+model Quiz {
+  id          String       @id @default(cuid())
+  title       String
+  slug        String       @unique
+  description String?
+  category    String
+  difficulty  Difficulty   @default(MEDIUM)
+  questions   Question[]
+  scores      QuizScore[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Question {
+  id            String   @id @default(cuid())
+  quizId        String
+  quiz          Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  question      String   @db.Text
+  options       String[] // stored as array
+  correctAnswer Int      // index of correct option
+  explanation   String?  @db.Text
+  order         Int      @default(0)
+}
+
+model QuizScore {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quizId    String
+  quiz      Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  score     Int
+  total     Int
+  createdAt DateTime @default(now())
+
+  @@unique([userId, quizId])
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
