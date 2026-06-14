@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Newspaper, ExternalLink } from "lucide-react";
+import { Newspaper } from "lucide-react";
 import { SectionHeading } from "@/components/ui/Cards";
 import { spaceNews } from "@/lib/data";
 

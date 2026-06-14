@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Search, ArrowRight, Maximize, Scale, Thermometer, Moon, Plus, X } from "lucide-react";
 import { planets } from "@/lib/data";
 import { useState } from "react";
+import SolarOrrery from "@/components/ui/SolarOrrery";
 
 const typeColors: Record<string, string> = {
   TERRESTRIAL: "from-amber-500/20 to-orange-500/20 border-amber-500/30 text-amber-400",
@@ -87,6 +88,11 @@ export default function SolarSystemPage() {
           </motion.div>
         </div>
       </section>
+
+      {/* Animated Orrery */}
+      <div className="bg-black">
+        <SolarOrrery />
+      </div>
 
       {/* Database Section */}
       <section id="database" className="relative z-10 py-[120px] px-6 bg-black">

@@ -23,14 +23,14 @@ export default function AgenciesPage() {
         {/* Gradient overlay to make text readable */}
         <div className="absolute inset-0 z-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent" />
 
-        <div className="relative z-10 w-full max-w-[600px] px-8 md:px-[8%] lg:px-[10%]">
+        <div className="relative z-10 w-full px-8 md:px-[8%] lg:px-[10%]">
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-4xl md:text-5xl lg:text-6xl font-display gradient-text mb-8 leading-[1.1] tracking-[2px]"
+            className="text-4xl md:text-5xl lg:text-6xl font-display gradient-text mb-8 leading-[1.1] tracking-[2px] max-w-[640px]"
           >
-            GLOBAL<br className="hidden md:block" /> ENDEAVORS
+            GLOBAL<br /> ENDEAVORS
           </motion.h1>
 
           <motion.p

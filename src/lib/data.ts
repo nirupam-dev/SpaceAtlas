@@ -22,7 +22,7 @@ export const rockets = [
     totalLaunches: 300,
     successfulLaunches: 296,
     description: "Falcon 9 is a partially reusable, two-stage-to-orbit, medium-lift launch vehicle designed and manufactured in the United States by SpaceX. The first Falcon 9 launch was on June 4, 2010, and the first Commercial Resupply mission to the International Space Station (ISS) launched on October 8, 2012. In 2020, it became the first commercial rocket to launch humans to orbit. With 647 successful flights, Falcon 9 has seen the most launches among active launch vehicles; it is noted for its reliability and high launch cadence, with two in-flight failures, one partial failure and one pre-flight destruction. The rocket has two stages. The first (booster) stage carries the second stage and payload to a predetermined speed and altitude, after which the second stage accelerates the payload to its target orbit. The booster is capable of landing vertically to facilitate reuse, a feat which was first achieved on flight 20 in December 2015. Additionally, the fairing halves are scooped out of water after a parachute-assisted landing and can be reflown multiple times. As of June 12, 2026, SpaceX has successfully landed Falcon 9 boosters 598 times. Individual boosters have flown as many as 35 flights. Both stages are powered by SpaceX Merlin engines, using cryogenic liquid oxygen and rocket-grade kerosene (RP-1) as propellants. The heaviest payloads flown to geostationary transfer orbit (GTO) were Intelsat 35e carrying 6,761 kg (14,905 lb), and Telstar 19V with 7,075 kg (15,598 lb). The former was launched into an advantageous super-synchronous transfer orbit, while the latter went into a lower-energy GTO, with an apogee well below the geostationary altitude. On January 24, 2021, Falcon 9 set a record for the most satellites launched by a single rocket, carrying 143 into orbit.",
-    imageUrl: "https://en.wikipedia.org/wiki/Special:FilePath/SpaceX_Falcon_9_v1.2_Block_5_on_pad_39A.jpg",
+    imageUrl: "https://images.unsplash.com/photo-1541185933-ef5d8ed016c2?q=80&w=1000&auto=format&fit=crop",
   },
   {
     id: "falcon-heavy",
@@ -44,7 +44,7 @@ export const rockets = [
     totalLaunches: 10,
     successfulLaunches: 10,
     description: "Falcon Heavy is a super heavy-lift launch vehicle with partial reusability that can carry cargo into Earth orbit and beyond. It is designed, manufactured and launched by American aerospace company SpaceX. The rocket consists of a center core on which two Falcon 9 boosters are attached, and a second stage on top of the center core. Falcon Heavy has the second highest payload capacity of any currently operational launch vehicle behind NASA's Space Launch System (SLS), and the fourth-highest capacity of any rocket to reach orbit, trailing behind the SLS, Energia and the Saturn V. SpaceX conducted Falcon Heavy's maiden launch on February 6, 2018, at 20:45 UTC. As a dummy payload, the rocket carried a Tesla Roadster belonging to SpaceX founder Elon Musk, with a mannequin dubbed Starman in the driver's seat. The second Falcon Heavy launch occurred on April 11, 2019, and all three booster rockets successfully returned to Earth. The third Falcon Heavy launch successfully occurred on June 25, 2019. Since then, Falcon Heavy has been certified for the National Security Space Launch (NSSL) program.",
-    imageUrl: "https://en.wikipedia.org/wiki/Special:FilePath/Falcon_Heavy_Demo_Mission_(39977123164).jpg",
+    imageUrl: "https://images.unsplash.com/photo-1517976487492-5750f3195933?q=80&w=1000&auto=format&fit=crop",
   },
   {
     id: "starship",
@@ -66,7 +66,7 @@ export const rockets = [
     totalLaunches: 6,
     successfulLaunches: 3,
     description: "Starship is a two-stage, fully reusable, super heavy-lift launch vehicle under development by American aerospace company SpaceX. Currently built and launched from Starbase in Texas, it is intended as the successor to the company's Falcon 9 and Falcon Heavy rockets, and is part of SpaceX's broader reusable launch system development program. If completed as designed, Starship would be the first fully reusable orbital rocket and have the highest payload capacity of any launch vehicle to date. As of May 27, 2026, Starship has launched 12 times, with 7 successful flights and 5 failures. The vehicle consists of two stages: the Super Heavy booster and the Starship spacecraft, both powered by Raptor engines burning liquid methane (the main component of natural gas) and liquid oxygen. Both stages are intended to return to the launch site and land vertically at the launch tower for potential reuse. Once in space, the Starship upper stage is intended to function as a standalone spacecraft capable of carrying crew and cargo. Missions beyond low Earth orbit would require multiple in-orbit refueling flights. At the end of its mission, Starship reenters the atmosphere using heat shield tiles similar to those of the Space Shuttle. SpaceX states that its goal is to reduce launch costs by reusing and mass producing both stages. SpaceX initially expressed ambitions to use Starship for crewed missions to Mars, but the plan was revised to prioritize returning humans to the Moon. SpaceX has also proposed a wide range of missions for Starship, such as deploying large satellites, space station modules, and space telescopes. A crewed variant, the Starship Human Landing System, is being developed under a contract with NASA as part of the Artemis program, with a docking test as part of Artemis III, currently scheduled for 2027, and a crewed lunar landing scheduled for 2028.",
-    imageUrl: "https://en.wikipedia.org/wiki/Special:FilePath/Starship_IFT-3_launch.jpg",
+    imageUrl: "https://images.unsplash.com/photo-1633519890479-7f37478d5e1b?q=80&w=1000&auto=format&fit=crop",
   },
   {
     id: "saturn-v",
@@ -110,7 +110,7 @@ export const rockets = [
     totalLaunches: 1,
     successfulLaunches: 1,
     description: "The Space Launch System (SLS) is an American two-stage super heavy-lift expendable launch vehicle used by NASA. The primary launch vehicle for the Artemis program, SLS is designed to launch the four-person Orion spacecraft for missions to the Moon, on a trans-lunar injection trajectory. The rocket first launched in November 2022, carrying the uncrewed Artemis I mission. Its first crewed launch was for the Artemis II lunar flyby in April 2026, becoming the second launch vehicle to carry humans beyond low Earth orbit (LEO), after NASA's Saturn V of the Apollo program. Development of SLS began in 2011 as a congressionally mandated replacement for the retiring Space Shuttle program and the cancelled Ares I and Ares V launch vehicles of the Constellation program, incorporating some hardware from both programs. Costing US$31.6 billion as of 2025, the project has been criticized for mismanagement, budget overruns, and delays, but ultimately succeeded in human spaceflight in 2026. All SLS launches take place from Launch Complex 39B at the Kennedy Space Center in Florida. The new Boeing-built core stage is powered by four ex-Shuttle RS-25 engines. Attached to the core are two Northrop Grumman five-segment Solid Rocket Boosters, built for the Ares vehicles, tested on Ares I-X, developed from the Shuttle's four-segment SRB. SLS currently uses the Interim Cryogenic Propulsion Stage (ICPS) as its second stage, for the insertions to low Earth orbit and trans-lunar injection. ICPS uses the RL10 engine, and was derived from the Delta Cryogenic Second Stage designed by Japan's space agency. Aerojet Rocketdyne builds the RS-25 and RL-10 engines.",
-    imageUrl: "https://en.wikipedia.org/wiki/Special:FilePath/Artemis_I_Launch_-_01_(cropped).jpg",
+    imageUrl: "https://images.unsplash.com/photo-1516849841032-87cbac4d88f7?q=80&w=1000&auto=format&fit=crop",
   },
   {
     id: "pslv",
@@ -154,7 +154,7 @@ export const rockets = [
     totalLaunches: 7,
     successfulLaunches: 7,
     description: "GSLV Mk III, also called LVM3, is a three-stage heavy-lift launch vehicle developed by ISRO. It is designed to carry 4-ton class of satellites into GTO.",
-    imageUrl: "https://en.wikipedia.org/wiki/Special:FilePath/LVM3_M4_Chandrayaan-3_launch.jpg",
+    imageUrl: "https://images.unsplash.com/photo-1541873676-a18131494184?q=80&w=1000&auto=format&fit=crop",
   },
   {
     id: "ariane-6",
@@ -176,7 +176,7 @@ export const rockets = [
     totalLaunches: 2,
     successfulLaunches: 2,
     description: "Ariane 6 (French: [aʁjan sis]) is a European expendable launch system developed for the European Space Agency (ESA) and French Space Agency (CNES) and manufactured by a consortium of European companies, led by the prime contractor ArianeGroup. As part of the Ariane rocket family, it is operated by Arianespace, replacing the Ariane 5. The project's primary contributors were France (55.3%), Germany (21%) and Italy (7.6%), with the remaining work distributed among ten other participating countries. This two-stage rocket utilizes liquid hydrogen and liquid oxygen (hydrolox) engines. The first stage features an upgraded Vulcain engine from Ariane 5, while the second uses the Vinci engine, designed specifically for this rocket. The Ariane 62 variant uses two P120C solid rocket boosters, while Ariane 64 uses four. The P120C booster is shared with Europe's other launch vehicle, and is an improved version of the P80 used on the original Vega. Selected in December 2014 over an all-solid-fuel alternative, Ariane 6 was initially planned for a 2020 debut. However, the program faced delays, with the first launch eventually taking place on 9 July 2024. While the rocket successfully launched, the mission experienced a partial failure when the upper stage malfunctioned and was not able to complete its final deorbit burn. The second launch was therefore postponed to 6 March 2025, successfully delivering its first commercial payload to orbit, the CSO-3 reconnaissance satellite.",
-    imageUrl: "https://en.wikipedia.org/wiki/Special:FilePath/Ariane_6_first_flight_lift-off.jpg",
+    imageUrl: "https://images.unsplash.com/photo-1528659105436-15ba8ecdf111?q=80&w=1000&auto=format&fit=crop",
   },
   {
     id: "long-march-5",
@@ -220,7 +220,7 @@ export const rockets = [
     totalLaunches: 40,
     successfulLaunches: 36,
     description: "Electron is a two-stage orbital expendable launch vehicle developed by Rocket Lab to serve the commercial small satellite market. It uses electric-pump-fed engines.",
-    imageUrl: "https://en.wikipedia.org/wiki/Special:FilePath/Electron_on_LC-1_(1).jpg",
+    imageUrl: "https://images.unsplash.com/photo-1581090122319-8fab9528eaca?q=80&w=1000&auto=format&fit=crop",
   },
   {
     id: "soyuz",
@@ -264,7 +264,7 @@ export const rockets = [
     totalLaunches: 98,
     successfulLaunches: 98,
     description: "Atlas V is an expendable launch system and the fifth major version in the Atlas launch vehicle family. It was developed by Lockheed Martin and has been operated by United Launch Alliance (ULA) since 2006. Primarily used to launch payloads for the United States Department of Defense, NASA, and commercial customers, Atlas V is the longest-serving active rocket in the United States. Each Atlas V vehicle consists of two main stages. The first stage is powered by a single Russian-made RD-180 engine that burns kerosene and liquid oxygen. The Centaur upper stage uses one or two American-made Aerojet Rocketdyne RL10 engines that burn liquid hydrogen and liquid oxygen. Strap-on solid rocket boosters (SRBs) are used in several configurations. Originally equipped with AJ-60A SRBs, the vehicle switched to Graphite-Epoxy Motor (GEM 63) boosters beginning in November 2020, except for flights in the Boeing Starliner program. Standard payload fairings measure either 4.2 m (14 ft) or 5.4 m (18 ft) in diameter, with multiple available lengths. In August 2021, ULA announced that Atlas V would be retired and all remaining launches had been sold. Production of the rocket ended in 2024. As of April 2026, eight rockets remain to be launched. Future ULA missions will use the Vulcan Centaur launch vehicle, which was designed in part to comply with a Congressional mandate to phase out use of the Russian-made RD-180 engine.",
-    imageUrl: "https://en.wikipedia.org/wiki/Special:FilePath/Atlas_V_551_launching_the_Juno_spacecraft.jpg",
+    imageUrl: "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=1000&auto=format&fit=crop",
   },
   {
     id: "delta-iv-heavy",
@@ -286,7 +286,7 @@ export const rockets = [
     totalLaunches: 16,
     successfulLaunches: 15,
     description: "The Delta IV Heavy (Delta 9250H) was an expendable heavy-lift launch vehicle, the largest member of the Delta IV family. Following the retirement of the Space Shuttle in 2011, it was the most capable operational launch vehicle until the Falcon Heavy's debut in 2018. At the time of its retirement in 2024, it ranked third among active rockets in payload capacity. Developed by Boeing and later manufactured by United Launch Alliance (ULA), it first flew in 2004. The Delta IV Heavy was retired after its 16th and final launch on 9 April 2024 and was succeeded by ULA's Vulcan Centaur rocket, which can offer similar heavy-lift capabilities at a lower cost with a single-core and six solid rocket boosters. The vehicle consisted of three Common Booster Cores (CBCs), each powered by an RS-68 engine. Two served as strap-on boosters attached to a central core. During ascent, all three engines ignited at liftoff, with the central engine throttling down partway through flight to conserve propellant before throttling up again after booster separation. A distinctive feature of Delta IV Heavy launches was the hydrogen-fueled ignition sequence, which often produced a large fireball that scorched the booster’s exterior surface.",
-    imageUrl: "https://en.wikipedia.org/wiki/Special:FilePath/Delta_IV_Heavy_NROL-44.jpg",
+    imageUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1000&auto=format&fit=crop",
   },
   {
     id: "vulcan-centaur",
@@ -308,7 +308,7 @@ export const rockets = [
     totalLaunches: 2,
     successfulLaunches: 2,
     description: "Vulcan Centaur is a heavy-lift launch vehicle developed and operated by United Launch Alliance (ULA). It is a two-stage-to-orbit launch vehicle consisting of the Vulcan first stage and the Centaur V second stage. Replacing ULA's Atlas V and Delta IV rockets, the Vulcan Centaur is principally designed to meet the needs of the National Security Space Launch (NSSL) program, which supports U.S. intelligence agencies and the Defense Department, but ULA believes it will also be able to price missions low enough to attract commercial launches. ULA began development of the new launch vehicle in 2014, primarily to compete with SpaceX’s Falcon 9 and to comply with a Congressional mandate to phase out the use of the Russian-made RD-180 engine that powered the Atlas V. The first launch of the Vulcan Centaur was initially scheduled for 2019 but faced multiple delays due to developmental challenges with its new BE-4 first-stage engine and the Centaur second-stage. The Vulcan Centaur conducted its first launch on January 8, 2024, carrying the Peregrine lunar lander as part of NASA's Commercial Lunar Payload Services program. Its second flight, conducted on October 4, 2024, as part of the U.S. Space Force's National Security Space Launch (NSSL) certification process, achieved its planned orbit despite the loss of a nozzle on one of the GEM-63XL solid rocket boosters, which resulted in reduced and asymmetrical thrust. Following a five-month review, the Space Force certified Vulcan for NSSL missions in March 2025. In February 2026, a second issue involving a solid rocket booster occurred, after which launches were paused pending investigation.",
-    imageUrl: "https://en.wikipedia.org/wiki/Special:FilePath/Vulcan_Cert_2_Launch_%28cropped%29.jpg",
+    imageUrl: "https://images.unsplash.com/photo-1610296669228-602fa827fc1f?q=80&w=1000&auto=format&fit=crop",
   },
   {
     id: "h3",
@@ -330,7 +330,7 @@ export const rockets = [
     totalLaunches: 3,
     successfulLaunches: 2,
     description: "The H3 is a Japanese medium-lift launch vehicle developed by JAXA and Mitsubishi Heavy Industries (MHI). A hydrolox-fuelled rocket, it is the successor to the H-IIA and H-IIB launch vehicles. The H3 uses the LE-9 main engine, which was designed to be less expensive to produce as part of a broader effort to lower launch costs. The rocket has a modular design: its first stage is powered by two or three LE-9 engines and can be fitted with zero, two, or four SRB-3 solid rocket boosters, which are also used on the Epsilon S small-lift launch vehicle. The second stage uses the LE-5B-3 engine, an upgraded version of the engine family used since the H-I rocket. Development of the H3 began in 2013. Its maiden flight in March 2023 failed after the second-stage engine did not ignite. The rocket's first successful flight took place in February 2024. In addition to launching satellites into Earth orbit, the H3 is used to launch the HTV-X cargo spacecraft to the International Space Station and is planned to launch the Martian Moons eXploration and Lunar Polar Exploration Mission probes.",
-    imageUrl: "https://en.wikipedia.org/wiki/Special:FilePath/H3_TF2_Launch.jpg",
+    imageUrl: "https://images.unsplash.com/photo-1541186877-bb5a745edde5?q=80&w=1000&auto=format&fit=crop",
   },
 ];
 
