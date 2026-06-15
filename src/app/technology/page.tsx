@@ -33,64 +33,71 @@ export default function TechnologyPage() {
   return (
     <div className="relative">
       {/* ═══ HERO ═══ */}
-      <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
-        <div
-          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2000&auto=format&fit=crop')",
-          }}
-        />
-        <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/70 via-black/50 to-[#0f172a]" />
+      <section className="relative w-full h-screen min-h-[700px] overflow-hidden">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="absolute inset-0 z-0 w-full h-full object-cover"
+        >
+          <source
+            src="https://sxcontent9668.azureedge.us/cms-assets/assets/20260522_Starship_Flight12_web1920_v2_71d68b5ee9.mp4"
+            type="video/mp4"
+          />
+        </video>
+        <div className="absolute inset-0 z-0 bg-gradient-to-r from-black/90 via-black/40 to-transparent" />
+        <div className="absolute inset-0 z-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/20 to-transparent" />
 
-        <div className="relative z-10 w-full max-w-6xl mx-auto px-6 text-center pt-40 pb-20">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-violet-500/40 text-violet-300 text-sm font-micro mb-8 uppercase tracking-widest bg-violet-500/10 backdrop-blur-md">
-              <Cpu className="w-4 h-4" />
-              NASA Powered · Live Data
-            </span>
-          </motion.div>
+        <div className="absolute inset-0 z-10 flex flex-col justify-center pt-24 px-8 md:px-[8%] lg:px-[10%]">
+          <div className="max-w-2xl">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+            >
+              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-sm border border-accent-blue/30 text-accent-blue text-[10px] font-micro uppercase tracking-[3px] bg-accent-blue/5 backdrop-blur-md mb-8">
+                <Cpu className="w-3.5 h-3.5" />
+                NASA Powered · Live Data
+              </span>
+            </motion.div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.1 }}
-            className="text-5xl md:text-7xl lg:text-8xl font-display gradient-text mb-8 leading-[1.1]"
-          >
-            Space Tech
-            <br />
-            & Research
-          </motion.h1>
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.1 }}
+              className="text-5xl md:text-7xl lg:text-8xl font-display text-white mb-6 leading-[1.05]"
+            >
+              SPACE TECH
+              <br />
+              <span className="text-space-400">RESEARCH</span>
+            </motion.h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-lg md:text-xl text-space-200 max-w-3xl mx-auto leading-relaxed font-light tracking-wide bg-black/30 backdrop-blur-sm p-6 rounded-2xl"
-          >
-            Explore cutting-edge NASA technologies, patents, active research projects,
-            real-time Earth imagery, and Mars rover photographs — all powered by live NASA APIs.
-          </motion.p>
+            <motion.p
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="text-[15px] md:text-[16px] text-space-300 leading-[1.8] font-light mb-10 max-w-[500px]"
+            >
+              Explore cutting-edge NASA technologies, patents, active research projects,
+              real-time Earth imagery, and Mars rover photographs — all powered by live NASA APIs.
+            </motion.p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-6"
-          >
-            <a href="#explore" className="btn-primary flex items-center gap-3 text-lg px-8 py-4">
-              <FlaskConical className="w-5 h-5" />
-              Explore Research
-              <ArrowRight className="w-5 h-5" />
-            </a>
-            <Link href="/ask" className="btn-outline flex items-center gap-3 text-lg px-8 py-4">
-              Ask AI About Tech
-            </Link>
-          </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="flex flex-col sm:flex-row items-start gap-5"
+            >
+              <a href="#explore" className="btn-primary flex items-center justify-center gap-3 text-[13px] px-8 py-3.5 min-w-[200px]">
+                <FlaskConical className="w-4 h-4" />
+                EXPLORE RESEARCH
+              </a>
+              <Link href="/ask" className="btn-outline flex items-center justify-center gap-3 text-[13px] px-8 py-3.5 min-w-[200px]">
+                ASK AI ABOUT TECH
+              </Link>
+            </motion.div>
+          </div>
         </div>
 
         <motion.div
@@ -124,11 +131,10 @@ export default function TechnologyPage() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-5 py-3 rounded-full text-xs font-micro uppercase tracking-widest transition-all duration-300 ${
-                  activeTab === tab.id
+                className={`flex items-center gap-2 px-5 py-3 rounded-full text-xs font-micro uppercase tracking-widest transition-all duration-300 ${activeTab === tab.id
                     ? "bg-gradient-to-r from-accent-blue/20 to-accent-purple/20 text-white border border-accent-blue/40 shadow-[0_0_20px_rgba(56,189,248,0.1)]"
                     : "bg-white/5 text-space-400 border border-white/10 hover:border-white/30 hover:text-white"
-                }`}
+                  }`}
               >
                 <tab.icon className="w-4 h-4" />
                 {tab.label}

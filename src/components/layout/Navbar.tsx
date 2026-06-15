@@ -134,20 +134,20 @@ export function Navbar() {
       >
         <div className="w-full">
           <nav
-            className={`px-12 flex items-center justify-between w-full transition-all duration-300 ${
-              scrolled ? "py-4" : "py-8"
+            className={`px-4 sm:px-6 md:px-8 lg:px-12 flex items-center justify-between w-full transition-all duration-300 ${
+              scrolled ? "py-3 sm:py-4" : "py-4 sm:py-6 lg:py-8"
             }`}
           >
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2 group">
-              <span className="text-2xl font-display text-white tracking-[2px]">
+              <span className="text-lg sm:text-xl lg:text-2xl font-display text-white tracking-[2px]">
                 SPACEATLAS
               </span>
             </Link>
 
             {/* Desktop nav + hamburger */}
-            <div className="flex items-center gap-6">
-              <div className="hidden lg:flex items-center gap-6 mr-4">
+            <div className="flex items-center gap-4 sm:gap-6">
+              <div className="hidden lg:flex items-center gap-4 xl:gap-6 mr-4">
                 {topBarLinks.map((link) => (
                   <Link
                     key={link.href}
@@ -224,7 +224,7 @@ export function Navbar() {
               <div className="absolute top-0 left-0 w-72 h-72 bg-accent-blue/5 rounded-full blur-[120px] pointer-events-none" />
               <div className="absolute bottom-0 right-0 w-64 h-64 bg-accent-purple/5 rounded-full blur-[100px] pointer-events-none" />
 
-              <div className="relative px-8 pt-28 pb-12">
+              <div className="relative px-5 sm:px-8 pt-20 sm:pt-28 pb-12">
                 {/* sections */}
                 <motion.div
                   variants={staggerContainer}

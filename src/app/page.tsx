@@ -22,13 +22,13 @@ export default function HomePage() {
           style={{ backgroundImage: "url('/hero-bg.jpg')" }}
         />
 
-        <div className="relative z-10 w-full max-w-6xl mx-auto px-6 text-center pt-40 pb-20">
+        <div className="relative z-10 w-full max-w-6xl mx-auto px-4 sm:px-6 text-center pt-28 sm:pt-40 pb-16 sm:pb-20">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-space-500 text-white text-sm font-micro mb-12 uppercase tracking-widest bg-black/30 backdrop-blur-md">
+            <span className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 sm:py-2.5 rounded-full border border-space-500 text-white text-xs sm:text-sm font-micro mb-8 sm:mb-12 uppercase tracking-widest bg-black/30 backdrop-blur-md">
               <Zap className="w-4 h-4" />
               Your Gateway to the Cosmos
             </span>
@@ -38,7 +38,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1 }}
-            className="text-5xl md:text-7xl lg:text-8xl font-display gradient-text mb-10 leading-[1.1]"
+            className="text-3xl sm:text-5xl md:text-7xl lg:text-8xl font-display gradient-text mb-6 sm:mb-10 leading-[1.1]"
           >
             Explore the
             <br />
@@ -49,7 +49,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="mt-10 text-lg md:text-xl text-[#e2e8f0] max-w-3xl mx-auto leading-relaxed font-light tracking-wide bg-black/20 backdrop-blur-sm p-6 rounded-2xl"
+            className="mt-6 sm:mt-10 text-sm sm:text-lg md:text-xl text-[#e2e8f0] max-w-3xl mx-auto leading-relaxed font-light tracking-wide bg-black/20 backdrop-blur-sm p-4 sm:p-6 rounded-2xl"
           >
             Comprehensive information about rockets, spacecraft, planets,
             space missions, astronauts, and the latest discoveries.
@@ -59,14 +59,14 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="mt-16 flex flex-col sm:flex-row items-center justify-center gap-8"
+            className="mt-8 sm:mt-16 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8"
           >
-            <Link href="/rockets" className="btn-primary flex items-center gap-3 text-lg px-8 py-4">
+            <Link href="/rockets" className="btn-primary flex items-center gap-3 text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 w-full sm:w-auto justify-center">
               <Rocket className="w-5 h-5" />
               Explore Rockets
               <ArrowRight className="w-5 h-5" />
             </Link>
-            <Link href="/solar-system" className="btn-outline flex items-center gap-3 text-lg px-8 py-4">
+            <Link href="/solar-system" className="btn-outline flex items-center gap-3 text-base sm:text-lg px-6 sm:px-8 py-3 sm:py-4 w-full sm:w-auto justify-center">
               <Globe2 className="w-5 h-5" />
               Solar System
             </Link>
@@ -77,7 +77,7 @@ export default function HomePage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5 }}
-            className="mt-32 grid grid-cols-2 md:grid-cols-4 gap-12 max-w-4xl mx-auto bg-black/40 backdrop-blur-md p-10 rounded-3xl border border-white/10"
+            className="mt-16 sm:mt-32 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8 md:gap-12 max-w-4xl mx-auto bg-black/40 backdrop-blur-md p-5 sm:p-10 rounded-2xl sm:rounded-3xl border border-white/10"
           >
             {[
               { val: `${rockets.length}+`, label: "Rockets" },
@@ -86,8 +86,8 @@ export default function HomePage() {
               { val: `${agencies.length}`, label: "Agencies" },
             ].map((s, i) => (
               <div key={i} className="text-center">
-                <div className="text-2xl md:text-3xl font-bold gradient-text mb-2">{s.val}</div>
-                <div className="text-xs text-space-400 uppercase tracking-widest font-bold">{s.label}</div>
+                <div className="text-xl sm:text-2xl md:text-3xl font-bold gradient-text mb-1 sm:mb-2">{s.val}</div>
+                <div className="text-[10px] sm:text-xs text-space-400 uppercase tracking-widest font-bold">{s.label}</div>
               </div>
             ))}
           </motion.div>
@@ -111,14 +111,14 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════ STATS DASHBOARD ═══════════ */}
-      <section className="relative py-32 px-6">
+      <section className="relative py-16 sm:py-24 md:py-32 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
           <SectionHeading
             badge="Dashboard"
             title="Space by the Numbers"
             subtitle="Key statistics about humanity's journey beyond Earth"
           />
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-8">
             <StatCard icon={<Rocket className="w-7 h-7 text-white" />} value="600+" label="Total Launches" delay={0} />
             <StatCard icon={<Target className="w-7 h-7 text-white" />} value="98.5%" label="Success Rate" color="from-accent-green to-accent-cyan" delay={0.1} />
             <StatCard icon={<Users className="w-7 h-7 text-white" />} value="580+" label="Astronauts" color="from-accent-purple to-accent-pink" delay={0.2} />
@@ -128,7 +128,7 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════ ISS LIVE CARD ═══════════ */}
-      <section className="relative py-16 px-6">
+      <section className="relative py-10 sm:py-16 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -164,7 +164,7 @@ export default function HomePage() {
       <NasaApod />
 
       {/* ═══════════ TECHNOLOGY & RESEARCH TEASER ═══════════ */}
-      <section className="relative py-16 px-6">
+      <section className="relative py-10 sm:py-16 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -199,7 +199,7 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════ FEATURED ROCKETS ═══════════ */}
-      <section className="relative py-32 px-6">
+      <section className="relative py-16 sm:py-24 md:py-32 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
           <SectionHeading
             badge="Rocket Database"
@@ -269,7 +269,7 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════ UPCOMING LAUNCHES ═══════════ */}
-      <section className="relative py-32 px-6">
+      <section className="relative py-16 sm:py-24 md:py-32 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
           <SectionHeading
             badge="Launch Tracker"
@@ -325,7 +325,7 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════ SPACE NEWS ═══════════ */}
-      <section className="relative py-32 px-6">
+      <section className="relative py-16 sm:py-24 md:py-32 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
           <SectionHeading
             badge="Latest News"
@@ -365,14 +365,14 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════ EXPLORE SECTIONS ═══════════ */}
-      <section className="relative py-32 px-6">
+      <section className="relative py-16 sm:py-24 md:py-32 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
           <SectionHeading
             badge="Explore"
             title="Discover the Cosmos"
             subtitle="Navigate through our comprehensive space database"
           />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-8">
             {[
               { href: "/solar-system", icon: Globe2, title: "Solar System", desc: "Planets, moons, and dwarf planets" },
               { href: "/missions", icon: Telescope, title: "Missions", desc: "Apollo, Artemis, Chandrayaan & more" },
@@ -388,14 +388,14 @@ export default function HomePage() {
                 transition={{ duration: 0.5, delay: i * 0.1 }}
                 className="h-full"
               >
-                <Link href={item.href} className="glass-card glass-card-hover p-10 flex flex-col items-center justify-center h-full group text-center border-t-2 border-space-500">
-                  <div className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 mb-6 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <item.icon className="w-8 h-8 text-white" />
+                <Link href={item.href} className="glass-card glass-card-hover p-5 sm:p-10 flex flex-col items-center justify-center h-full group text-center border-t-2 border-space-500">
+                  <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-2xl bg-white/5 border border-white/10 mb-3 sm:mb-6 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <item.icon className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                   </div>
-                  <h3 className="text-xl font-display text-white group-hover:text-[#38bdf8] transition-colors mb-3">
+                  <h3 className="text-sm sm:text-xl font-display text-white group-hover:text-[#38bdf8] transition-colors mb-1 sm:mb-3">
                     {item.title}
                   </h3>
-                  <p className="text-sm font-micro text-space-400 leading-relaxed">{item.desc}</p>
+                  <p className="text-xs sm:text-sm font-micro text-space-400 leading-relaxed hidden sm:block">{item.desc}</p>
                 </Link>
               </motion.div>
             ))}
@@ -404,14 +404,14 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════ AGENCIES ═══════════ */}
-      <section className="relative py-32 px-6 pb-48">
+      <section className="relative py-16 sm:py-24 md:py-32 px-4 sm:px-6 pb-24 sm:pb-48">
         <div className="max-w-7xl mx-auto">
           <SectionHeading
             badge="Agencies"
             title="Space Organizations"
             subtitle="The world's leading space agencies"
           />
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+          <div className="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-6">
             {agencies.map((agency, i) => (
               <motion.div
                 key={agency.id}
@@ -420,9 +420,9 @@ export default function HomePage() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: i * 0.05 }}
               >
-                <Link href={`/agencies/${agency.slug}`} className="glass-card glass-card-hover p-8 flex flex-col items-center justify-center h-full text-center group border-t-2 border-space-500">
-                  <div className="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 mb-5 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <Building2 className="w-7 h-7 text-white" />
+                <Link href={`/agencies/${agency.slug}`} className="glass-card glass-card-hover p-4 sm:p-8 flex flex-col items-center justify-center h-full text-center group border-t-2 border-space-500">
+                  <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-white/5 border border-white/10 mb-3 sm:mb-5 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <Building2 className="w-5 h-5 sm:w-7 sm:h-7 text-white" />
                   </div>
                   <h3 className="font-display text-white text-base group-hover:text-[#38bdf8] transition-colors">
                     {agency.abbreviation}
@@ -436,25 +436,25 @@ export default function HomePage() {
       </section>
 
       {/* ═══════════ CTA ═══════════ */}
-      <section className="relative pb-32 px-6 z-20">
+      <section className="relative pb-16 sm:pb-32 px-4 sm:px-6 z-20">
         <div className="max-w-5xl mx-auto text-center -mt-20">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="glass-card p-16 md:p-20 relative overflow-hidden shadow-2xl bg-[#0f172a]/90 backdrop-blur-2xl"
+            className="glass-card p-8 sm:p-16 md:p-20 relative overflow-hidden shadow-2xl bg-[#0f172a]/90 backdrop-blur-2xl"
           >
             <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-[#38bdf8] via-[#818cf8] to-[#c084fc]" />
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Ready to Explore?</h2>
-            <p className="text-space-300 text-lg mb-12 max-w-2xl mx-auto leading-relaxed">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4 sm:mb-6">Ready to Explore?</h2>
+            <p className="text-space-300 text-sm sm:text-lg mb-8 sm:mb-12 max-w-2xl mx-auto leading-relaxed">
               Dive into our comprehensive database of space knowledge. Compare rockets,
               track launches, and test your knowledge.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-              <Link href="/rockets" className="btn-primary flex items-center justify-center gap-3 px-8 py-4 text-lg w-full sm:w-auto">
+              <Link href="/rockets" className="btn-primary flex items-center justify-center gap-3 px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg w-full sm:w-auto">
                 Get Started <ArrowRight className="w-5 h-5" />
               </Link>
-              <Link href="/quiz" className="btn-outline flex items-center justify-center gap-3 px-8 py-4 text-lg w-full sm:w-auto">
+              <Link href="/quiz" className="btn-outline flex items-center justify-center gap-3 px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg w-full sm:w-auto">
                 <BrainCircuit className="w-5 h-5" />
                 Take a Quiz
               </Link>
