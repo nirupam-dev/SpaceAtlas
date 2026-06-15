@@ -72,14 +72,14 @@ const menuSections = [
 /* ─── animation presets ─── */
 const overlayVariants = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 0.35, ease: "easeOut" } },
-  exit:    { opacity: 0, transition: { duration: 0.25, ease: "easeIn"  } },
+  visible: { opacity: 1, transition: { duration: 0.35, ease: "easeOut" as const } },
+  exit:    { opacity: 0, transition: { duration: 0.25, ease: "easeIn" as const  } },
 };
 
 const panelVariants = {
   hidden:  { x: "100%" },
-  visible: { x: "0%", transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } },
-  exit:    { x: "100%", transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] } },
+  visible: { x: "0%", transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] as const } },
+  exit:    { x: "100%", transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] as const } },
 };
 
 const staggerContainer = {
@@ -88,7 +88,7 @@ const staggerContainer = {
 
 const itemVariants = {
   hidden:  { opacity: 0, x: 30 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.35, ease: "easeOut" } },
+  visible: { opacity: 1, x: 0, transition: { duration: 0.35, ease: "easeOut" as const } },
 };
 
 export function Navbar() {
