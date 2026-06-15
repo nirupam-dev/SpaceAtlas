@@ -14,12 +14,14 @@ import {
   Telescope,
   BrainCircuit,
   Satellite,
+  Cpu,
 } from "lucide-react";
 
 const navLinks = [
   { href: "/rockets",      label: "Rockets",     icon: Rocket },
   { href: "/missions",     label: "Missions",    icon: Telescope },
   { href: "/agencies",     label: "Agencies",    icon: Building2 },
+  { href: "/technology",   label: "Technology",  icon: Cpu },
   { href: "/solar-system", label: "Solar System", icon: Globe2 },
   { href: "/astronauts",   label: "Astronauts",  icon: Users },
   { href: "/ask",          label: "Ask AI",      icon: BrainCircuit },
@@ -50,7 +52,7 @@ export function Navbar() {
             {/* Desktop nav + hamburger */}
             <div className="flex items-center gap-6">
               <div className="hidden lg:flex items-center gap-6 mr-4">
-                {navLinks.slice(0, 6).map((link) => (
+                {navLinks.slice(0, 7).map((link) => (
                   <Link
                     key={link.href}
                     href={link.href}

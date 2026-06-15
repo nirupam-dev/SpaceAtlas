@@ -4,7 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   Rocket, Globe2, Users, Building2, ArrowRight,
-  Zap, Target, Timer, TrendingUp, ChevronRight, Telescope, BrainCircuit, Satellite,
+  Zap, Target, Timer, TrendingUp, ChevronRight, Telescope, BrainCircuit, Satellite, Cpu,
 } from "lucide-react";
 
 import { SectionHeading, StatCard } from "@/components/ui/Cards";
@@ -162,6 +162,41 @@ export default function HomePage() {
 
       {/* ═══════════ NASA APOD ═══════════ */}
       <NasaApod />
+
+      {/* ═══════════ TECHNOLOGY & RESEARCH TEASER ═══════════ */}
+      <section className="relative py-16 px-6">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="glass-card p-8 md:p-12 relative overflow-hidden border border-violet-500/20 shadow-[0_0_60px_rgba(139,92,246,0.06)]"
+          >
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-violet-500 via-accent-blue to-accent-cyan" />
+            <div className="flex flex-col md:flex-row items-center gap-8">
+              <div className="w-20 h-20 shrink-0 rounded-2xl bg-violet-500/10 border border-violet-500/20 flex items-center justify-center relative">
+                <Cpu className="w-10 h-10 text-violet-400" />
+                <span className="absolute -top-1 -right-1 px-2 py-0.5 rounded-full text-[9px] font-micro bg-violet-500/20 text-violet-300 border border-violet-500/30 uppercase tracking-widest">New</span>
+              </div>
+              <div className="flex-1 text-center md:text-left">
+                <div className="flex items-center justify-center md:justify-start gap-2 mb-2">
+                  <span className="text-[10px] font-micro text-violet-400 uppercase tracking-[3px]">NASA APIs · Live Data</span>
+                </div>
+                <h2 className="text-2xl md:text-3xl font-display text-white mb-3">Space Technology & Research</h2>
+                <p className="text-space-400 text-sm leading-relaxed max-w-lg">
+                  Explore NASA patents, TechPort research projects, real-time Earth imagery from DSCOVR, Mars Rover photographs, and thousands of NASA archive images.
+                </p>
+              </div>
+              <Link
+                href="/technology"
+                className="shrink-0 flex items-center gap-3 px-8 py-4 rounded-full bg-violet-500/10 border border-violet-500/30 text-violet-400 font-micro text-sm uppercase tracking-widest hover:bg-violet-500/20 hover:border-violet-500/60 transition-all duration-300"
+              >
+                Explore Tech <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+      </section>
 
       {/* ═══════════ FEATURED ROCKETS ═══════════ */}
       <section className="relative py-32 px-6">
@@ -337,11 +372,12 @@ export default function HomePage() {
             title="Discover the Cosmos"
             subtitle="Navigate through our comprehensive space database"
           />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
             {[
               { href: "/solar-system", icon: Globe2, title: "Solar System", desc: "Planets, moons, and dwarf planets" },
               { href: "/missions", icon: Telescope, title: "Missions", desc: "Apollo, Artemis, Chandrayaan & more" },
               { href: "/astronauts", icon: Users, title: "Astronauts", desc: "The heroes who explore space" },
+              { href: "/technology", icon: Cpu, title: "Technology", desc: "NASA patents, research & live imagery" },
               { href: "/quiz", icon: BrainCircuit, title: "Space Quiz", desc: "Test your cosmic knowledge" },
             ].map((item, i) => (
               <motion.div

@@ -43,9 +43,10 @@ interface StatCardProps {
   value: string;
   label: string;
   delay?: number;
+  color?: string;
 }
 
-export function StatCard({ icon, value, label, delay = 0 }: StatCardProps) {
+export function StatCard({ icon, value, label, delay = 0, color }: StatCardProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -57,7 +58,9 @@ export function StatCard({ icon, value, label, delay = 0 }: StatCardProps) {
       <div className="w-12 h-12 border border-space-500 rounded-sm mx-auto mb-4 flex items-center justify-center">
         {icon}
       </div>
-      <div className="text-3xl font-display text-white mb-1">{value}</div>
+      <div className={`text-3xl font-display mb-1 ${color ? `bg-clip-text text-transparent bg-gradient-to-r ${color}` : 'text-white'}`}>
+        {value}
+      </div>
       <div className="text-xs font-micro text-space-400">{label}</div>
     </motion.div>
   );
