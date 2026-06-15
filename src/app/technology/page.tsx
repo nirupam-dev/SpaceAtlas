@@ -46,8 +46,8 @@ export default function TechnologyPage() {
             type="video/mp4"
           />
         </video>
-        <div className="absolute inset-0 z-0 bg-gradient-to-r from-black/90 via-black/40 to-transparent" />
-        <div className="absolute inset-0 z-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/20 to-transparent" />
+        <div className="absolute inset-0 z-0 bg-gradient-to-r from-black/40 via-transparent to-transparent" />
+        <div className="absolute inset-0 z-0 bg-gradient-to-t from-[#0f172a]/60 via-transparent to-transparent" />
 
         <div className="absolute inset-0 z-10 flex flex-col justify-center pt-24 px-8 md:px-[8%] lg:px-[10%]">
           <div className="max-w-2xl">
