@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Satellite, Gauge, Navigation, Clock, Users } from "lucide-react";
+import { ArrowLeft, Satellite, Gauge, Navigation, Clock, Users, MapPin } from "lucide-react";
 import Link from "next/link";
 
 interface ISSData {
@@ -16,10 +16,10 @@ interface ISSData {
 // Rough continent bounding boxes [minLng, maxLat, maxLng, minLat]
 const CONTINENTS: [number, number, number, number][] = [
   [-168, 72, -52, 15],
-  [-82,  13, -34, -56],
-  [-12,  72,  40,  35],
-  [-18,  38,  52, -35],
-  [ 26,  78, 180, -10],
+  [-82, 13, -34, -56],
+  [-12, 72, 40, 35],
+  [-18, 38, 52, -35],
+  [26, 78, 180, -10],
   [113, -10, 155, -45],
   [-180, -60, 180, -90],
 ];
@@ -42,10 +42,10 @@ export default function ISSPage() {
         if (!res.ok) throw new Error();
         const j = await res.json();
         const pos: ISSData = {
-          latitude:  j.latitude,
+          latitude: j.latitude,
           longitude: j.longitude,
-          altitude:  Math.round(j.altitude),
-          velocity:  Math.round(j.velocity),
+          altitude: Math.round(j.altitude),
+          velocity: Math.round(j.velocity),
           timestamp: j.timestamp,
         };
         setData(pos);
@@ -130,8 +130,8 @@ export default function ISSPage() {
     // Crosshair
     ctx.strokeStyle = "rgba(56,189,248,0.6)"; ctx.lineWidth = 1;
     ctx.setLineDash([3, 4]);
-    [[x-20,y,x-8,y],[x+8,y,x+20,y],[x,y-20,x,y-8],[x,y+8,x,y+20]].forEach(([x1,y1,x2,y2]) => {
-      ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+    [[x - 20, y, x - 8, y], [x + 8, y, x + 20, y], [x, y - 20, x, y - 8], [x, y + 8, x, y + 20]].forEach(([x1, y1, x2, y2]) => {
+      ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
     });
     ctx.setLineDash([]);
 
@@ -141,12 +141,12 @@ export default function ISSPage() {
     `${Math.abs(val).toFixed(4)}° ${val >= 0 ? p : n}`;
 
   const stats = data ? [
-    { icon: Navigation, label: "Latitude",  value: fmt(data.latitude,  "N", "S") },
+    { icon: Navigation, label: "Latitude", value: fmt(data.latitude, "N", "S") },
     { icon: Navigation, label: "Longitude", value: fmt(data.longitude, "E", "W") },
-    { icon: Satellite,  label: "Altitude",  value: `${data.altitude} km` },
-    { icon: Gauge,      label: "Velocity",  value: `${data.velocity.toLocaleString()} km/h` },
-    { icon: Users,      label: "Crew",      value: "7 aboard" },
-    { icon: Clock,      label: "Last Update", value: new Date().toLocaleTimeString() },
+    { icon: Satellite, label: "Altitude", value: `${data.altitude} km` },
+    { icon: Gauge, label: "Velocity", value: `${data.velocity.toLocaleString()} km/h` },
+    { icon: Users, label: "Crew", value: "7 aboard" },
+    { icon: Clock, label: "Last Update", value: new Date().toLocaleTimeString() },
   ] : [];
 
   return (
@@ -244,23 +244,39 @@ export default function ISSPage() {
           </motion.div>
         </div>
 
-        {/* Legend */}
+        {/* Footer Area: Legend & Map Link */}
         <motion.div
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}
-          className="mt-6 flex items-center gap-8 text-[10px] font-micro text-space-500 uppercase tracking-widest"
+          className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-6"
         >
-          <div className="flex items-center gap-2">
-            <span className="w-8 h-[2px] bg-accent-blue/60 rounded block" />
-            <span>Orbital Trail</span>
+          <div className="flex items-center gap-6 sm:gap-8 text-[10px] font-micro text-space-500 uppercase tracking-widest">
+            <div className="flex items-center gap-2">
+              <span className="w-8 h-[2px] bg-accent-blue/60 rounded block" />
+              <span className="hidden sm:inline">Orbital Trail</span>
+              <span className="sm:hidden">Trail</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full bg-accent-blue/40 border border-white block" />
+              <span className="hidden sm:inline">ISS Position</span>
+              <span className="sm:hidden">ISS</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-4 h-2.5 rounded-sm bg-[rgba(30,58,100,0.55)] block" />
+              <span>Landmass</span>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full bg-accent-blue/40 border border-white block" />
-            <span>ISS Position</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="w-4 h-2.5 rounded-sm bg-[rgba(30,58,100,0.55)] block" />
-            <span>Landmass</span>
-          </div>
+
+          {data && (
+            <a
+              href={`https://www.google.com/maps?q=${data.latitude},${data.longitude}&t=k`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 px-4 py-2 rounded-full border border-space-600/50 text-xs font-micro uppercase tracking-widest text-space-300 hover:text-white hover:border-white/50 hover:bg-white/5 transition-all duration-300"
+            >
+              <MapPin className="w-3.5 h-3.5" />
+              View on Real Map
+            </a>
+          )}
         </motion.div>
       </div>
     </div>

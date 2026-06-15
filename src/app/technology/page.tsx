@@ -16,62 +16,7 @@ import TechPortProjects from "@/components/ui/TechPortProjects";
 import ApodGallery from "@/components/ui/ApodGallery";
 import MarsRoverGallery from "@/components/ui/MarsRoverGallery";
 
-const researchDomains = [
-  {
-    icon: Satellite,
-    title: "Satellite Systems",
-    desc: "Advanced communication, Earth observation, and deep-space relay architectures.",
-    color: "from-sky-400 to-blue-600",
-    borderColor: "border-sky-500/30",
-    stat: "200+",
-    statLabel: "Active Satellites",
-  },
-  {
-    icon: FlaskConical,
-    title: "Life Sciences",
-    desc: "Microgravity biology, radiation protection, and closed-loop life support for deep space.",
-    color: "from-emerald-400 to-teal-600",
-    borderColor: "border-emerald-500/30",
-    stat: "50+",
-    statLabel: "ISS Experiments",
-  },
-  {
-    icon: Atom,
-    title: "Propulsion R&D",
-    desc: "Ion drives, nuclear thermal engines, and solar sail research for faster interplanetary travel.",
-    color: "from-violet-400 to-purple-600",
-    borderColor: "border-violet-500/30",
-    stat: "12",
-    statLabel: "Active Programs",
-  },
-  {
-    icon: Microscope,
-    title: "Materials Science",
-    desc: "Heat shields, radiation-hardened electronics, and lightweight composites for extreme conditions.",
-    color: "from-amber-400 to-orange-600",
-    borderColor: "border-amber-500/30",
-    stat: "1,400+",
-    statLabel: "Patents Filed",
-  },
-  {
-    icon: Cpu,
-    title: "AI & Autonomy",
-    desc: "Machine learning for autonomous navigation, anomaly detection, and mission planning.",
-    color: "from-pink-400 to-rose-600",
-    borderColor: "border-pink-500/30",
-    stat: "30+",
-    statLabel: "AI Projects",
-  },
-  {
-    icon: Lightbulb,
-    title: "Spinoff Technology",
-    desc: "Space innovations applied to everyday life — from water purifiers to memory foam.",
-    color: "from-cyan-400 to-sky-600",
-    borderColor: "border-cyan-500/30",
-    stat: "2,000+",
-    statLabel: "Spinoffs",
-  },
-];
+
 
 export default function TechnologyPage() {
   const [activeTab, setActiveTab] = useState<string>("gallery");
@@ -163,44 +108,6 @@ export default function TechnologyPage() {
         </motion.div>
       </section>
 
-      {/* ═══ RESEARCH DOMAINS ═══ */}
-      <section className="relative py-28 px-6">
-        <div className="max-w-7xl mx-auto">
-          <SectionHeading
-            badge="Research Domains"
-            title="Fields of Innovation"
-            subtitle="Six pillars driving humanity's next giant leap"
-          />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {researchDomains.map((domain, i) => (
-              <motion.div
-                key={domain.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.08 }}
-                className={`glass-card glass-card-hover p-8 group ${domain.borderColor} relative overflow-hidden`}
-              >
-                <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${domain.color} opacity-60`} />
-                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${domain.color} bg-opacity-10 border border-white/10 mb-5 flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
-                  <domain.icon className="w-7 h-7 text-white" />
-                </div>
-                <h3 className="text-lg font-display text-white mb-3 group-hover:text-accent-blue transition-colors">
-                  {domain.title}
-                </h3>
-                <p className="text-sm text-space-400 leading-relaxed mb-6">{domain.desc}</p>
-                <div className="pt-4 border-t border-space-700 flex items-center justify-between">
-                  <div>
-                    <div className="text-xl font-bold gradient-text">{domain.stat}</div>
-                    <div className="text-[10px] font-micro text-space-500 uppercase tracking-widest">{domain.statLabel}</div>
-                  </div>
-                  <ArrowRight className="w-4 h-4 text-space-600 group-hover:text-accent-blue group-hover:translate-x-1 transition-all" />
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ═══ TABBED NASA DATA EXPLORER ═══ */}
       <section id="explore" className="relative py-8 px-6">
