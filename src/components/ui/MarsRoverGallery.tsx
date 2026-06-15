@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Camera, X, Loader2, ImageIcon } from "lucide-react";
+import { Camera, X, Loader2, ImageIcon, AlertCircle } from "lucide-react";
 
 interface MarsPhoto {
   id: number;
@@ -25,20 +25,27 @@ export default function MarsRoverGallery() {
   const [rover, setRover] = useState("curiosity");
   const [sol, setSol] = useState("1000");
   const [selected, setSelected] = useState<MarsPhoto | null>(null);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     setLoading(true);
+    setError(false);
     fetch(`/api/nasa-mars?rover=${rover}&sol=${sol}`)
       .then((res) => res.json())
       .then((data) => {
-        if (data.photos) {
-          setPhotos(data.photos.slice(0, 20));
-        } else {
+        if (data.error || !data.photos) {
+          setError(true);
           setPhotos([]);
+        } else {
+          setPhotos(data.photos.slice(0, 20));
+          setError(false);
         }
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch(() => {
+        setError(true);
+        setLoading(false);
+      });
   }, [rover, sol]);
 
   const rovers = [
@@ -96,6 +103,14 @@ export default function MarsRoverGallery() {
         <div className="flex flex-col items-center justify-center py-32">
           <Loader2 className="w-10 h-10 text-orange-400 animate-spin mb-4" />
           <p className="text-space-400 text-sm font-micro uppercase tracking-widest">Receiving Mars transmissions...</p>
+        </div>
+      ) : error ? (
+        <div className="text-center py-20 max-w-2xl mx-auto glass-card border-orange-500/20 p-8">
+          <AlertCircle className="w-16 h-16 text-orange-500/50 mx-auto mb-6" />
+          <h3 className="text-xl font-display text-white mb-3">API Currently Offline</h3>
+          <p className="text-space-400 text-sm leading-relaxed">
+            NASA has temporarily archived the official Mars Rover Photos API endpoint. While we wait for NASA to restore the service, you can still search for Mars rover images using the <strong className="text-orange-400 font-medium">NASA Image Library</strong> tab.
+          </p>
         </div>
       ) : photos.length === 0 ? (
         <div className="text-center py-20">

@@ -43,7 +43,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
-      <body className={`${inter.variable} font-sans antialiased bg-space-900 text-space-100`}>
+      <body className={`${inter.variable} font-sans antialiased bg-space-900 text-space-100`} suppressHydrationWarning>
         <div className="relative min-h-screen flex flex-col">
           <ScrollProgress />
           <Navbar />
