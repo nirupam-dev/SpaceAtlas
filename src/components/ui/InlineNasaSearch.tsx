@@ -206,7 +206,7 @@ export default function InlineNasaSearch({ query, icon, category = "items" }: In
                   <h3 className="text-xl font-display text-white mb-4 leading-tight">
                     {selected.data[0].title}
                   </h3>
-                  <p className="text-space-400 text-sm leading-relaxed line-clamp-6 mb-6">
+                  <p className="text-space-400 text-sm leading-relaxed mb-6 max-h-[200px] overflow-y-auto pr-2">
                     {selected.data[0].description || "No description available."}
                   </p>
                   <div className="space-y-3 text-sm border-t border-white/10 pt-4">
