@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Building2, Search, ArrowRight } from "lucide-react";
 import { SectionHeading } from "@/components/ui/Cards";
+import InlineNasaSearch from "@/components/ui/InlineNasaSearch";
 import { agencies } from "@/lib/data";
 import { useState } from "react";
 
@@ -123,17 +124,14 @@ export default function AgenciesPage() {
           </div>
 
           {filtered.length === 0 && (
-            <div className="text-center py-20 glass-card rounded-2xl border border-space-500/30">
+            <div className="text-center py-12 glass-card rounded-2xl border border-space-500/30">
               <Building2 className="w-16 h-16 text-space-600 mx-auto mb-4" />
               <h2 className="text-2xl font-bold text-white mb-2">No local agencies found</h2>
-              <p className="text-space-400 mb-8 max-w-md mx-auto">
-                We couldn't find any agencies matching "{search}".
+              <p className="text-space-400 max-w-md mx-auto">
+                We couldn&apos;t find any agencies matching &quot;{search}&quot;.
               </p>
               {search.trim().length > 0 && (
-                <Link href={`/agencies/${encodeURIComponent(search.replace(/\s+/g, '-').toLowerCase())}`} className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-accent-blue/20 to-accent-purple/20 border border-accent-blue/30 text-white font-medium hover:from-accent-blue/40 hover:to-accent-purple/40 transition-all hover:scale-105 hover:shadow-[0_0_30px_rgba(56,189,248,0.3)]">
-                  <Search className="w-4 h-4" />
-                  Search NASA Live Archives
-                </Link>
+                <InlineNasaSearch query={search} category="agencies" />
               )}
             </div>
           )}
