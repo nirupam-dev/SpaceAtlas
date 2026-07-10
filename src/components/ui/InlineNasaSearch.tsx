@@ -27,6 +27,14 @@ export default function InlineNasaSearch({ query, icon, category = "items" }: In
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<NasaImageItem | null>(null);
 
+  // Map each category to contextual keywords appended to the search
+  const CATEGORY_CONTEXT: Record<string, string> = {
+    rockets: "rocket launch vehicle spacecraft",
+    missions: "space mission exploration",
+    astronauts: "astronaut cosmonaut crew spaceflight",
+    agencies: "space agency program",
+  };
+
   useEffect(() => {
     if (!query || query.trim().length === 0) {
       setLoading(false);
@@ -34,7 +42,9 @@ export default function InlineNasaSearch({ query, icon, category = "items" }: In
     }
 
     setLoading(true);
-    const searchQuery = query.replace(/-/g, " ");
+    const userQuery = query.replace(/-/g, " ");
+    const context = CATEGORY_CONTEXT[category] || "";
+    const searchQuery = context ? `${userQuery} ${context}` : userQuery;
 
     fetch(
       `https://images-api.nasa.gov/search?q=${encodeURIComponent(searchQuery)}&media_type=image&page_size=12`
@@ -53,7 +63,7 @@ export default function InlineNasaSearch({ query, icon, category = "items" }: In
       .catch(() => {
         setLoading(false);
       });
-  }, [query]);
+  }, [query, category]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const displayQuery = query.replace(/-/g, " ");
 
