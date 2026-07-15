@@ -45,7 +45,7 @@ export default function PlanetDetailPage({ params }: { params: Promise<{ slug: s
             src={planet.imageUrl || "/placeholder.jpg"} 
             alt={planet.name} 
             className="w-full h-full object-cover"
-            onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?q=80&w=1000&auto=format&fit=crop'; }}
+            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#020617] via-[#020617]/60 to-transparent" />
         </div>

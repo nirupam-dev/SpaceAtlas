@@ -60,9 +60,7 @@ export default function NewsPage() {
                     alt={article.title} 
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     loading="lazy"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = '/hero-bg.jpg';
-                    }}
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                   />
                   <div className="absolute top-4 left-4 z-20">
                     <span className="badge badge-active bg-black/60 backdrop-blur-md border-white/10">

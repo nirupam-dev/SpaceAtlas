@@ -100,10 +100,7 @@ export default function RocketDetailPage({
               src={rocket.imageUrl || "/placeholder.jpg"}
               alt={rocket.name}
               className="absolute right-0 top-0 w-full md:w-[60%] h-full object-cover object-center opacity-60 md:opacity-80"
-              onError={(e) => {
-                (e.target as HTMLImageElement).src =
-                  "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=1000&auto=format&fit=crop";
-              }}
+              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
             />
           </div>
           {/* Gradient overlays for readability */}

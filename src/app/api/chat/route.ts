@@ -36,30 +36,78 @@ async function ensureVectorStore() {
   storeInitialized = true;
 }
 
-// ─── NASA Image Fetch with Caching ────────────────────────────
+// ─── NASA Image Fetch with Smart Keyword Extraction ───────────
+
+// Known space entities for precise matching
+const SPACE_ENTITIES = new Set([
+  'falcon 9', 'falcon heavy', 'starship', 'saturn v', 'sls', 'space launch system',
+  'pslv', 'gslv', 'ariane', 'ariane 5', 'ariane 6', 'long march', 'electron',
+  'soyuz', 'atlas v', 'delta iv', 'delta iv heavy', 'vulcan', 'vulcan centaur',
+  'h3', 'new glenn', 'new shepard', 'vega', 'proton', 'angara',
+  'apollo', 'apollo 11', 'apollo 13', 'gemini', 'mercury', 'artemis',
+  'voyager', 'voyager 1', 'voyager 2', 'cassini', 'hubble', 'james webb',
+  'perseverance', 'curiosity', 'opportunity', 'spirit', 'insight', 'mars rover',
+  'chandrayaan', 'mangalyaan', 'new horizons', 'juno', 'pioneer',
+  'iss', 'international space station', 'skylab', 'mir', 'tiangong',
+  'spacex', 'nasa', 'isro', 'esa', 'jaxa', 'roscosmos', 'cnsa',
+  'neil armstrong', 'buzz aldrin', 'yuri gagarin', 'john glenn', 'sally ride',
+  'chris hadfield', 'sunita williams', 'kalpana chawla', 'rakesh sharma',
+  'mercury', 'venus', 'earth', 'mars', 'jupiter', 'saturn', 'uranus', 'neptune', 'pluto',
+  'moon', 'europa', 'titan', 'io', 'ganymede', 'enceladus', 'callisto', 'triton',
+  'black hole', 'neutron star', 'supernova', 'nebula', 'pulsar', 'quasar',
+  'milky way', 'andromeda', 'orion nebula', 'crab nebula', 'pillars of creation',
+]);
+
+// Abstract/conceptual terms that shouldn't trigger image search
+const ABSTRACT_PATTERNS = /\b(how (far|long|many|much|fast|old)|what (is|are) the (distance|speed|mass|weight|size|temperature|difference|cost)|compare|comparison|vs\.?|versus|calculate|explain|define|history of|timeline|when (did|was|will))\b/i;
+
+function extractImageKeyword(query: string): string | null {
+  const q = query.toLowerCase().trim();
+
+  // Skip images for abstract/conceptual questions
+  if (ABSTRACT_PATTERNS.test(q)) return null;
+
+  // Try to match known space entities (longest match first)
+  const sortedEntities = [...SPACE_ENTITIES].sort((a, b) => b.length - a.length);
+  for (const entity of sortedEntities) {
+    if (q.includes(entity)) return entity;
+  }
+
+  // Fallback: extract meaningful nouns (skip stop words)
+  const stopWords = new Set([
+    'what', 'is', 'are', 'the', 'a', 'an', 'tell', 'me', 'about', 'how', 'why',
+    'when', 'did', 'does', 'can', 'you', 'please', 'show', 'i', 'want', 'to',
+    'know', 'see', 'of', 'in', 'on', 'for', 'and', 'or', 'it', 'its', 'this',
+    'that', 'do', 'has', 'have', 'was', 'were', 'be', 'been', 'being', 'will',
+    'would', 'could', 'should', 'may', 'might', 'shall', 'with', 'from', 'by',
+    'at', 'up', 'out', 'so', 'if', 'my', 'your', 'we', 'they', 'them', 'us',
+  ]);
+  const words = q.replace(/[^a-z0-9 ]/g, '').split(/\s+/).filter(w => w.length > 2 && !stopWords.has(w));
+
+  if (words.length === 0) return null;
+  // Take up to 3 meaningful words
+  return words.slice(0, 3).join(' ');
+}
 
 async function fetchNasaImages(query: string): Promise<NasaImage[]> {
   try {
-    const keyword = query
-      .toLowerCase()
-      .replace(/[^a-z0-9 ]/g, "")
-      .split(" ")
-      .filter((w) => !["what", "is", "are", "the", "a", "an", "tell", "me", "about", "how", "why", "when", "did", "does"].includes(w))
-      .slice(0, 2)
-      .join(" ")
-      .trim() || query.split(" ").slice(0, 2).join(" ");
+    const keyword = extractImageKeyword(query);
+    if (!keyword) return []; // No relevant visual subject
 
     // Check cache
     const cacheKey = `nasa-img:${keyword}`;
     const cached = apiCache.get<NasaImage[]>(cacheKey);
     if (cached) return cached;
 
-    const url = `https://images-api.nasa.gov/search?q=${encodeURIComponent(keyword)}&media_type=image&page_size=6`;
+    const url = `https://images-api.nasa.gov/search?q=${encodeURIComponent(keyword)}&media_type=image&page_size=10`;
     const res = await fetch(url, { next: { revalidate: 3600 } });
     if (!res.ok) return [];
 
     const data = await res.json();
     const items: any[] = data?.collection?.items ?? [];
+
+    // Extract key topic words for relevance filtering
+    const topicWords = keyword.split(/\s+/).filter(w => w.length > 2);
 
     const images: NasaImage[] = [];
     for (const item of items) {
@@ -67,13 +115,19 @@ async function fetchNasaImages(query: string): Promise<NasaImage[]> {
       const links: any[] = item.links ?? [];
       const imgLink = links.find((l: any) => l.rel === "preview");
       const meta = item.data?.[0];
-      if (imgLink?.href && meta?.title) {
-        images.push({
-          url: imgLink.href,
-          title: meta.title,
-          description: (meta.description ?? "").slice(0, 120),
-        });
-      }
+      if (!imgLink?.href || !meta?.title) continue;
+
+      // Relevance check: title or description must contain at least one topic word
+      const titleLower = (meta.title || '').toLowerCase();
+      const descLower = (meta.description || '').toLowerCase().slice(0, 200);
+      const isRelevant = topicWords.some((w: string) => titleLower.includes(w) || descLower.includes(w));
+      if (!isRelevant) continue;
+
+      images.push({
+        url: imgLink.href,
+        title: meta.title,
+        description: (meta.description ?? "").slice(0, 120),
+      });
     }
 
     // Cache results
@@ -85,6 +139,8 @@ async function fetchNasaImages(query: string): Promise<NasaImage[]> {
 }
 
 // ─── Main Chat Endpoint ───────────────────────────────────────
+
+const MODELS = ["gemini-2.5-flash", "gemini-2.0-flash"] as const;
 
 export async function POST(req: Request) {
   if (!process.env.GEMINI_API_KEY) {
@@ -127,11 +183,6 @@ ${ragContext}
 ---
 IMPORTANT: Prefer facts from the reference data above when they are relevant. If the reference data doesn't cover the user's question, use your general knowledge but indicate when you're going beyond the encyclopedia data.` : ''}`;
 
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.5-flash",
-      systemInstruction,
-    });
-
     // Format history for Gemini API
     const formattedHistory = history
       ? history.map((msg: any) => ({
@@ -140,16 +191,34 @@ IMPORTANT: Prefer facts from the reference data above when they are relevant. If
         }))
       : [];
 
-    const chat = model.startChat({ history: formattedHistory });
+    // Try models with fallback on 503 errors
+    let lastError: any = null;
+    let text = '';
 
-    // Run Gemini and NASA image fetch in parallel
-    const [result, images] = await Promise.all([
-      chat.sendMessage(message),
-      fetchNasaImages(message),
-    ]);
+    for (const modelName of MODELS) {
+      try {
+        const model = genAI.getGenerativeModel({
+          model: modelName,
+          systemInstruction,
+        });
+        const chat = model.startChat({ history: formattedHistory });
+        const result = await chat.sendMessage(message);
+        const response = await result.response;
+        text = response.text();
+        lastError = null;
+        break; // Success — stop trying models
+      } catch (err: any) {
+        lastError = err;
+        const is503 = err?.message?.includes('503') || err?.status === 503;
+        if (!is503) throw err; // Non-503 errors should not retry
+        console.warn(`[Chat] ${modelName} returned 503, trying next model...`);
+      }
+    }
 
-    const response = await result.response;
-    const text = response.text();
+    if (lastError) throw lastError;
+
+    // Fetch NASA images in parallel (already completed or do it now)
+    const images = await fetchNasaImages(message);
 
     return NextResponse.json({
       text,
@@ -173,3 +242,4 @@ IMPORTANT: Prefer facts from the reference data above when they are relevant. If
     );
   }
 }
+
