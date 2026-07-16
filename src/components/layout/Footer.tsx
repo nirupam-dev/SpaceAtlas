@@ -88,7 +88,7 @@ export function Footer() {
         <div className="border-t border-space-500 mt-12 mb-6" />
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs font-micro text-space-500">
-            © {new Date().getFullYear()} SPACEATLAS
+            © {new Date().getFullYear()} SPACEATLAS BY NIRUPAM KUMAR CHOUDHARY
           </p>
           <p className="text-xs font-micro text-space-500">
             DATA SOURCED FROM NASA, SPACEX, AND PUBLIC APIS

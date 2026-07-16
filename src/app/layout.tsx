@@ -23,6 +23,7 @@ export const metadata: Metadata = {
     default: "SpaceAtlas — AI-Powered Space Exploration Engine",
     template: "%s | SpaceAtlas",
   },
+  authors: [{ name: "Nirupam Kumar Choudhary" }],
   description:
     "Explore the cosmos with SpaceAtlas. AI-powered semantic search across rockets, spacecraft, planets, space missions, astronauts, and more.",
   keywords: [

@@ -1,6 +1,7 @@
 {
   "name": "spaceatlas",
   "version": "0.1.0",
+  "author": "Nirupam Kumar Choudhary",
   "private": true,
   "scripts": {
     "dev": "next dev",

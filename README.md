@@ -61,3 +61,7 @@ npm run dev
 The application is configured and ready to be deployed on Vercel. 
 Push your code to a Git repository and import it into Vercel.
 Make sure to add the necessary environment variables (`DATABASE_URL`, `NEXTAUTH_URL`, `NEXTAUTH_SECRET`) in the Vercel project settings.
+
+## Author
+
+- **Nirupam Kumar Choudhary** - *Creator & Lead Developer*
