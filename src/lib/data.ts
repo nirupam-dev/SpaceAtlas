@@ -600,7 +600,7 @@ export const satellites = [
     lifetime: "5 years per satellite (continuously replenished)",
     purpose: "Global broadband internet service via a mega-constellation of thousands of small satellites in low Earth orbit.",
     description: "Starlink is a satellite internet constellation operated by SpaceX that provides satellite Internet access coverage to over 75 countries. It also aims for global mobile phone service after 2024. SpaceX started launching Starlink satellites in 2019. As of July 2024, Starlink consists of over 6,000 mass-produced small satellites in low Earth orbit (LEO), which communicate with designated ground transceivers. Nearly 12,000 satellites are planned to be deployed, with a possible later extension to 42,000. SpaceX had launched 6,804 Starlink satellites, of which about 6,370 were operational as of July 2024. Each satellite weighs about 260 kg and orbits at approximately 550 km altitude. The constellation provides broadband internet service to residential, commercial, maritime, and aviation customers worldwide.",
-    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/2/24/Starlink_Mission_%2847926144123%29.jpg",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/d/d0/Starlink_01.webp",
   },
   {
     id: "gps-iii",
@@ -617,7 +617,7 @@ export const satellites = [
     lifetime: "15 years per satellite",
     purpose: "Precision navigation, positioning, and timing signals for military and civilian users worldwide.",
     description: "GPS III is the latest generation of Global Positioning System satellites developed by Lockheed Martin for the United States Space Force. The satellites provide 3× more accuracy and up to 8× improved anti-jamming capabilities compared to previous GPS satellites. GPS III introduces the L1C civil signal, compatible with other international global navigation satellite systems like Galileo. The GPS constellation consists of 31 operational satellites orbiting at approximately 20,200 km altitude in six orbital planes, each plane inclined at 55 degrees relative to the equator. These satellites provide critical positioning, navigation, and timing services used by billions of people worldwide and are essential for modern transportation, agriculture, banking, and emergency services.",
-    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/8/80/GPS_Block_IIIA.jpg",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/4/49/GPS_Block_IIIA.jpg",
   },
   {
     id: "landsat-9",
@@ -634,7 +634,7 @@ export const satellites = [
     lifetime: "5+ years (designed)",
     purpose: "Moderate-resolution multispectral Earth imaging for land use monitoring, agriculture, forestry, and environmental change detection.",
     description: "Landsat 9 is the latest satellite in the Landsat program, a joint NASA and United States Geological Survey (USGS) mission that has been imaging the Earth continuously since 1972 — the longest-running enterprise for acquisition of satellite imagery of Earth. Landsat 9 carries two science instruments: the Operational Land Imager 2 (OLI-2) and the Thermal Infrared Sensor 2 (TIRS-2). Together, these instruments collect data in 11 spectral bands, with spatial resolutions ranging from 15 to 100 meters. The satellite orbits at 705 km in a sun-synchronous orbit, imaging every point on Earth every 16 days. Landsat data is freely available and used by governments, scientists, and resource managers worldwide to monitor deforestation, urbanization, agricultural health, and climate change impacts.",
-    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/5/58/Landsat_9_illustration_%28cropped%29.jpg",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/4/43/LANDSAT-9.jpg",
   },
   {
     id: "tiangong",
@@ -651,7 +651,7 @@ export const satellites = [
     lifetime: "10+ years (designed)",
     purpose: "Chinese modular space station for long-term crewed habitation, scientific research, and technology validation.",
     description: "The Tiangong space station is a space station being constructed by China in low Earth orbit between 340 and 450 km above the surface. Being China's first long-term space station, it is the goal of the Tiangong program. Operations are managed by the China Manned Space Agency (CMSA). The station's first module, the Tianhe core module, was launched on 29 April 2021. Two laboratory modules, Wentian and Mengtian, were launched in 2022. The T-shaped station has a pressurized volume of 110 cubic metres, roughly one-sixth the size of the ISS. It can accommodate three crew members on a permanent basis and up to six during crew rotations. The station supports a wide range of experiments in life sciences, fluid physics, materials science, combustion science, and fundamental physics. China plans to expand the station to a six-module cross-shaped configuration and operates the Xuntian space telescope in close orbit with the station.",
-    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/b/b7/Tiangong_Space_Station_-_2022-12-01.jpg",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/2/25/Chinese_Tiangong_Space_Station.jpg",
   },
   {
     id: "sentinel-2",
@@ -668,7 +668,7 @@ export const satellites = [
     lifetime: "7+ years per satellite",
     purpose: "High-resolution multispectral Earth observation for environmental monitoring, agriculture, forestry, and disaster management under Copernicus.",
     description: "Sentinel-2 is an Earth observation mission developed by the European Space Agency as part of the Copernicus Programme. The mission's objective is to provide systematic, high-resolution optical imaging data for land monitoring, emergency response, and security services. The constellation of two identical satellites (Sentinel-2A and Sentinel-2B) provides global coverage every 5 days at the equator with 13 spectral bands at resolutions of 10, 20, and 60 metres. The mission supports a wide range of applications including monitoring vegetation, soil and water cover, inland waterways and coastal areas, as well as providing imagery for emergency services. Sentinel-2 data is freely available and has become one of the most widely used sources of Earth observation data globally.",
-    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/5/55/Sentinel-2.jpg",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/3/3d/Sentinel_2-IMG_5873-white_%28crop%29.jpg",
   },
   {
     id: "chandrayaan-2-orbiter",
@@ -685,7 +685,7 @@ export const satellites = [
     lifetime: "7+ years (extended from 1 year)",
     purpose: "Lunar remote sensing and mapping: surface composition, topography, exosphere analysis, and water-ice detection in polar regions.",
     description: "The Chandrayaan-2 Orbiter is the orbital component of India's Chandrayaan-2 mission, launched by ISRO on 22 July 2019. While the Vikram lander crashed during its descent, the orbiter successfully entered lunar orbit and continues to operate well beyond its designed one-year mission life. The orbiter carries eight scientific instruments including the Terrain Mapping Camera 2 (TMC-2), a dual-frequency Synthetic Aperture Radar (SAR) for polar mapping, an Imaging Infrared Spectrometer (IIRS), and the CLASS instrument for measuring the Moon's X-ray fluorescence spectrum. The orbiter has been instrumental in mapping the lunar surface in unprecedented detail and has provided crucial data about the Moon's water-ice distribution in permanently shadowed craters near the poles. ISRO has extended the mission multiple times due to its excellent performance and fuel reserves.",
-    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/c/c1/Chandrayaan-2_orbiter_%28cropped%29.jpg",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/e/ef/GSLV_Mk_III_M1%2C_Chandrayaan-2_-_Vikram_lander_mounted_on_top_of_orbiter.jpg",
   },
   {
     id: "goes-18",
@@ -702,7 +702,7 @@ export const satellites = [
     lifetime: "15 years",
     purpose: "Geostationary weather observation providing continuous imagery of the Western Hemisphere for weather forecasting and severe storm tracking.",
     description: "GOES-18, also known as GOES-West, is a geostationary weather satellite operated by the National Oceanic and Atmospheric Administration (NOAA). It is part of the fourth generation GOES-R series, the most advanced fleet of geostationary weather satellites ever developed. The satellite carries the Advanced Baseline Imager (ABI), which provides three times more spectral information, four times the spatial resolution, and five times faster coverage than previous GOES satellites. It also features the Geostationary Lightning Mapper (GLM), the first instrument to continuously detect lightning over the Americas. Positioned at 137.2°W longitude at geostationary orbit (35,786 km altitude), GOES-18 monitors weather conditions across the Pacific Ocean, western United States, Alaska, Hawaii, and Central America. The satellite provides critical data for weather forecasting, severe storm tracking, and environmental monitoring.",
-    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/6/67/GOES-T_Satellite.jpg",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/f/fd/GOES-T_Satellite_at_Processing_Facility_%2851854351059%29.jpg",
   },
   {
     id: "galileo",
@@ -719,7 +719,7 @@ export const satellites = [
     lifetime: "12+ years per satellite",
     purpose: "European global navigation satellite system providing independent high-precision positioning, navigation, and timing services.",
     description: "Galileo is the global navigation satellite system (GNSS) created by the European Union through the European Space Agency (ESA). It is the world's most precise satellite navigation system, serving over four billion smartphones and devices worldwide. The fully deployed constellation consists of 30 satellites (24 operational, 6 spares) in three orbital planes at an altitude of 23,222 km. Galileo provides several services: an Open Service free of charge, a High Accuracy Service with centimetre-level precision, a Search and Rescue Service that relays distress signals, and a Public Regulated Service for government-authorized users. Unlike GPS, Galileo is under civilian control. It is interoperable with GPS and GLONASS and provides an independent European capability for this critical infrastructure. Initial services began in December 2016, with full operational capability expected by 2025.",
-    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/6/6e/Galileo_satellite_in_orbit.jpg",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/4/47/Galileo_satellite_model.jpg",
   },
   {
     id: "aditya-l1",
@@ -736,7 +736,7 @@ export const satellites = [
     lifetime: "5+ years",
     purpose: "India's first solar observatory, studying the Sun's corona, chromosphere, photosphere, solar wind, and space weather from the Sun-Earth L1 point.",
     description: "Aditya-L1 is India's first dedicated space mission to study the Sun, launched by ISRO on 2 September 2023 aboard a PSLV-XL rocket. The spacecraft was placed in a halo orbit around the Sun-Earth Lagrangian point L1, approximately 1.5 million km from Earth, providing an unobstructed view of the Sun. It carries seven payloads to observe the photosphere, chromosphere, and corona of the Sun using electromagnetic and particle detectors. The primary payload, Visible Emission Line Coronagraph (VELC), studies the solar corona and the dynamics of coronal mass ejections. Other instruments study the solar UV spectrum, measure solar wind, and monitor the magnetic field and energy flux. The mission aims to understand the dynamics of the solar atmosphere, solar wind distribution, and space weather drivers. India became the fifth entity (after NASA, ESA, JAXA, and China) to have a spacecraft studying the Sun from an L1 vantage point.",
-    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/c/cf/PSLV-C57_Aditya-L1_Mission.jpg",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/f/f2/Aditya_L1.png",
   },
   {
     id: "navic",
@@ -753,7 +753,7 @@ export const satellites = [
     lifetime: "10+ years per satellite",
     purpose: "Indian regional navigation satellite system providing positioning, navigation, and timing services over India and the surrounding region.",
     description: "NavIC (Navigation with Indian Constellation), formerly known as the Indian Regional Navigation Satellite System (IRNSS), is an autonomous regional satellite navigation system developed by ISRO to provide accurate positioning services over India and the surrounding region up to 1,500 km. The constellation consists of seven satellites: three in geostationary orbit (GEO) and four in inclined geosynchronous orbit (GSO). NavIC provides two levels of service: Standard Positioning Service (SPS) available to all users and Restricted Service (RS) for authorized users with encrypted signals. The system provides position accuracy better than 20 metres in the primary service area and better than 10 metres over Indian landmass. NavIC is compatible with GPS and Galileo and is increasingly being integrated into smartphones and navigation devices. ISRO is developing second-generation NavIC satellites with improved atomic clocks and inter-satellite links.",
-    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/a/a2/IRNSS-1B_satellite.jpg",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/9/98/IRNSS_Series_1.jpg",
   },
   {
     id: "chandra",
@@ -770,7 +770,7 @@ export const satellites = [
     lifetime: "1999–present (25+ years)",
     purpose: "X-ray space telescope for observing high-energy phenomena such as black holes, supernova remnants, dark matter, and galaxy clusters.",
     description: "The Chandra X-ray Observatory is a flagship-class space telescope launched by NASA in 1999. Named after Nobel laureate Subrahmanyan Chandrasekhar, it is one of NASA's Great Observatories alongside Hubble, Spitzer (retired), and the Compton Gamma Ray Observatory (deorbited). Chandra is designed to detect X-ray emission from very hot regions of the Universe such as exploded stars, clusters of galaxies, and matter around black holes. Because X-rays are absorbed by Earth's atmosphere, space-based telescopes are essential for X-ray astronomy. Chandra has the finest angular resolution of any X-ray telescope ever built, allowing it to resolve structures as small as 0.5 arcseconds. The observatory operates in a highly elliptical orbit reaching up to 139,000 km from Earth, spending the majority of its orbit above the Van Allen radiation belts. Chandra has made groundbreaking discoveries including the first X-ray image of the shock wave from a supernova, evidence for dark energy, and direct detection of dark matter separation in galaxy cluster collisions.",
-    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/b/b4/Chandra_X-ray_Observatory.jpg",
+    imageUrl: "https://upload.wikimedia.org/wikipedia/commons/f/fd/Chandra_artist_illustration.jpg",
   },
   {
     id: "sputnik-1",

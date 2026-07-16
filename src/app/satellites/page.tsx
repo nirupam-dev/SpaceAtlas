@@ -60,19 +60,11 @@ export default function SatellitesPage() {
     <div className="relative bg-black min-h-screen">
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center">
-        {/* Background Video */}
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute inset-0 z-0 w-full h-full object-cover"
-        >
-          <source
-            src="https://sxcontent9668.azureedge.us/cms-assets/assets/SpaceX_Crew7_EVA_DESKTOP_compress_a43c8d2e79_cc4f2e3f7e.mp4"
-            type="video/mp4"
-          />
-        </video>
+        {/* Background Image */}
+        <div
+          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('/Always_Sunny_v4_d8b76550ae.jpg')" }}
+        />
         {/* Gradient overlay */}
         <div className="absolute inset-0 z-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
 
