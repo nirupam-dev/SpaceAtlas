@@ -29,6 +29,7 @@ import {
 /* ─── top‑bar links (visible in the header on large screens) ─── */
 const topBarLinks = [
   { href: "/rockets",      label: "Rockets",      icon: Rocket },
+  { href: "/satellites",   label: "Satellites",   icon: Satellite },
   { href: "/missions",     label: "Missions",     icon: Telescope },
   { href: "/agencies",     label: "Agencies",     icon: Building2 },
   { href: "/technology",   label: "Technology",   icon: Cpu },
@@ -43,6 +44,7 @@ const menuSections = [
     title: "Explore",
     links: [
       { href: "/rockets",      label: "Rockets",      icon: Rocket,     desc: "Launch vehicles & specs" },
+      { href: "/satellites",   label: "Satellites",   icon: Satellite,  desc: "Orbital instruments & stations" },
       { href: "/missions",     label: "Missions",     icon: Telescope,  desc: "Past & future missions" },
       { href: "/agencies",     label: "Agencies",     icon: Building2,  desc: "Space organisations" },
       { href: "/astronauts",   label: "Astronauts",   icon: Users,      desc: "The people of space" },

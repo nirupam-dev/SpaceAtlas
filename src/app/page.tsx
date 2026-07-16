@@ -11,7 +11,7 @@ import {
 
 import { SectionHeading, StatCard } from "@/components/ui/Cards";
 import NasaApod from "@/components/ui/NasaApod";
-import { rockets, agencies, planets, missions, upcomingLaunches } from "@/lib/data";
+import { rockets, agencies, planets, missions, upcomingLaunches, satellites } from "@/lib/data";
 
 interface NewsArticle {
   id: number;
@@ -103,7 +103,7 @@ export default function HomePage() {
           >
             {[
               { val: `${rockets.length}+`, label: "Rockets" },
-              { val: `${planets.length}`, label: "Celestial Bodies" },
+              { val: `${satellites.length}+`, label: "Satellites" },
               { val: `${missions.length}+`, label: "Missions" },
               { val: `${agencies.length}`, label: "Agencies" },
             ].map((s, i) => (
@@ -422,10 +422,10 @@ export default function HomePage() {
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-8">
             {[
               { href: "/solar-system", icon: Globe2, title: "Solar System", desc: "Planets, moons, and dwarf planets" },
+              { href: "/satellites", icon: Satellite, title: "Satellites", desc: "Space telescopes, stations & more" },
               { href: "/missions", icon: Telescope, title: "Missions", desc: "Apollo, Artemis, Chandrayaan & more" },
               { href: "/astronauts", icon: Users, title: "Astronauts", desc: "The heroes who explore space" },
               { href: "/technology", icon: Cpu, title: "Technology", desc: "NASA patents, research & live imagery" },
-              { href: "/quiz", icon: BrainCircuit, title: "Space Quiz", desc: "Test your cosmic knowledge" },
             ].map((item, i) => (
               <motion.div
                 key={item.href}
