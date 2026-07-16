@@ -107,13 +107,21 @@ export default function RocketsPage() {
                 <Link href={`/rockets/${rocket.slug}`} className="group relative flex flex-col h-full bg-[#0f172a]/40 border border-space-500/30 backdrop-blur-xl rounded-2xl overflow-hidden hover:-translate-y-2 transition-all duration-500 hover:shadow-[0_20px_40px_-15px_rgba(56,189,248,0.15)] hover:border-space-500/60">
                   
                   {/* Image Area */}
-                  <div className="relative h-[220px] w-full overflow-hidden bg-black shrink-0">
+                  <div className="relative h-[220px] w-full overflow-hidden bg-gradient-to-br from-[#0f172a] to-[#1e293b] shrink-0">
                     <img 
                       src={rocket.imageUrl || "/placeholder.jpg"} 
                       alt={rocket.name} 
                       className="object-cover w-full h-full object-center group-hover:scale-105 group-hover:rotate-1 transition-all duration-700 opacity-80 group-hover:opacity-100" 
-                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                      onError={(e) => { 
+                        const img = e.target as HTMLImageElement;
+                        img.style.display = 'none'; 
+                        const fallback = img.parentElement?.querySelector('.img-fallback') as HTMLElement;
+                        if (fallback) fallback.style.display = 'flex';
+                      }}
                     />
+                    <div className="img-fallback hidden absolute inset-0 items-center justify-center">
+                      <Rocket className="w-16 h-16 text-space-500/40" />
+                    </div>
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/20 to-transparent" />
                     
                     <div className="absolute top-4 right-4">
