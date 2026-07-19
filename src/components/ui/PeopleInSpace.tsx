@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Users, Satellite, Rocket } from "lucide-react";
 import NasaImageBanner from "./NasaImageBanner";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger("PeopleInSpace");
 
 interface Astronaut {
   name: string;
@@ -20,7 +23,7 @@ export default function PeopleInSpace() {
       .then(data => {
         if (data.people) setPeople(data.people);
       })
-      .catch(() => {})
+      .catch((err) => { log.error("Failed to fetch people in space", { error: String(err) }); })
       .finally(() => setLoading(false));
   }, []);
 

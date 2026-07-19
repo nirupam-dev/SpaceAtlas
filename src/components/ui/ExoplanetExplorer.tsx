@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Star, Calendar, Ruler, Thermometer, Orbit, Search, Telescope, ChevronDown, Info, ExternalLink, Globe2, Droplets } from "lucide-react";
 import NasaImageBanner from "./NasaImageBanner";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger("ExoplanetExplorer");
 
 interface Exoplanet {
   pl_name: string;
@@ -73,7 +76,7 @@ export default function ExoplanetExplorer() {
     fetch("/api/exoplanets?limit=100")
       .then(r => r.json())
       .then(data => { if (Array.isArray(data)) setPlanets(data); })
-      .catch(() => {})
+      .catch((err) => { log.error("Failed to fetch exoplanet data", { error: String(err) }); })
       .finally(() => setLoading(false));
   }, []);
 
@@ -160,7 +163,12 @@ export default function ExoplanetExplorer() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.03, duration: 0.3 }}
                 className="glass-card overflow-hidden hover:border-accent-purple/30 transition-all duration-300 group cursor-pointer"
+                role="button"
+                tabIndex={0}
+                aria-expanded={isExpanded}
+                aria-label={`Exoplanet ${planet.pl_name}, host star ${planet.hostname}, ${pType.type}. Click to ${isExpanded ? 'collapse' : 'expand'} details.`}
                 onClick={() => setExpandedName(isExpanded ? null : planet.pl_name)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpandedName(isExpanded ? null : planet.pl_name); } }}
               >
                 {/* Visual planet */}
                 <div className="relative h-28 overflow-hidden bg-gradient-to-b from-black/40 to-transparent">

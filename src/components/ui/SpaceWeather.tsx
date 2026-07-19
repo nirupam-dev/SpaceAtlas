@@ -1,9 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sun, Zap, Wind, Activity, Shield, AlertTriangle, Radio, ChevronDown, Info, ExternalLink } from "lucide-react";
 import NasaImageBanner from "./NasaImageBanner";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger("SpaceWeather");
 
 interface CME {
   activityID: string;
@@ -60,7 +63,9 @@ export default function SpaceWeather() {
           const d = await gstRes.value.json();
           setStorms(Array.isArray(d) ? d.slice(0, 20) : []);
         }
-      } catch { /* ignore */ }
+      } catch (err) {
+        log.error("Failed to fetch space weather data", { error: String(err) });
+      }
       setLoading(false);
     };
     load();
@@ -201,7 +206,12 @@ export default function SpaceWeather() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.04 }}
                 className="glass-card border border-amber-500/20 overflow-hidden cursor-pointer hover:border-amber-500/40 transition-colors"
+                role="button"
+                tabIndex={0}
+                aria-expanded={isExpanded}
+                aria-label={`CME ${event.activityID}, speed ${analysis ? analysis.speed + ' km/s' : 'unknown'}. Click to ${isExpanded ? 'collapse' : 'expand'} details.`}
                 onClick={() => setExpandedId(isExpanded ? null : event.activityID)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpandedId(isExpanded ? null : event.activityID); } }}
               >
                 <div className="p-5 flex items-start gap-4">
                   <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shrink-0">
@@ -294,7 +304,12 @@ export default function SpaceWeather() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.04 }}
                 className={`glass-card overflow-hidden cursor-pointer hover:border-pink-500/40 transition-colors ${isStrong ? "border-red-500/30" : "border-pink-500/20"}`}
+                role="button"
+                tabIndex={0}
+                aria-expanded={isExpanded}
+                aria-label={`${flare.classType} solar flare${isStrong ? ' (strong)' : ''}. Click to ${isExpanded ? 'collapse' : 'expand'} details.`}
                 onClick={() => setExpandedId(isExpanded ? null : flare.flrID)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpandedId(isExpanded ? null : flare.flrID); } }}
               >
                 <div className="p-5 flex items-center gap-4">
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${isStrong ? "bg-red-500/10 border border-red-500/30" : "bg-pink-500/10 border border-pink-500/20"}`}>
@@ -377,7 +392,12 @@ export default function SpaceWeather() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: i * 0.04 }}
                 className="glass-card overflow-hidden border border-cyan-500/20 cursor-pointer hover:border-cyan-500/40 transition-colors"
+                role="button"
+                tabIndex={0}
+                aria-expanded={isExpanded}
+                aria-label={`Geomagnetic storm ${storm.gstID}, max Kp ${maxKp}. Click to ${isExpanded ? 'collapse' : 'expand'} details.`}
                 onClick={() => setExpandedId(isExpanded ? null : storm.gstID)}
+                onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpandedId(isExpanded ? null : storm.gstID); } }}
               >
                 <div className="p-5 flex items-center gap-4">
                   <div className="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center shrink-0">

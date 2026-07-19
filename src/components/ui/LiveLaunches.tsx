@@ -6,6 +6,9 @@ import {
   Rocket, MapPin, Clock, Calendar, ExternalLink,
   CheckCircle, AlertCircle, Timer, Building2,
 } from "lucide-react";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger("LiveLaunches");
 
 interface Launch {
   id: string;
@@ -67,7 +70,8 @@ async function fetchNasaImage(query: string): Promise<string | null> {
     const pick = withImages[Math.floor(Math.random() * Math.min(5, withImages.length))];
     const link = pick?.links?.find((l: { rel: string }) => l.rel === "preview")?.href;
     return link || null;
-  } catch {
+  } catch (err) {
+    log.warn("Failed to fetch NASA fallback image", { query, error: String(err) });
     return null;
   }
 }
@@ -82,7 +86,7 @@ export default function LiveLaunches() {
     fetch("/api/launch-library?limit=12&type=upcoming")
       .then(r => r.json())
       .then(data => { if (data.results) setLaunches(data.results); })
-      .catch(() => {})
+      .catch((err) => { log.error("Failed to fetch launch data", { error: String(err) }); })
       .finally(() => setLoading(false));
   }, []);
 

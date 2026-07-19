@@ -8,6 +8,9 @@ import {
   Target, Orbit, Globe2
 } from "lucide-react";
 import NasaImageBanner from "./NasaImageBanner";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger("AsteroidWatch");
 
 interface NeoObject {
   id: string;
@@ -67,7 +70,7 @@ export default function AsteroidWatch() {
         parseFloat(b.close_approach_data[0]?.miss_distance?.kilometers || "0")
       );
       setAsteroids(allNeos);
-    } catch { setError(true); }
+    } catch (err) { log.error("Failed to fetch NEO data", { error: String(err), date: dateStr }); setError(true); }
     finally { setLoading(false); }
   }, [dateStr]);
 
@@ -170,7 +173,12 @@ export default function AsteroidWatch() {
               return (
                 <motion.div key={neo.id} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} transition={{ duration: 0.3, delay: i * 0.04 }}
                   className={`glass-card overflow-hidden cursor-pointer transition-all ${haz ? "border-red-500/30 hover:border-red-500/50" : "border-space-500/20 hover:border-white/30"}`}
+                  role="button"
+                  tabIndex={0}
+                  aria-expanded={exp}
+                  aria-label={`Asteroid ${neo.name.replace(/[()]/g, '')}, ${haz ? 'hazardous' : 'safe'}, ${avg.toFixed(0)} meters, ${missLD.toFixed(1)} lunar distances. Click to ${exp ? 'collapse' : 'expand'}.`}
                   onClick={() => setExpandedId(exp ? null : neo.id)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpandedId(exp ? null : neo.id); } }}
                 >
                   <div className="p-5 flex flex-col md:flex-row items-start md:items-center gap-4">
                     <div className={`w-10 h-10 rounded-xl shrink-0 flex items-center justify-center ${haz ? "bg-red-500/10 border border-red-500/30" : "bg-accent-green/10 border border-accent-green/30"}`}>

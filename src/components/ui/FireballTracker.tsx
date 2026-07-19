@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Zap, MapPin, Calendar, Gauge, ChevronDown, ExternalLink, Info, Flame, Mountain, Globe2 } from "lucide-react";
 import NasaImageBanner from "./NasaImageBanner";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger("FireballTracker");
 
 interface Fireball {
   date: string;
@@ -54,7 +57,7 @@ export default function FireballTracker() {
           setFireballs(mapped.slice(0, 30));
         }
       })
-      .catch(() => {})
+      .catch((err) => { log.error("Failed to fetch fireball data", { error: String(err) }); })
       .finally(() => setLoading(false));
   }, []);
 
@@ -158,7 +161,12 @@ export default function FireballTracker() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.03, duration: 0.3 }}
               className={`glass-card overflow-hidden cursor-pointer transition-all ${isLarge ? "border-amber-500/30 hover:border-amber-500/50" : "border-space-500/20 hover:border-white/30"}`}
+              role="button"
+              tabIndex={0}
+              aria-expanded={isExpanded}
+              aria-label={`Fireball on ${new Date(fb.date).toLocaleDateString()}, ${impactE ? impactE.toFixed(2) + ' kT impact' : 'impact unknown'}. Click to ${isExpanded ? 'collapse' : 'expand'} details.`}
               onClick={() => setExpandedIdx(isExpanded ? null : i)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpandedIdx(isExpanded ? null : i); } }}
             >
               <div className="p-5 flex items-center gap-4">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${isLarge ? "bg-amber-500/15 border border-amber-500/30" : "bg-white/5 border border-white/10"}`}>

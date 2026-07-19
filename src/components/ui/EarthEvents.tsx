@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Flame, MapPin, Calendar, Zap, Globe2, Wind, Waves, Mountain, ChevronDown, ExternalLink, Info, Navigation } from "lucide-react";
 import NasaImageBanner from "./NasaImageBanner";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger("EarthEvents");
 
 interface EonetEvent {
   id: string;
@@ -45,7 +48,7 @@ export default function EarthEvents() {
     fetch("/api/eonet?limit=30")
       .then(r => r.json())
       .then(data => { if (data.events) setEvents(data.events); })
-      .catch(() => {})
+      .catch((err) => { log.error("Failed to fetch EONET events", { error: String(err) }); })
       .finally(() => setLoading(false));
   }, []);
 
@@ -147,7 +150,12 @@ export default function EarthEvents() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.04, duration: 0.3 }}
               className="glass-card overflow-hidden hover:border-white/20 transition-all duration-300 cursor-pointer"
+              role="button"
+              tabIndex={0}
+              aria-expanded={isExpanded}
+              aria-label={`${catTitle}: ${event.title}. Click to ${isExpanded ? 'collapse' : 'expand'} details.`}
               onClick={() => setExpandedId(isExpanded ? null : event.id)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpandedId(isExpanded ? null : event.id); } }}
             >
               <div className="p-5">
                 <div className="flex items-start gap-4">
