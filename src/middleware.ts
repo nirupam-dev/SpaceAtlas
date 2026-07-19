@@ -47,11 +47,10 @@ const TRUSTED_CONNECT_SOURCES = [
 ].join(" ");
 
 export function middleware(request: NextRequest) {
-  const response = NextResponse.next();
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
+  const isDev = process.env.NODE_ENV === "development";
 
   // ─── Content Security Policy ──────────────────────────────
-  const isDev = process.env.NODE_ENV === "development";
   const csp = [
     `default-src 'self'`,
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${isDev ? " 'unsafe-eval'" : ""}`,
@@ -68,7 +67,18 @@ export function middleware(request: NextRequest) {
     `upgrade-insecure-requests`,
   ].join("; ");
 
-  // ─── Set Security Headers ─────────────────────────────────
+  // Clone request headers to pass nonce and CSP to Server Components
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-nonce", nonce);
+  requestHeaders.set("Content-Security-Policy", csp);
+
+  const response = NextResponse.next({
+    request: {
+      headers: requestHeaders,
+    },
+  });
+
+  // ─── Set Security Headers on Response ─────────────────────
   response.headers.set("Content-Security-Policy", csp);
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("X-Frame-Options", "DENY");
@@ -82,9 +92,6 @@ export function middleware(request: NextRequest) {
     "Permissions-Policy",
     "camera=(), microphone=(), geolocation=(), interest-cohort=()"
   );
-
-  // Pass nonce to the request headers so Server Components can use it
-  response.headers.set("x-nonce", nonce);
 
   return response;
 }
