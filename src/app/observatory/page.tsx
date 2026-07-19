@@ -3,7 +3,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-import { SectionHeading } from "@/components/ui/Cards";
+import { SectionHeading } from "@/components/ui/SectionCards";
 import PeopleInSpace from "@/components/ui/PeopleInSpace";
 import ObservatoryTabs from "@/components/ui/ObservatoryTabs";
 

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Newspaper, ExternalLink, Calendar, Loader2 } from "lucide-react";
-import { SectionHeading } from "@/components/ui/Cards";
+import { SectionHeading } from "@/components/ui/SectionCards";
 import Image from "next/image";
 
 interface Article {

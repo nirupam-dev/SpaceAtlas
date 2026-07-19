@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Timer, MapPin, Rocket, Calendar } from "lucide-react";
-import { SectionHeading } from "@/components/ui/Cards";
+import { SectionHeading } from "@/components/ui/SectionCards";
 import { upcomingLaunches } from "@/lib/data";
 import { useState, useEffect } from "react";
 

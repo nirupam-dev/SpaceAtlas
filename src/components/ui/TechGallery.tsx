@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Search, ImageIcon, ExternalLink, X } from "lucide-react";
-import { SectionHeading } from "./Cards";
+import { SectionHeading } from "./SectionCards";
 import Image from "next/image";
 
 interface NasaImage {

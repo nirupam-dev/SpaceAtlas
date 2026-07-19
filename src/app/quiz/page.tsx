@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from "framer-motion";
 import { BrainCircuit, CheckCircle2, XCircle, ArrowRight, RotateCcw, Trophy } from "lucide-react";
-import { SectionHeading } from "@/components/ui/Cards";
+import { SectionHeading } from "@/components/ui/SectionCards";
 import { quizzes } from "@/lib/data";
 import { useState } from "react";
 

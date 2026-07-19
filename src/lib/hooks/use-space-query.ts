@@ -6,13 +6,14 @@
  * - Type-safe return values
  * - Automatic caching, deduplication & retry
  * - Race condition prevention
- * - Configurable stale times per data type
+ * - Configurable stale times per data type (via semantic constants)
  *
  * These hooks replace the fragile client-side fetching pattern
  * that was prone to race conditions when users switched tabs quickly.
  */
 
 import { useQuery } from "@tanstack/react-query";
+import { STALE_TIMES, API_LIMITS } from "@/lib/constants";
 
 // ─── Generic Fetcher ──────────────────────────────────────────
 
@@ -35,7 +36,7 @@ export function useNeoData(dateStr: string) {
     queryKey: ["neo", dateStr],
     queryFn: () =>
       fetchJSON<NeoResponse>(`/api/neo?start_date=${dateStr}&end_date=${dateStr}`),
-    staleTime: 5 * 60 * 1000, // 5 min — NEO data doesn't change rapidly
+    staleTime: STALE_TIMES.NEO,
   });
 }
 
@@ -53,14 +54,14 @@ export function useSpaceWeather() {
 
       return {
         cmes: cmeRes.status === "fulfilled" && Array.isArray(cmeRes.value)
-          ? (cmeRes.value as unknown[]).slice(0, 20) : [],
+          ? (cmeRes.value as unknown[]).slice(0, API_LIMITS.SPACE_WEATHER_PER_CATEGORY) : [],
         flares: flrRes.status === "fulfilled" && Array.isArray(flrRes.value)
-          ? (flrRes.value as unknown[]).slice(0, 20) : [],
+          ? (flrRes.value as unknown[]).slice(0, API_LIMITS.SPACE_WEATHER_PER_CATEGORY) : [],
         storms: gstRes.status === "fulfilled" && Array.isArray(gstRes.value)
-          ? (gstRes.value as unknown[]).slice(0, 20) : [],
+          ? (gstRes.value as unknown[]).slice(0, API_LIMITS.SPACE_WEATHER_PER_CATEGORY) : [],
       };
     },
-    staleTime: 2 * 60 * 1000, // 2 min — weather data updates frequently
+    staleTime: STALE_TIMES.SPACE_WEATHER,
   });
 }
 
@@ -74,7 +75,7 @@ export function usePeopleInSpace() {
   return useQuery({
     queryKey: ["people-in-space"],
     queryFn: () => fetchJSON<PeopleResponse>("/api/people-in-space"),
-    staleTime: 5 * 60 * 1000,
+    staleTime: STALE_TIMES.PEOPLE_IN_SPACE,
   });
 }
 
@@ -84,12 +85,12 @@ interface LaunchResponse {
   results: unknown[];
 }
 
-export function useLiveLaunches(limit = 12) {
+export function useLiveLaunches(limit = API_LIMITS.LAUNCHES_FETCH) {
   return useQuery({
     queryKey: ["live-launches", limit],
     queryFn: () =>
       fetchJSON<LaunchResponse>(`/api/launch-library?limit=${limit}&type=upcoming`),
-    staleTime: 60 * 1000, // 1 min — launch data is time-sensitive
+    staleTime: STALE_TIMES.LIVE_LAUNCHES,
   });
 }
 
@@ -99,11 +100,11 @@ interface EonetResponse {
   events: unknown[];
 }
 
-export function useEarthEvents(limit = 30) {
+export function useEarthEvents(limit = API_LIMITS.EARTH_EVENTS_FETCH) {
   return useQuery({
     queryKey: ["earth-events", limit],
     queryFn: () => fetchJSON<EonetResponse>(`/api/eonet?limit=${limit}`),
-    staleTime: 5 * 60 * 1000,
+    staleTime: STALE_TIMES.EARTH_EVENTS,
   });
 }
 
@@ -118,16 +119,16 @@ export function useFireballs() {
   return useQuery({
     queryKey: ["fireballs"],
     queryFn: () => fetchJSON<FireballResponse>("/api/fireballs"),
-    staleTime: 10 * 60 * 1000, // 10 min — historical data
+    staleTime: STALE_TIMES.FIREBALLS,
   });
 }
 
 // ─── Exoplanets ───────────────────────────────────────────────
 
-export function useExoplanets(limit = 100) {
+export function useExoplanets(limit = API_LIMITS.EXOPLANETS_FETCH) {
   return useQuery({
     queryKey: ["exoplanets", limit],
     queryFn: () => fetchJSON<unknown[]>(`/api/exoplanets?limit=${limit}`),
-    staleTime: 30 * 60 * 1000, // 30 min — catalog data is very stable
+    staleTime: STALE_TIMES.EXOPLANETS,
   });
 }

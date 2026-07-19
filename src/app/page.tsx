@@ -9,7 +9,7 @@ import {
   Calendar, ExternalLink, Eye, Orbit, Sun, Star,
 } from "lucide-react";
 
-import { SectionHeading, StatCard } from "@/components/ui/Cards";
+import { SectionHeading, StatCard } from "@/components/ui/SectionCards";
 import NasaApod from "@/components/ui/NasaApod";
 import PeopleInSpace from "@/components/ui/PeopleInSpace";
 import { rockets, agencies, planets, missions, upcomingLaunches, satellites } from "@/lib/data";

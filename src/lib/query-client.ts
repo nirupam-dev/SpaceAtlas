@@ -11,15 +11,16 @@
  */
 
 import { QueryClient } from "@tanstack/react-query";
+import { STALE_TIMES, GC_TIME } from "@/lib/constants";
 
 function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {
       queries: {
-        // Data is considered fresh for 60 seconds
-        staleTime: 60 * 1000,
-        // Keep inactive cache for 5 minutes
-        gcTime: 5 * 60 * 1000,
+        // Data is considered fresh for the default duration
+        staleTime: STALE_TIMES.DEFAULT,
+        // Keep inactive cache warm
+        gcTime: GC_TIME,
         // Retry failed requests twice with exponential backoff
         retry: 2,
         // Don't refetch when window regains focus (avoids jarring re-renders)

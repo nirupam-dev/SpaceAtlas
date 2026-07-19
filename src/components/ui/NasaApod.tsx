@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Telescope } from "lucide-react";
-import { SectionHeading } from "./Cards";
+import { SectionHeading } from "./SectionCards";
 import Image from "next/image";
 
 interface ApodData {

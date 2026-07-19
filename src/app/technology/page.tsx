@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
-import { SectionHeading } from "@/components/ui/Cards";
+import { SectionHeading } from "@/components/ui/SectionCards";
 import TechGallery from "@/components/ui/TechGallery";
 import EpicEarth from "@/components/ui/EpicEarth";
 import NasaPatents from "@/components/ui/NasaPatents";

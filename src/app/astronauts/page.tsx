@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Users, Search, Globe, ArrowRight } from "lucide-react";
-import { SectionHeading } from "@/components/ui/Cards";
+import { SectionHeading } from "@/components/ui/SectionCards";
 import InlineNasaSearch from "@/components/ui/InlineNasaSearch";
 import { astronauts } from "@/lib/data";
 import { useState } from "react";

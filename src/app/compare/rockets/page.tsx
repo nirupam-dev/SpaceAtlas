@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { Rocket, Plus, X, ArrowLeftRight } from "lucide-react";
-import { SectionHeading } from "@/components/ui/Cards";
+import { SectionHeading } from "@/components/ui/SectionCards";
 import { rockets } from "@/lib/data";
 import { useState } from "react";
 
