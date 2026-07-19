@@ -6,6 +6,7 @@ import {
   Rocket, MapPin, Clock, Calendar, ExternalLink,
   CheckCircle, AlertCircle, Timer, Building2,
 } from "lucide-react";
+import NasaImageBanner from "./NasaImageBanner";
 
 interface Launch {
   id: string;
@@ -80,6 +81,9 @@ export default function LiveLaunches() {
         </div>
       </div>
 
+      {/* NASA Launch Imagery */}
+      <NasaImageBanner query="rocket launch SpaceX NASA countdown" count={6} title="NASA Launch Gallery" cols={6} />
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {launches.map((launch, i) => {
           const launchTime = new Date(launch.net).getTime();
@@ -99,10 +103,10 @@ export default function LiveLaunches() {
               className="glass-card overflow-hidden hover:border-accent-blue/30 transition-all duration-300 group"
             >
               {/* Image header */}
-              {launch.image && (
-                <div className="relative h-44 overflow-hidden">
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/30 to-transparent z-10" />
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
+              <div className="relative h-48 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/30 to-transparent z-10" />
+                {launch.image ? (
+                  <>{ /* eslint-disable-next-line @next/next/no-img-element */ }
                   <img
                     src={launch.image}
                     alt={launch.name}
@@ -110,13 +114,18 @@ export default function LiveLaunches() {
                     loading="lazy"
                     onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
                   />
-                  <div className="absolute top-3 right-3 z-20">
-                    <span className={`px-3 py-1 rounded-full text-[9px] font-micro uppercase tracking-widest border backdrop-blur-md ${statusColor}`}>
-                      {launch.status.abbrev}
-                    </span>
+                  </>
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-space-800 via-space-900 to-black flex items-center justify-center">
+                    <Rocket className="w-16 h-16 text-space-700" />
                   </div>
+                )}
+                <div className="absolute top-3 right-3 z-20">
+                  <span className={`px-3 py-1 rounded-full text-[9px] font-micro uppercase tracking-widest border backdrop-blur-md ${statusColor}`}>
+                    {launch.status.abbrev}
+                  </span>
                 </div>
-              )}
+              </div>
 
               <div className="p-6">
                 {/* Title */}

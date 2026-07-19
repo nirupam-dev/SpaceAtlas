@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Flame, MapPin, Calendar, Zap, Globe2, Wind, Waves, Mountain } from "lucide-react";
+import NasaImageBanner from "./NasaImageBanner";
 
 interface EonetEvent {
   id: string;
@@ -48,16 +49,32 @@ export default function EarthEvents() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h3 className="text-xl font-display text-white tracking-widest">EARTH EVENTS</h3>
-          <p className="text-space-400 text-sm mt-1">Natural events tracked by NASA EONET in real-time</p>
+      {/* Hero Banner */}
+      <div className="relative h-56 md:h-72 rounded-2xl overflow-hidden mb-8 border border-white/[0.06]">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/earth-from-space.png"
+          alt="Planet Earth from Space"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0f172a]/80 via-transparent to-transparent" />
+        <div className="absolute bottom-0 left-0 p-8">
+          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[9px] font-micro uppercase tracking-widest bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 mb-3">
+            <Globe2 className="w-3 h-3" /> NASA EONET
+          </span>
+          <h3 className="text-2xl md:text-3xl font-display text-white tracking-widest">EARTH EVENTS</h3>
+          <p className="text-space-400 text-sm mt-1 max-w-md">Natural events tracked in real-time by NASA&apos;s Earth Observatory</p>
         </div>
-        <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-accent-green/5 border border-accent-green/20">
+        {/* Live badge */}
+        <div className="absolute top-6 right-6 flex items-center gap-2 px-4 py-2 rounded-full bg-black/50 backdrop-blur-md border border-accent-green/30">
           <span className="w-2 h-2 rounded-full bg-accent-green animate-pulse" />
-          <span className="text-[10px] font-micro text-accent-green uppercase tracking-widest">{events.length} Active Events</span>
+          <span className="text-[10px] font-micro text-accent-green uppercase tracking-widest">{events.length} Active</span>
         </div>
       </div>
+
+      {/* NASA Earth Satellite Imagery */}
+      <NasaImageBanner query="earth satellite wildfire natural disaster" count={6} title="NASA Earth Observation" cols={6} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {events.map((event, i) => {

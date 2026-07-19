@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Sun, Zap, Wind, Activity, Shield, AlertTriangle, Radio } from "lucide-react";
+import NasaImageBanner from "./NasaImageBanner";
 
 interface CME {
   activityID: string;
@@ -73,10 +74,27 @@ export default function SpaceWeather() {
 
   return (
     <div>
-      <div className="mb-8">
-        <h3 className="text-xl font-display text-white tracking-widest">SPACE WEATHER</h3>
-        <p className="text-space-400 text-sm mt-1">Solar activity data from NASA DONKI — Last 30 days</p>
+      {/* Hero Banner */}
+      <div className="relative h-56 md:h-72 rounded-2xl overflow-hidden mb-8 border border-white/[0.06]">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/solar-weather.png"
+          alt="Solar Activity and Coronal Mass Ejections"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0f172a]/80 via-transparent to-transparent" />
+        <div className="absolute bottom-0 left-0 p-8">
+          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[9px] font-micro uppercase tracking-widest bg-amber-500/10 text-amber-400 border border-amber-500/30 mb-3">
+            <Sun className="w-3 h-3" /> NASA DONKI
+          </span>
+          <h3 className="text-2xl md:text-3xl font-display text-white tracking-widest">SPACE WEATHER</h3>
+          <p className="text-space-400 text-sm mt-1 max-w-md">Solar activity data from the Space Weather Database Of Notifications, Knowledge, Information</p>
+        </div>
       </div>
+
+      {/* NASA Solar Imagery */}
+      <NasaImageBanner query="solar flare coronal mass ejection sun" count={6} title="NASA Solar Observatory" cols={6} />
 
       {/* Summary Cards */}
       <div className="grid grid-cols-3 gap-4 mb-8">
@@ -143,6 +161,14 @@ export default function SpaceWeather() {
               </div>
             </motion.div>
           ))}
+
+          {activeTab === "flares" && flares.length === 0 && (
+            <div className="text-center py-16">
+              <Shield className="w-10 h-10 mx-auto text-emerald-400 mb-3" />
+              <p className="text-space-300 font-medium">No Solar Flares Detected</p>
+              <p className="text-space-500 text-sm mt-1">The Sun has been calm in the past 30 days</p>
+            </div>
+          )}
 
           {activeTab === "flares" && flares.map((flare, i) => {
             const isStrong = flare.classType?.startsWith("X") || flare.classType?.startsWith("M");

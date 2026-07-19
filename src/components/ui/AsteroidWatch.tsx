@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { AlertTriangle, Shield, Crosshair, Ruler, Gauge, Calendar, ChevronLeft, ChevronRight } from "lucide-react";
+import NasaImageBanner from "./NasaImageBanner";
 
 interface NeoObject {
   id: string;
@@ -54,20 +55,41 @@ export default function AsteroidWatch() {
 
   return (
     <div>
+      {/* Hero Banner */}
+      <div className="relative h-56 md:h-72 rounded-2xl overflow-hidden mb-8 border border-white/[0.06]">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/asteroid-banner.png"
+          alt="Near-Earth Asteroid"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0f172a]/80 via-transparent to-transparent" />
+        <div className="absolute bottom-0 left-0 p-8">
+          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[9px] font-micro uppercase tracking-widest bg-red-500/10 text-red-400 border border-red-500/30 mb-3">
+            <AlertTriangle className="w-3 h-3" /> Planetary Defense
+          </span>
+          <h3 className="text-2xl md:text-3xl font-display text-white tracking-widest">ASTEROID WATCH</h3>
+          <p className="text-space-400 text-sm mt-1 max-w-md">Near-Earth Objects tracked by NASA JPL&apos;s Center for Near Earth Object Studies</p>
+        </div>
+      </div>
+
+      {/* NASA Imagery */}
+      <NasaImageBanner query="asteroid near earth OSIRIS-REx" count={6} title="NASA Asteroid Imagery" cols={6} />
+
       {/* Date navigation */}
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h3 className="text-xl font-display text-white tracking-widest">ASTEROID WATCH</h3>
-          <p className="text-space-400 text-sm mt-1">Near-Earth Objects tracked by NASA JPL</p>
+      <div className="flex items-center justify-between mb-6">
+        <div className="text-sm text-space-400">
+          Showing objects for selected date
         </div>
         <div className="flex items-center gap-3">
-          <button onClick={() => setDateOffset(p => p - 1)} className="p-2 rounded-lg bg-white/5 border border-white/10 hover:border-accent-blue/40 hover:bg-accent-blue/10 transition-all text-space-400 hover:text-white">
+          <button onClick={() => setDateOffset(p => p - 1)} className="p-2 rounded-lg bg-white/5 border border-white/10 hover:border-accent-blue/40 hover:bg-accent-blue/10 transition-all text-space-400 hover:text-white cursor-pointer">
             <ChevronLeft className="w-4 h-4" />
           </button>
           <span className="text-sm font-mono text-white px-4 py-2 rounded-lg bg-white/5 border border-white/10 min-w-[130px] text-center">
             {currentDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
           </span>
-          <button onClick={() => setDateOffset(p => Math.min(p + 1, 7))} className="p-2 rounded-lg bg-white/5 border border-white/10 hover:border-accent-blue/40 hover:bg-accent-blue/10 transition-all text-space-400 hover:text-white">
+          <button onClick={() => setDateOffset(p => Math.min(p + 1, 7))} className="p-2 rounded-lg bg-white/5 border border-white/10 hover:border-accent-blue/40 hover:bg-accent-blue/10 transition-all text-space-400 hover:text-white cursor-pointer">
             <ChevronRight className="w-4 h-4" />
           </button>
         </div>
@@ -125,12 +147,9 @@ export default function AsteroidWatch() {
                   transition={{ duration: 0.3, delay: i * 0.04 }}
                   className={`glass-card p-5 flex flex-col md:flex-row items-start md:items-center gap-4 ${isHazardous ? "border-red-500/30 shadow-[0_0_30px_rgba(239,68,68,0.05)]" : "border-space-500/20"}`}
                 >
-                  {/* Status Icon */}
                   <div className={`w-10 h-10 rounded-xl shrink-0 flex items-center justify-center ${isHazardous ? "bg-red-500/10 border border-red-500/30" : "bg-accent-green/10 border border-accent-green/30"}`}>
                     {isHazardous ? <AlertTriangle className="w-5 h-5 text-red-400" /> : <Shield className="w-5 h-5 text-emerald-400" />}
                   </div>
-
-                  {/* Name + magnitude */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
                       <span className="text-sm font-bold text-white truncate">{neo.name.replace(/[()]/g, "")}</span>
@@ -138,8 +157,6 @@ export default function AsteroidWatch() {
                     </div>
                     <span className="text-[11px] text-space-500">Magnitude: {neo.absolute_magnitude_h.toFixed(1)}</span>
                   </div>
-
-                  {/* Stats */}
                   <div className="flex items-center gap-6 text-xs">
                     <div className="flex items-center gap-1.5 text-space-300">
                       <Ruler className="w-3.5 h-3.5 text-accent-blue" />

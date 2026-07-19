@@ -33,23 +33,20 @@ export default function ObservatoryPage() {
     <div className="relative">
       {/* ═══ HERO ═══ */}
       <section className="relative w-full min-h-[85vh] overflow-hidden flex items-center">
-        {/* Animated background */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-b from-[#050816] via-[#0f172a] to-[#0f172a]">
-          <div className="absolute top-20 left-1/4 w-96 h-96 bg-accent-purple/5 rounded-full blur-[150px] animate-pulse" />
-          <div className="absolute bottom-20 right-1/4 w-80 h-80 bg-accent-blue/5 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: "1s" }} />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-accent-cyan/3 rounded-full blur-[200px]" />
-        </div>
+        {/* Background Image */}
+        <div
+          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('/observatory-hero.png')" }}
+        />
+        {/* Gradient overlays */}
+        <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/40 via-[#0f172a]/60 to-[#0f172a]" />
+        <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#0f172a]/50 via-transparent to-[#0f172a]/50" />
 
-        {/* Star field effect */}
-        <div className="absolute inset-0 z-0" style={{
-          backgroundImage: `radial-gradient(1px 1px at 20px 30px, rgba(255,255,255,0.3), transparent),
-                           radial-gradient(1px 1px at 40px 70px, rgba(255,255,255,0.2), transparent),
-                           radial-gradient(1px 1px at 50px 160px, rgba(255,255,255,0.3), transparent),
-                           radial-gradient(1px 1px at 90px 40px, rgba(255,255,255,0.15), transparent),
-                           radial-gradient(1px 1px at 130px 80px, rgba(255,255,255,0.25), transparent),
-                           radial-gradient(1px 1px at 160px 120px, rgba(255,255,255,0.1), transparent)`,
-          backgroundSize: '200px 200px',
-        }} />
+        {/* Animated glow effects */}
+        <div className="absolute inset-0 z-[1]">
+          <div className="absolute top-20 left-1/4 w-96 h-96 bg-accent-purple/8 rounded-full blur-[150px] animate-pulse" />
+          <div className="absolute bottom-20 right-1/4 w-80 h-80 bg-accent-blue/8 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: "1s" }} />
+        </div>
 
         <div className="relative z-10 w-full max-w-5xl mx-auto px-6 pt-32 pb-16 text-center">
           <motion.div

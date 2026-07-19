@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Zap, MapPin, Calendar, Gauge } from "lucide-react";
+import NasaImageBanner from "./NasaImageBanner";
 
 interface Fireball {
   date: string;
@@ -25,7 +26,6 @@ export default function FireballTracker() {
       .then(r => r.json())
       .then(data => {
         if (data.data) {
-          // Map fields array to objects
           const fields = data.fields as string[];
           const mapped: Fireball[] = (data.data as string[][]).map(row => {
             const obj: Record<string, string | null> = {};
@@ -49,15 +49,31 @@ export default function FireballTracker() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-8">
-        <div>
-          <h3 className="text-xl font-display text-white tracking-widest">FIREBALL TRACKER</h3>
-          <p className="text-space-400 text-sm mt-1">Meteor/bolide impacts detected by US government sensors</p>
+      {/* Hero Banner */}
+      <div className="relative h-56 md:h-72 rounded-2xl overflow-hidden mb-8 border border-white/[0.06]">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/fireball-meteor.png"
+          alt="Fireball meteor streaking across the sky"
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0f172a]/80 via-transparent to-transparent" />
+        <div className="absolute bottom-0 left-0 p-8">
+          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-[9px] font-micro uppercase tracking-widest bg-amber-500/10 text-amber-400 border border-amber-500/30 mb-3">
+            <Zap className="w-3 h-3" /> NASA CNEOS
+          </span>
+          <h3 className="text-2xl md:text-3xl font-display text-white tracking-widest">FIREBALL TRACKER</h3>
+          <p className="text-space-400 text-sm mt-1 max-w-md">Meteor and bolide impacts detected by US government sensors worldwide</p>
         </div>
-        <span className="px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/20 text-[10px] font-micro text-amber-400 uppercase tracking-widest">
-          {fireballs.length} Events
-        </span>
+        {/* Count badge */}
+        <div className="absolute top-6 right-6 px-4 py-2 rounded-full bg-black/50 backdrop-blur-md border border-amber-500/30">
+          <span className="text-[10px] font-micro text-amber-400 uppercase tracking-widest">{fireballs.length} Events</span>
+        </div>
       </div>
+
+      {/* NASA Meteor Imagery */}
+      <NasaImageBanner query="meteor bolide fireball atmosphere" count={6} title="NASA Meteor Imagery" cols={6} />
 
       <div className="space-y-3">
         {fireballs.map((fb, i) => {
@@ -66,8 +82,6 @@ export default function FireballTracker() {
           const velocity = fb.vel ? parseFloat(fb.vel) : null;
           const lat = fb.lat ? `${fb.lat}° ${fb["lat-dir"] || ""}` : null;
           const lon = fb.lon ? `${fb.lon}° ${fb["lon-dir"] || ""}` : null;
-
-          // Color based on energy
           const isLarge = (impactE && impactE > 1) || (energy && energy > 1e11);
 
           return (

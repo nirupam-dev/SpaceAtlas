@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Users, Satellite, Rocket } from "lucide-react";
+import NasaImageBanner from "./NasaImageBanner";
 
 interface Astronaut {
   name: string;
@@ -44,30 +45,45 @@ export default function PeopleInSpace() {
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="glass-card p-8 md:p-10 border border-accent-green/20 relative overflow-hidden"
+      className="glass-card overflow-hidden border border-accent-green/20 relative"
     >
-      {/* Decorative glow */}
-      <div className="absolute top-0 right-0 w-40 h-40 bg-accent-green/5 rounded-full blur-[80px] pointer-events-none" />
+      {/* ISS Hero Image Strip */}
+      <div className="relative h-48 md:h-56 overflow-hidden">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/International_Space_Station_after_undocking_of_STS-132.jpg/1280px-International_Space_Station_after_undocking_of_STS-132.jpg"
+          alt="International Space Station in orbit"
+          className="w-full h-full object-cover"
+          loading="lazy"
+          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0f172a]/60 via-transparent to-transparent" />
 
-      <div className="flex items-center gap-4 mb-6">
-        <div className="w-14 h-14 rounded-2xl bg-accent-green/10 border border-accent-green/20 flex items-center justify-center relative">
-          <Users className="w-7 h-7 text-accent-green" />
-          <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-accent-green animate-ping" />
-          <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-accent-green" />
-        </div>
-        <div>
-          <div className="flex items-center gap-2 mb-0.5">
-            <span className="text-[10px] font-micro text-accent-green uppercase tracking-[3px]">Live Now</span>
+        {/* Overlayed header */}
+        <div className="absolute bottom-0 left-0 right-0 p-8 flex items-end justify-between">
+          <div className="flex items-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-accent-green/10 border border-accent-green/20 flex items-center justify-center relative backdrop-blur-md">
+              <Users className="w-7 h-7 text-accent-green" />
+              <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-accent-green animate-ping" />
+              <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-accent-green" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2 mb-0.5">
+                <span className="text-[10px] font-micro text-accent-green uppercase tracking-[3px]">Live Now</span>
+              </div>
+              <h3 className="text-2xl font-display text-white">People in Space</h3>
+            </div>
           </div>
-          <h3 className="text-2xl font-display text-white">People in Space</h3>
-        </div>
-        <div className="ml-auto text-right">
-          <div className="text-4xl font-bold gradient-text">{people.length}</div>
-          <div className="text-[10px] font-micro text-space-500 uppercase tracking-widest">Humans</div>
+          <div className="text-right">
+            <div className="text-4xl font-bold gradient-text">{people.length}</div>
+            <div className="text-[10px] font-micro text-space-500 uppercase tracking-widest">Humans</div>
+          </div>
         </div>
       </div>
 
-      <div className="space-y-6">
+      {/* Content */}
+      <div className="p-8 pt-6 space-y-6">
         {Object.entries(craftGroups).map(([craft, crew]) => (
           <div key={craft}>
             <div className="flex items-center gap-2 mb-3">
@@ -97,6 +113,9 @@ export default function PeopleInSpace() {
             </div>
           </div>
         ))}
+
+        {/* NASA ISS Imagery */}
+        <NasaImageBanner query="international space station astronaut crew" count={4} title="NASA ISS Imagery" cols={4} />
       </div>
     </motion.div>
   );
