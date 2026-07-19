@@ -12,6 +12,8 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'epic.gsfc.nasa.gov' },
       { protocol: 'https', hostname: 'mars.nasa.gov' },
       { protocol: 'https', hostname: 'apod.nasa.gov' },
+      { protocol: 'https', hostname: 'spacelaunchnow-prod-east.nyc3.digitaloceanspaces.com' },
+      { protocol: 'https', hostname: 'thespacedevs-prod.nyc3.digitaloceanspaces.com' },
     ],
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 86400, // 24 hours

@@ -58,6 +58,11 @@ export default function RootLayout({
         <link rel="preconnect" href="https://api.nasa.gov" />
         <link rel="dns-prefetch" href="https://images.unsplash.com" />
         <link rel="dns-prefetch" href="https://upload.wikimedia.org" />
+        <link rel="dns-prefetch" href="https://ssd-api.jpl.nasa.gov" />
+        <link rel="dns-prefetch" href="https://eonet.gsfc.nasa.gov" />
+        <link rel="dns-prefetch" href="https://exoplanetarchive.ipac.caltech.edu" />
+        <link rel="dns-prefetch" href="https://ll.thespacedevs.com" />
+        <link rel="dns-prefetch" href="https://api.spaceflightnewsapi.net" />
       </head>
       <body className={`${inter.variable} font-sans antialiased bg-space-900 text-space-100`} suppressHydrationWarning>
         <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:bg-accent-blue focus:text-white focus:px-4 focus:py-2 focus:rounded-lg">

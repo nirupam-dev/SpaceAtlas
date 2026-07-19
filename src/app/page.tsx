@@ -6,11 +6,12 @@ import { motion } from "framer-motion";
 import {
   Rocket, Globe2, Users, Building2, ArrowRight,
   Zap, Target, Timer, TrendingUp, ChevronRight, Telescope, BrainCircuit, Satellite, Cpu,
-  Calendar, ExternalLink,
+  Calendar, ExternalLink, Eye, Orbit, Sun, Star,
 } from "lucide-react";
 
 import { SectionHeading, StatCard } from "@/components/ui/Cards";
 import NasaApod from "@/components/ui/NasaApod";
+import PeopleInSpace from "@/components/ui/PeopleInSpace";
 import { rockets, agencies, planets, missions, upcomingLaunches, satellites } from "@/lib/data";
 
 interface NewsArticle {
@@ -184,6 +185,58 @@ export default function HomePage() {
 
       {/* ═══════════ NASA APOD ═══════════ */}
       <NasaApod />
+
+      {/* ═══════════ PEOPLE IN SPACE ═══════════ */}
+      <section className="relative py-10 sm:py-16 px-4 sm:px-6">
+        <div className="max-w-7xl mx-auto">
+          <PeopleInSpace />
+        </div>
+      </section>
+
+      {/* ═══════════ OBSERVATORY TEASER ═══════════ */}
+      <section className="relative py-10 sm:py-16 px-4 sm:px-6">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="glass-card p-8 md:p-12 relative overflow-hidden border border-indigo-500/20 shadow-[0_0_60px_rgba(99,102,241,0.06)]"
+          >
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-accent-purple via-indigo-500 to-accent-cyan" />
+            <div className="absolute top-0 right-0 w-40 h-40 bg-indigo-500/5 rounded-full blur-[80px] pointer-events-none" />
+
+            <div className="flex flex-col md:flex-row items-center gap-8">
+              <div className="w-20 h-20 shrink-0 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center relative">
+                <Eye className="w-10 h-10 text-indigo-400" />
+                <span className="absolute -top-1 -right-1 px-2 py-0.5 rounded-full text-[9px] font-micro bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 uppercase tracking-widest">New</span>
+              </div>
+              <div className="flex-1 text-center md:text-left">
+                <div className="flex items-center justify-center md:justify-start gap-2 mb-2">
+                  <span className="text-[10px] font-micro text-indigo-400 uppercase tracking-[3px]">8 Live APIs · Real-Time Data</span>
+                </div>
+                <h2 className="text-2xl md:text-3xl font-display text-white mb-3">Space Observatory</h2>
+                <p className="text-space-400 text-sm leading-relaxed max-w-lg">
+                  Track near-Earth asteroids, monitor solar storms, discover exoplanets,
+                  watch fireballs, and follow live launches — all in one breathtaking dashboard.
+                </p>
+                <div className="flex flex-wrap items-center gap-2 mt-4">
+                  {["Asteroids", "Solar Flares", "Exoplanets", "Fireballs", "Earth Events", "Live Launches"].map((tag) => (
+                    <span key={tag} className="px-2.5 py-1 rounded-full text-[9px] font-micro uppercase tracking-widest bg-white/[0.03] border border-white/[0.06] text-space-400">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              <Link
+                href="/observatory"
+                className="shrink-0 flex items-center gap-3 px-8 py-4 rounded-full bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 font-micro text-sm uppercase tracking-widest hover:bg-indigo-500/20 hover:border-indigo-500/60 transition-all duration-300"
+              >
+                Observe Now <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+      </section>
 
       {/* ═══════════ TECHNOLOGY & RESEARCH TEASER ═══════════ */}
       <section className="relative py-10 sm:py-16 px-4 sm:px-6">
@@ -419,12 +472,13 @@ export default function HomePage() {
             title="Discover the Cosmos"
             subtitle="Navigate through our comprehensive space database"
           />
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-8">
             {[
               { href: "/solar-system", icon: Globe2, title: "Solar System", desc: "Planets, moons, and dwarf planets" },
               { href: "/satellites", icon: Satellite, title: "Satellites", desc: "Space telescopes, stations & more" },
               { href: "/missions", icon: Telescope, title: "Missions", desc: "Apollo, Artemis, Chandrayaan & more" },
               { href: "/astronauts", icon: Users, title: "Astronauts", desc: "The heroes who explore space" },
+              { href: "/observatory", icon: Eye, title: "Observatory", desc: "Asteroids, weather, exoplanets" },
               { href: "/technology", icon: Cpu, title: "Technology", desc: "NASA patents, research & live imagery" },
             ].map((item, i) => (
               <motion.div

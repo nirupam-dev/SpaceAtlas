@@ -24,6 +24,7 @@ import {
   Radio,
   Star,
   BarChart3,
+  Eye,
 } from "lucide-react";
 
 /* ─── top‑bar links (visible in the header on large screens) ─── */
@@ -32,9 +33,9 @@ const topBarLinks = [
   { href: "/satellites",   label: "Satellites",   icon: Satellite },
   { href: "/missions",     label: "Missions",     icon: Telescope },
   { href: "/agencies",     label: "Agencies",     icon: Building2 },
+  { href: "/observatory",  label: "Observatory",  icon: Eye },
   { href: "/technology",   label: "Technology",   icon: Cpu },
   { href: "/solar-system", label: "Solar System", icon: Globe2 },
-  { href: "/astronauts",   label: "Astronauts",   icon: Users },
   { href: "/ask",          label: "Ask AI",       icon: BrainCircuit },
 ];
 
@@ -54,6 +55,7 @@ const menuSections = [
     title: "Discover",
     links: [
       { href: "/solar-system", label: "Solar System", icon: Globe2,      desc: "Planets, moons & more" },
+      { href: "/observatory",  label: "Observatory",  icon: Eye,         desc: "Live data from 8 APIs" },
       { href: "/technology",   label: "Technology",   icon: Cpu,         desc: "Research & innovations" },
       { href: "/news",         label: "Space News",   icon: Newspaper,   desc: "Live feed from industry" },
       { href: "/launches",     label: "Launches",     icon: Zap,         desc: "Upcoming launch schedule" },

@@ -15,6 +15,7 @@ const footerLinks = [
     title: "Resources",
     links: [
       { label: "Launch Tracker", href: "/launches" },
+      { label: "Observatory",    href: "/observatory" },
       { label: "ISS Tracker",    href: "/iss" },
       { label: "Space News",     href: "/news" },
       { label: "Space Quiz",     href: "/quiz" },
