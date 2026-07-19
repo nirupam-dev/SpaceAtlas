@@ -33,20 +33,14 @@ export default function ObservatoryPage() {
     <div className="relative">
       {/* ═══ HERO ═══ */}
       <section className="relative w-full min-h-screen overflow-hidden flex items-center">
-        {/* Background Image — vivid & visible */}
+        {/* Background Image — HD, crisp */}
         <div
-          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat scale-105"
-          style={{ backgroundImage: "url('/observatory-hero.png')" }}
+          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: "url('/observatory-hero.jpg')" }}
         />
         {/* Minimal overlays — just enough for text readability */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/20 via-transparent to-[#0f172a]/90" />
-        <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(15,23,42,0.4)_100%)]" />
-
-        {/* Subtle animated glow accents */}
-        <div className="absolute inset-0 z-[1] pointer-events-none">
-          <div className="absolute top-32 left-1/4 w-72 h-72 bg-accent-purple/6 rounded-full blur-[120px] animate-pulse" />
-          <div className="absolute bottom-32 right-1/4 w-64 h-64 bg-accent-blue/6 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: "1s" }} />
-        </div>
+        <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/15 via-transparent to-[#0f172a]/90" />
+        <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,transparent_50%,rgba(15,23,42,0.3)_100%)]" />
 
         <div className="relative z-10 w-full max-w-5xl mx-auto px-6 pt-32 pb-16 text-center">
           <motion.div
