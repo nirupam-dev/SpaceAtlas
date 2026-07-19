@@ -12,6 +12,7 @@
 import React from "react";
 import { render, screen, waitFor, within, cleanup, fireEvent, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 // ── Mocks ─────────────────────────────────────────────────────
 // Framer Motion: render children without animations
@@ -51,6 +52,28 @@ import SpaceWeather from "@/components/ui/SpaceWeather";
 import FireballTracker from "@/components/ui/FireballTracker";
 
 // ── Test Helpers ──────────────────────────────────────────────
+
+/** Creates a fresh QueryClient with retry disabled for deterministic tests */
+function createTestQueryClient() {
+  return new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false,
+        gcTime: Infinity,
+      },
+    },
+  });
+}
+
+/** Wraps a component in QueryClientProvider for testing */
+function renderWithQuery(ui: React.ReactElement) {
+  const queryClient = createTestQueryClient();
+  return render(
+    <QueryClientProvider client={queryClient}>
+      {ui}
+    </QueryClientProvider>
+  );
+}
 
 function mockFetchResponse(data: unknown, ok = true) {
   return jest.fn().mockResolvedValue({
@@ -115,7 +138,7 @@ describe("AsteroidWatch", () => {
 
   it("renders asteroid data after loading", async () => {
     global.fetch = mockFetchResponse(mockNeoData);
-    render(<AsteroidWatch />);
+    renderWithQuery(<AsteroidWatch />);
 
     await waitFor(() => {
       expect(screen.getByText(/2016 PC8/)).toBeInTheDocument();
@@ -125,7 +148,7 @@ describe("AsteroidWatch", () => {
 
   it("shows hazardous badge for dangerous asteroids", async () => {
     global.fetch = mockFetchResponse(mockNeoData);
-    render(<AsteroidWatch />);
+    renderWithQuery(<AsteroidWatch />);
 
     await waitFor(() => {
       expect(screen.getByText("Hazardous")).toBeInTheDocument();
@@ -134,7 +157,7 @@ describe("AsteroidWatch", () => {
 
   it("displays correct summary statistics", async () => {
     global.fetch = mockFetchResponse(mockNeoData);
-    render(<AsteroidWatch />);
+    renderWithQuery(<AsteroidWatch />);
 
     await waitFor(() => {
       // Use exact match to avoid matching the subtitle "Near-Earth Objects tracked..."
@@ -149,7 +172,7 @@ describe("AsteroidWatch", () => {
 
   it("expands asteroid detail on click", async () => {
     global.fetch = mockFetchResponse(mockNeoData);
-    render(<AsteroidWatch />);
+    renderWithQuery(<AsteroidWatch />);
 
     await waitFor(() => {
       expect(screen.getByText(/2016 PC8/)).toBeInTheDocument();
@@ -181,7 +204,7 @@ describe("AsteroidWatch", () => {
 
   it("supports keyboard navigation (Enter/Space)", async () => {
     global.fetch = mockFetchResponse(mockNeoData);
-    render(<AsteroidWatch />);
+    renderWithQuery(<AsteroidWatch />);
 
     await waitFor(() => {
       expect(screen.getByText(/2016 PC8/)).toBeInTheDocument();
@@ -206,7 +229,7 @@ describe("AsteroidWatch", () => {
 
   it("shows error state when fetch fails", async () => {
     global.fetch = jest.fn().mockRejectedValue(new Error("Network failure"));
-    render(<AsteroidWatch />);
+    renderWithQuery(<AsteroidWatch />);
 
     await waitFor(() => {
       expect(screen.getByText(/Failed to load asteroid data/i)).toBeInTheDocument();
@@ -215,7 +238,7 @@ describe("AsteroidWatch", () => {
 
   it("has proper ARIA attributes on interactive cards", async () => {
     global.fetch = mockFetchResponse(mockNeoData);
-    render(<AsteroidWatch />);
+    renderWithQuery(<AsteroidWatch />);
 
     await waitFor(() => {
       const cards = screen.getAllByRole("button", { name: /asteroid/i });
@@ -259,7 +282,7 @@ describe("SpaceWeather", () => {
 
   it("renders CME data after loading", async () => {
     setupSpaceWeatherFetch();
-    render(<SpaceWeather />);
+    renderWithQuery(<SpaceWeather />);
 
     await waitFor(() => {
       expect(screen.getByText(/2026-06-19T00:00:00-CME-001/)).toBeInTheDocument();
@@ -268,7 +291,7 @@ describe("SpaceWeather", () => {
 
   it("displays CME count in summary card", async () => {
     setupSpaceWeatherFetch();
-    render(<SpaceWeather />);
+    renderWithQuery(<SpaceWeather />);
 
     await waitFor(() => {
       // The CME tab should show count of 1
@@ -280,7 +303,7 @@ describe("SpaceWeather", () => {
 
   it("expands CME detail on click with ARIA support", async () => {
     setupSpaceWeatherFetch();
-    render(<SpaceWeather />);
+    renderWithQuery(<SpaceWeather />);
 
     await waitFor(() => {
       expect(screen.getByText(/2026-06-19T00:00:00-CME-001/)).toBeInTheDocument();
@@ -304,7 +327,7 @@ describe("SpaceWeather", () => {
 
   it("shows educational info card", async () => {
     setupSpaceWeatherFetch();
-    render(<SpaceWeather />);
+    renderWithQuery(<SpaceWeather />);
 
     await waitFor(() => {
       expect(screen.getByText(/Understanding Space Weather/)).toBeInTheDocument();
@@ -330,7 +353,7 @@ describe("FireballTracker", () => {
 
   it("renders fireball events after loading", async () => {
     global.fetch = mockFetchResponse(mockFireballData);
-    render(<FireballTracker />);
+    renderWithQuery(<FireballTracker />);
 
     await waitFor(() => {
       expect(screen.getByText(/Jun 11, 2026/)).toBeInTheDocument();
@@ -340,7 +363,7 @@ describe("FireballTracker", () => {
 
   it("tags major fireballs with badge", async () => {
     global.fetch = mockFetchResponse(mockFireballData);
-    render(<FireballTracker />);
+    renderWithQuery(<FireballTracker />);
 
     await waitFor(() => {
       expect(screen.getByText("Major")).toBeInTheDocument();
@@ -349,7 +372,7 @@ describe("FireballTracker", () => {
 
   it("displays summary statistics", async () => {
     global.fetch = mockFetchResponse(mockFireballData);
-    render(<FireballTracker />);
+    renderWithQuery(<FireballTracker />);
 
     await waitFor(() => {
       // 2 events
@@ -359,7 +382,7 @@ describe("FireballTracker", () => {
 
   it("expands fireball detail on keyboard Enter", async () => {
     global.fetch = mockFetchResponse(mockFireballData);
-    render(<FireballTracker />);
+    renderWithQuery(<FireballTracker />);
 
     await waitFor(() => {
       expect(screen.getByText(/Jun 11, 2026/)).toBeInTheDocument();
@@ -378,7 +401,7 @@ describe("FireballTracker", () => {
 
   it("shows educational info about fireballs", async () => {
     global.fetch = mockFetchResponse(mockFireballData);
-    render(<FireballTracker />);
+    renderWithQuery(<FireballTracker />);
 
     await waitFor(() => {
       expect(screen.getByText(/Understanding Fireballs/i)).toBeInTheDocument();

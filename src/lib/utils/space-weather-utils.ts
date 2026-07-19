@@ -116,10 +116,13 @@ export function getMaxKp(allKpIndex?: KpReading[]): number {
 /**
  * Formats a date string to a compact display format.
  * Example: "Jan 15, 02:30 PM"
+ * Returns the original string if parsing fails.
  */
 export function formatShortDate(d: string): string {
   try {
-    return new Date(d).toLocaleDateString("en-US", {
+    const date = new Date(d);
+    if (isNaN(date.getTime())) return d;
+    return date.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
       hour: "2-digit",
@@ -133,10 +136,13 @@ export function formatShortDate(d: string): string {
 /**
  * Formats a date string to a full display format.
  * Example: "Mon, Jan 15, 2024, 02:30 PM EST"
+ * Returns the original string if parsing fails.
  */
 export function formatFullDate(d: string): string {
   try {
-    return new Date(d).toLocaleString("en-US", {
+    const date = new Date(d);
+    if (isNaN(date.getTime())) return d;
+    return date.toLocaleString("en-US", {
       weekday: "short",
       month: "short",
       day: "numeric",
