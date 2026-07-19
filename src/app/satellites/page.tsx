@@ -60,13 +60,23 @@ export default function SatellitesPage() {
     <div className="relative bg-black min-h-screen">
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center">
-        {/* Background Image */}
-        <div
-          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: "url('/Always_Sunny_v4_d8b76550ae.jpg')" }}
-        />
-        {/* Gradient overlay */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
+        {/* Background Video */}
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 z-0 w-full h-full object-cover"
+          poster="/Always_Sunny_v4_d8b76550ae.jpg"
+        >
+          <source
+            src="https://content.spacex.com/cms-assets/assets/hero_ai_sat_249fb5c60b.mp4"
+            type="video/mp4"
+          />
+        </video>
+        {/* Gradient overlays */}
+        <div className="absolute inset-0 z-[1] bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
+        <div className="absolute inset-0 z-[1] bg-gradient-to-b from-transparent via-transparent to-black/60" />
 
         <div className="relative z-10 w-full px-8 md:px-[8%] lg:px-[10%]">
           <motion.div
