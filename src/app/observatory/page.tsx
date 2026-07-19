@@ -32,20 +32,20 @@ export default function ObservatoryPage() {
   return (
     <div className="relative">
       {/* ═══ HERO ═══ */}
-      <section className="relative w-full min-h-[85vh] overflow-hidden flex items-center">
-        {/* Background Image */}
+      <section className="relative w-full min-h-screen overflow-hidden flex items-center">
+        {/* Background Image — vivid & visible */}
         <div
-          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat scale-105"
           style={{ backgroundImage: "url('/observatory-hero.png')" }}
         />
-        {/* Gradient overlays */}
-        <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/40 via-[#0f172a]/60 to-[#0f172a]" />
-        <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#0f172a]/50 via-transparent to-[#0f172a]/50" />
+        {/* Minimal overlays — just enough for text readability */}
+        <div className="absolute inset-0 z-0 bg-gradient-to-b from-black/20 via-transparent to-[#0f172a]/90" />
+        <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(15,23,42,0.4)_100%)]" />
 
-        {/* Animated glow effects */}
-        <div className="absolute inset-0 z-[1]">
-          <div className="absolute top-20 left-1/4 w-96 h-96 bg-accent-purple/8 rounded-full blur-[150px] animate-pulse" />
-          <div className="absolute bottom-20 right-1/4 w-80 h-80 bg-accent-blue/8 rounded-full blur-[120px] animate-pulse" style={{ animationDelay: "1s" }} />
+        {/* Subtle animated glow accents */}
+        <div className="absolute inset-0 z-[1] pointer-events-none">
+          <div className="absolute top-32 left-1/4 w-72 h-72 bg-accent-purple/6 rounded-full blur-[120px] animate-pulse" />
+          <div className="absolute bottom-32 right-1/4 w-64 h-64 bg-accent-blue/6 rounded-full blur-[100px] animate-pulse" style={{ animationDelay: "1s" }} />
         </div>
 
         <div className="relative z-10 w-full max-w-5xl mx-auto px-6 pt-32 pb-16 text-center">
@@ -56,7 +56,7 @@ export default function ObservatoryPage() {
           >
             <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-accent-purple/30 text-accent-purple text-[10px] font-micro uppercase tracking-[3px] bg-accent-purple/5 backdrop-blur-md mb-8">
               <Eye className="w-3.5 h-3.5" />
-              Live Data · 8 Free APIs · Real-Time
+              Live Data · Real-Time Tracking
             </span>
           </motion.div>
 
@@ -64,7 +64,7 @@ export default function ObservatoryPage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1 }}
-            className="text-5xl md:text-7xl lg:text-8xl font-display text-white mb-6 leading-[1.05]"
+            className="text-5xl md:text-7xl lg:text-8xl font-display text-white mb-6 leading-[1.05] drop-shadow-[0_4px_24px_rgba(0,0,0,0.7)]"
           >
             SPACE
             <br />
@@ -75,11 +75,11 @@ export default function ObservatoryPage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-[15px] md:text-[17px] text-space-300 leading-[1.8] font-light mb-10 max-w-2xl mx-auto"
+            className="text-[15px] md:text-[17px] text-space-200 leading-[1.8] font-light mb-10 max-w-2xl mx-auto drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)]"
           >
             Your real-time command center for the cosmos. Track asteroids, monitor solar storms,
             discover exoplanets, watch live launches, and observe Earth from space —
-            all powered by NASA, SpaceDevs, and open science APIs.
+            powered by NASA, JPL, and SpaceDevs.
           </motion.p>
 
           <motion.div
@@ -141,7 +141,7 @@ export default function ObservatoryPage() {
           <SectionHeading
             badge="Real-Time Observatory"
             title="Explore Live Data"
-            subtitle="Powered by NASA, JPL, SpaceDevs & open science APIs — updated automatically"
+            subtitle="Powered by NASA, JPL & SpaceDevs — updated automatically"
           />
 
           {/* Tab Navigation */}

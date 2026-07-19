@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
   Rocket, MapPin, Clock, Calendar, ExternalLink,
   CheckCircle, AlertCircle, Timer, Building2,
 } from "lucide-react";
-import NasaImageBanner from "./NasaImageBanner";
 
 interface Launch {
   id: string;
@@ -31,7 +30,10 @@ interface Launch {
     abbrev: string;
     type: string;
   };
-  image?: string;
+  image?: {
+    image_url: string;
+    thumbnail_url?: string;
+  } | null;
 }
 
 const statusColors: Record<number, string> = {
@@ -45,10 +47,36 @@ const statusColors: Record<number, string> = {
   8: "text-amber-400 bg-amber-500/10 border-amber-500/30",      // TBC
 };
 
+/* ── Fetch a contextual NASA image for a rocket/provider ────── */
+async function fetchNasaImage(query: string): Promise<string | null> {
+  try {
+    const res = await fetch(
+      `/api/nasa-images?q=${encodeURIComponent(query)}&media_type=image`
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    const items = data?.collection?.items;
+    if (!items || items.length === 0) return null;
+    // Filter to items that have a preview link
+    const withImages = items.filter(
+      (item: { links?: { rel: string; href: string }[] }) =>
+        item.links?.some((l: { rel: string }) => l.rel === "preview")
+    );
+    if (withImages.length === 0) return null;
+    // Pick a random image from the first 5 results
+    const pick = withImages[Math.floor(Math.random() * Math.min(5, withImages.length))];
+    const link = pick?.links?.find((l: { rel: string }) => l.rel === "preview")?.href;
+    return link || null;
+  } catch {
+    return null;
+  }
+}
+
 export default function LiveLaunches() {
   const [launches, setLaunches] = useState<Launch[]>([]);
   const [loading, setLoading] = useState(true);
   const [now, setNow] = useState(Date.now());
+  const [fallbackImages, setFallbackImages] = useState<Record<string, string>>({});
 
   useEffect(() => {
     fetch("/api/launch-library?limit=12&type=upcoming")
@@ -57,6 +85,35 @@ export default function LiveLaunches() {
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);
+
+  /* Fetch fallback images for launches without images */
+  useEffect(() => {
+    if (launches.length === 0) return;
+    const needImages = launches.filter(l => !l.image?.image_url);
+    if (needImages.length === 0) return;
+
+    // Deduplicate by rocket family to avoid redundant fetches
+    const queries = new Map<string, string[]>();
+    needImages.forEach(l => {
+      const key = l.rocket.configuration.family || l.rocket.configuration.name;
+      const ids = queries.get(key) || [];
+      ids.push(l.id);
+      queries.set(key, ids);
+    });
+
+    queries.forEach((ids, rocketName) => {
+      const searchQuery = `${rocketName} rocket launch`;
+      fetchNasaImage(searchQuery).then(url => {
+        if (url) {
+          setFallbackImages(prev => {
+            const next = { ...prev };
+            ids.forEach(id => { next[id] = url; });
+            return next;
+          });
+        }
+      });
+    });
+  }, [launches]);
 
   // Countdown ticker
   useEffect(() => {
@@ -74,16 +131,15 @@ export default function LiveLaunches() {
 
   return (
     <div>
+      {/* Section Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h3 className="text-xl font-display text-white tracking-widest">LIVE LAUNCHES</h3>
-          <p className="text-space-400 text-sm mt-1">Upcoming launches from The Space Devs Launch Library</p>
+          <h3 className="text-xl font-display text-white tracking-widest">UPCOMING LAUNCHES</h3>
+          <p className="text-space-400 text-sm mt-1">Live countdown data from The Space Devs Launch Library</p>
         </div>
       </div>
 
-      {/* NASA Launch Imagery */}
-      <NasaImageBanner query="rocket launch SpaceX NASA countdown" count={6} title="NASA Launch Gallery" cols={6} />
-
+      {/* Launch Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {launches.map((launch, i) => {
           const launchTime = new Date(launch.net).getTime();
@@ -93,6 +149,7 @@ export default function LiveLaunches() {
           const minutes = Math.max(0, Math.floor((diff % 3600000) / 60000));
           const seconds = Math.max(0, Math.floor((diff % 60000) / 1000));
           const statusColor = statusColors[launch.status.id] || statusColors[2];
+          const imgSrc = launch.image?.image_url || fallbackImages[launch.id];
 
           return (
             <motion.div
@@ -103,12 +160,12 @@ export default function LiveLaunches() {
               className="glass-card overflow-hidden hover:border-accent-blue/30 transition-all duration-300 group"
             >
               {/* Image header */}
-              <div className="relative h-48 overflow-hidden">
+              <div className="relative h-52 overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/30 to-transparent z-10" />
-                {launch.image ? (
+                {imgSrc ? (
                   <>{ /* eslint-disable-next-line @next/next/no-img-element */ }
                   <img
-                    src={launch.image}
+                    src={imgSrc}
                     alt={launch.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     loading="lazy"
@@ -116,8 +173,11 @@ export default function LiveLaunches() {
                   />
                   </>
                 ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-space-800 via-space-900 to-black flex items-center justify-center">
-                    <Rocket className="w-16 h-16 text-space-700" />
+                  <div className="w-full h-full bg-gradient-to-br from-[#0c1222] via-[#162038] to-[#0f172a] flex items-center justify-center">
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-accent-blue/10 rounded-full blur-2xl w-24 h-24 -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2" />
+                      <Rocket className="w-14 h-14 text-space-600 relative z-10" />
+                    </div>
                   </div>
                 )}
                 <div className="absolute top-3 right-3 z-20">
