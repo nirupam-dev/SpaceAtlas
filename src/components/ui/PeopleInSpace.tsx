@@ -1,13 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Users, Satellite, Rocket } from "lucide-react";
 import NasaImageBanner from "./NasaImageBanner";
-import { createLogger } from "@/lib/logger";
+import { usePeopleInSpace } from "@/lib/hooks/use-space-query";
 import Image from "next/image";
-
-const log = createLogger("PeopleInSpace");
 
 interface Astronaut {
   name: string;
@@ -15,18 +12,8 @@ interface Astronaut {
 }
 
 export default function PeopleInSpace() {
-  const [people, setPeople] = useState<Astronaut[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetch("/api/people-in-space")
-      .then(r => r.json())
-      .then(data => {
-        if (data.people) setPeople(data.people);
-      })
-      .catch((err) => { log.error("Failed to fetch people in space", { error: String(err) }); })
-      .finally(() => setLoading(false));
-  }, []);
+  const { data, isLoading: loading } = usePeopleInSpace();
+  const people = data?.people ?? [];
 
   const craftGroups = people.reduce<Record<string, Astronaut[]>>((acc, p) => {
     acc[p.craft] = acc[p.craft] || [];

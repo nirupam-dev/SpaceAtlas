@@ -5,6 +5,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ScrollProgress } from "@/components/ui/ScrollProgress";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import QueryProvider from "@/components/providers/QueryProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -68,13 +69,15 @@ export default function RootLayout({
         <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:bg-accent-blue focus:text-white focus:px-4 focus:py-2 focus:rounded-lg">
           Skip to main content
         </a>
-        <div className="relative min-h-screen flex flex-col">
-          <ScrollProgress />
-          <Navbar />
-          <main id="main-content" className="flex-1" role="main">{children}</main>
-          <Footer />
-          <SpeedInsights />
-        </div>
+        <QueryProvider>
+          <div className="relative min-h-screen flex flex-col">
+            <ScrollProgress />
+            <Navbar />
+            <main id="main-content" className="flex-1" role="main">{children}</main>
+            <Footer />
+            <SpeedInsights />
+          </div>
+        </QueryProvider>
       </body>
     </html>
   );

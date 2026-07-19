@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Rocket, MapPin, Clock, Calendar, ExternalLink,
   CheckCircle, AlertCircle, Timer, Building2,
 } from "lucide-react";
+import { useLiveLaunches } from "@/lib/hooks/use-space-query";
 import { createLogger } from "@/lib/logger";
 import Image from "next/image";
 
@@ -78,18 +79,10 @@ async function fetchNasaImage(query: string): Promise<string | null> {
 }
 
 export default function LiveLaunches() {
-  const [launches, setLaunches] = useState<Launch[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading: loading } = useLiveLaunches(12);
+  const launches = (data?.results ?? []) as Launch[];
   const [now, setNow] = useState(Date.now());
   const [fallbackImages, setFallbackImages] = useState<Record<string, string>>({});
-
-  useEffect(() => {
-    fetch("/api/launch-library?limit=12&type=upcoming")
-      .then(r => r.json())
-      .then(data => { if (data.results) setLaunches(data.results); })
-      .catch((err) => { log.error("Failed to fetch launch data", { error: String(err) }); })
-      .finally(() => setLoading(false));
-  }, []);
 
   /* Fetch fallback images for launches without images */
   useEffect(() => {

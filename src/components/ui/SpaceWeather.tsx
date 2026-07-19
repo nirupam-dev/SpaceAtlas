@@ -1,13 +1,11 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sun, Zap, Wind, Activity, Shield, AlertTriangle, Radio, ChevronDown, Info, ExternalLink } from "lucide-react";
 import NasaImageBanner from "./NasaImageBanner";
-import { createLogger } from "@/lib/logger";
+import { useSpaceWeather } from "@/lib/hooks/use-space-query";
 import Image from "next/image";
-
-const log = createLogger("SpaceWeather");
 
 interface CME {
   activityID: string;
@@ -36,41 +34,12 @@ interface GeoStorm {
 }
 
 export default function SpaceWeather() {
-  const [cmes, setCmes] = useState<CME[]>([]);
-  const [flares, setFlares] = useState<SolarFlare[]>([]);
-  const [storms, setStorms] = useState<GeoStorm[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading: loading } = useSpaceWeather();
+  const cmes = (data?.cmes ?? []) as CME[];
+  const flares = (data?.flares ?? []) as SolarFlare[];
+  const storms = (data?.storms ?? []) as GeoStorm[];
   const [activeTab, setActiveTab] = useState<"cme" | "flares" | "storms">("cme");
   const [expandedId, setExpandedId] = useState<string | null>(null);
-
-  useEffect(() => {
-    const load = async () => {
-      setLoading(true);
-      try {
-        const [cmeRes, flrRes, gstRes] = await Promise.allSettled([
-          fetch("/api/space-weather?type=CME"),
-          fetch("/api/space-weather?type=FLR"),
-          fetch("/api/space-weather?type=GST"),
-        ]);
-        if (cmeRes.status === "fulfilled" && cmeRes.value.ok) {
-          const d = await cmeRes.value.json();
-          setCmes(Array.isArray(d) ? d.slice(0, 20) : []);
-        }
-        if (flrRes.status === "fulfilled" && flrRes.value.ok) {
-          const d = await flrRes.value.json();
-          setFlares(Array.isArray(d) ? d.slice(0, 20) : []);
-        }
-        if (gstRes.status === "fulfilled" && gstRes.value.ok) {
-          const d = await gstRes.value.json();
-          setStorms(Array.isArray(d) ? d.slice(0, 20) : []);
-        }
-      } catch (err) {
-        log.error("Failed to fetch space weather data", { error: String(err) });
-      }
-      setLoading(false);
-    };
-    load();
-  }, []);
 
   const tabs = [
     { id: "cme" as const, label: "Coronal Mass Ejections", icon: Sun, count: cmes.length, desc: "Massive bursts of solar wind and magnetic fields" },

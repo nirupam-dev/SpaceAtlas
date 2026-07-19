@@ -1,13 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Zap, MapPin, Calendar, Gauge, ChevronDown, ExternalLink, Info, Flame, Mountain, Globe2 } from "lucide-react";
 import NasaImageBanner from "./NasaImageBanner";
-import { createLogger } from "@/lib/logger";
+import { useFireballs } from "@/lib/hooks/use-space-query";
 import Image from "next/image";
-
-const log = createLogger("FireballTracker");
 
 interface Fireball {
   date: string;
@@ -40,27 +38,19 @@ function getAltitudeDesc(alt: number): string {
 }
 
 export default function FireballTracker() {
-  const [fireballs, setFireballs] = useState<Fireball[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading: loading } = useFireballs();
   const [expandedIdx, setExpandedIdx] = useState<number | null>(null);
 
-  useEffect(() => {
-    fetch("/api/fireballs")
-      .then(r => r.json())
-      .then(data => {
-        if (data.data) {
-          const fields = data.fields as string[];
-          const mapped: Fireball[] = (data.data as string[][]).map(row => {
-            const obj: Record<string, string | null> = {};
-            fields.forEach((f: string, i: number) => { obj[f] = row[i]; });
-            return obj as unknown as Fireball;
-          });
-          setFireballs(mapped.slice(0, 30));
-        }
-      })
-      .catch((err) => { log.error("Failed to fetch fireball data", { error: String(err) }); })
-      .finally(() => setLoading(false));
-  }, []);
+  const fireballs = useMemo(() => {
+    if (!data?.data || !data?.fields) return [];
+    const fields = data.fields as string[];
+    const mapped: Fireball[] = (data.data as string[][]).map(row => {
+      const obj: Record<string, string | null> = {};
+      fields.forEach((f: string, i: number) => { obj[f] = row[i]; });
+      return obj as unknown as Fireball;
+    });
+    return mapped.slice(0, 30);
+  }, [data]);
 
   // Stats
   const totalEnergy = fireballs.reduce((acc, fb) => acc + (fb["impact-e"] ? parseFloat(fb["impact-e"]) : 0), 0);

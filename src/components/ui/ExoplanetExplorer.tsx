@@ -1,13 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Star, Calendar, Ruler, Thermometer, Orbit, Search, Telescope, ChevronDown, Info, ExternalLink, Globe2, Droplets } from "lucide-react";
 import NasaImageBanner from "./NasaImageBanner";
-import { createLogger } from "@/lib/logger";
+import { useExoplanets } from "@/lib/hooks/use-space-query";
 import Image from "next/image";
-
-const log = createLogger("ExoplanetExplorer");
 
 interface Exoplanet {
   pl_name: string;
@@ -68,18 +66,10 @@ function getHabitability(eqt: number | null, rade: number | null): { score: stri
 }
 
 export default function ExoplanetExplorer() {
-  const [planets, setPlanets] = useState<Exoplanet[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading: loading } = useExoplanets(100);
+  const planets = (Array.isArray(data) ? data : []) as Exoplanet[];
   const [search, setSearch] = useState("");
   const [expandedName, setExpandedName] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetch("/api/exoplanets?limit=100")
-      .then(r => r.json())
-      .then(data => { if (Array.isArray(data)) setPlanets(data); })
-      .catch((err) => { log.error("Failed to fetch exoplanet data", { error: String(err) }); })
-      .finally(() => setLoading(false));
-  }, []);
 
   const filtered = planets.filter(p =>
     p.pl_name.toLowerCase().includes(search.toLowerCase()) ||

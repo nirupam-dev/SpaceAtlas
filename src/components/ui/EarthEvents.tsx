@@ -1,13 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Flame, MapPin, Calendar, Zap, Globe2, Wind, Waves, Mountain, ChevronDown, ExternalLink, Info, Navigation } from "lucide-react";
 import NasaImageBanner from "./NasaImageBanner";
-import { createLogger } from "@/lib/logger";
+import { useEarthEvents } from "@/lib/hooks/use-space-query";
 import Image from "next/image";
-
-const log = createLogger("EarthEvents");
 
 interface EonetEvent {
   id: string;
@@ -40,18 +38,10 @@ const categoryDescriptions: Record<string, string> = {
 };
 
 export default function EarthEvents() {
-  const [events, setEvents] = useState<EonetEvent[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading: loading } = useEarthEvents(30);
+  const events = (data?.events ?? []) as EonetEvent[];
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>("all");
-
-  useEffect(() => {
-    fetch("/api/eonet?limit=30")
-      .then(r => r.json())
-      .then(data => { if (data.events) setEvents(data.events); })
-      .catch((err) => { log.error("Failed to fetch EONET events", { error: String(err) }); })
-      .finally(() => setLoading(false));
-  }, []);
 
   // Category counts
   const catCounts = events.reduce<Record<string, number>>((acc, e) => {

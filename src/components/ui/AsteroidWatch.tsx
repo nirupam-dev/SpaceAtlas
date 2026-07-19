@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   AlertTriangle, Shield, Crosshair, Ruler, Gauge, Calendar,
@@ -8,10 +8,8 @@ import {
   Target, Orbit, Globe2
 } from "lucide-react";
 import NasaImageBanner from "./NasaImageBanner";
-import { createLogger } from "@/lib/logger";
+import { useNeoData } from "@/lib/hooks/use-space-query";
 import Image from "next/image";
-
-const log = createLogger("AsteroidWatch");
 
 interface NeoObject {
   id: string;
@@ -50,32 +48,23 @@ function getThreatInfo(hazardous: boolean, lunar: number) {
 }
 
 export default function AsteroidWatch() {
-  const [asteroids, setAsteroids] = useState<NeoObject[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
   const [dateOffset, setDateOffset] = useState(0);
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const currentDate = new Date(Date.now() + dateOffset * 86400000);
   const dateStr = currentDate.toISOString().split("T")[0];
 
-  const fetchNeo = useCallback(async () => {
-    setLoading(true); setError(false); setExpandedId(null);
-    try {
-      const res = await fetch(`/api/neo?start_date=${dateStr}&end_date=${dateStr}`);
-      if (!res.ok) throw new Error();
-      const data = await res.json();
-      const allNeos: NeoObject[] = Object.values(data.near_earth_objects || {}).flat() as NeoObject[];
-      allNeos.sort((a, b) =>
-        parseFloat(a.close_approach_data[0]?.miss_distance?.kilometers || "0") -
-        parseFloat(b.close_approach_data[0]?.miss_distance?.kilometers || "0")
-      );
-      setAsteroids(allNeos);
-    } catch (err) { log.error("Failed to fetch NEO data", { error: String(err), date: dateStr }); setError(true); }
-    finally { setLoading(false); }
-  }, [dateStr]);
+  const { data, isLoading: loading, isError: error } = useNeoData(dateStr);
 
-  useEffect(() => { fetchNeo(); }, [fetchNeo]);
+  const asteroids = useMemo(() => {
+    if (!data?.near_earth_objects) return [];
+    const allNeos: NeoObject[] = Object.values(data.near_earth_objects).flat() as NeoObject[];
+    allNeos.sort((a, b) =>
+      parseFloat(a.close_approach_data[0]?.miss_distance?.kilometers || "0") -
+      parseFloat(b.close_approach_data[0]?.miss_distance?.kilometers || "0")
+    );
+    return allNeos;
+  }, [data]);
 
   const hazardousCount = asteroids.filter(a => a.is_potentially_hazardous_asteroid).length;
   const closestLD = asteroids[0] ? parseFloat(asteroids[0].close_approach_data[0]?.miss_distance?.lunar || "0").toFixed(1) : "—";
