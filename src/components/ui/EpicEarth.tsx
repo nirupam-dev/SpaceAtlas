@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Globe2, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
+import Image from "next/image";
 
 interface EpicImage {
   identifier: string;
@@ -162,11 +163,10 @@ export default function EpicEarth() {
                 : "border-transparent opacity-50 hover:opacity-80"
             }`}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+                        <Image
               src={getEpicImageUrl(img)}
               alt={`Earth ${i + 1}`}
-              className="w-full h-full object-cover"
+              fill className="w-full h-full object-cover"
               loading="lazy"
             />
           </button>

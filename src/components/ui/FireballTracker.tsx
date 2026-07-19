@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Zap, MapPin, Calendar, Gauge, ChevronDown, ExternalLink, Info, Flame, Mountain, Globe2 } from "lucide-react";
 import NasaImageBanner from "./NasaImageBanner";
 import { createLogger } from "@/lib/logger";
+import Image from "next/image";
 
 const log = createLogger("FireballTracker");
 
@@ -80,8 +81,7 @@ export default function FireballTracker() {
     <div>
       {/* Hero Banner */}
       <div className="relative h-56 md:h-72 rounded-2xl overflow-hidden mb-8 border border-white/[0.06]">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/fireball-meteor.png" alt="Fireball meteor streaking across the sky" className="w-full h-full object-cover" />
+                <Image src="/fireball-meteor.png" alt="Fireball meteor streaking across the sky" fill className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/40 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#0f172a]/80 via-transparent to-transparent" />
         <div className="absolute bottom-0 left-0 p-8">

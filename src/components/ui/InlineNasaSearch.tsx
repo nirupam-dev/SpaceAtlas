@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Telescope, Image as ImageIcon, X, Loader2, ExternalLink } from "lucide-react";
+import Image from "next/image";
 
 interface NasaImageItem {
   data: {
@@ -124,11 +125,10 @@ export default function InlineNasaSearch({ query, icon, category = "items" }: In
             >
               {/* Image */}
               <div className="relative h-[220px] w-full overflow-hidden bg-black shrink-0">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                                <Image
                   src={imageUrl}
                   alt={info.title}
-                  className="object-cover w-full h-full group-hover:scale-105 transition-all duration-700 opacity-80 group-hover:opacity-100"
+                  fill className="object-cover w-full h-full group-hover:scale-105 transition-all duration-700 opacity-80 group-hover:opacity-100"
                   loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/20 to-transparent" />
@@ -189,11 +189,10 @@ export default function InlineNasaSearch({ query, icon, category = "items" }: In
               </button>
               <div className="flex flex-col lg:flex-row">
                 <div className="lg:w-2/3 relative min-h-[300px] lg:min-h-[500px]">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                                    <Image
                     src={selected.links?.[0]?.href || ""}
                     alt={selected.data[0].title}
-                    className="absolute inset-0 w-full h-full object-contain bg-black"
+                    fill className="absolute inset-0 w-full h-full object-contain bg-black"
                   />
                 </div>
                 <div className="lg:w-1/3 p-8 flex flex-col justify-center">

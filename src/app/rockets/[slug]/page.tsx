@@ -18,6 +18,7 @@ import {
 import { rockets } from "@/lib/data";
 
 import NasaSearchFallback from "@/components/ui/NasaSearchFallback";
+import Image from "next/image";
 
 export default function RocketDetailPage({
   params,

@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { satellites } from "@/lib/data";
 import NasaSearchFallback from "@/components/ui/NasaSearchFallback";
+import Image from "next/image";
 
 const typeLabels: Record<string, string> = {
   SPACE_STATION: "Space Station",

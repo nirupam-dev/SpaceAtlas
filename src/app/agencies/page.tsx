@@ -7,6 +7,7 @@ import { SectionHeading } from "@/components/ui/Cards";
 import InlineNasaSearch from "@/components/ui/InlineNasaSearch";
 import { agencies } from "@/lib/data";
 import { useState } from "react";
+import Image from "next/image";
 
 export default function AgenciesPage() {
   const [search, setSearch] = useState("");

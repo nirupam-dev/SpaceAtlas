@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Telescope } from "lucide-react";
 import { SectionHeading } from "./Cards";
+import Image from "next/image";
 
 interface ApodData {
   title: string;
@@ -62,10 +63,10 @@ export default function NasaApod() {
           <div className="flex flex-col lg:flex-row">
             <div className="lg:w-1/2 relative min-h-[400px]">
               {apod.media_type === "image" ? (
-                <img 
+                <Image 
                   src={apod.hdurl || apod.url} 
                   alt={apod.title}
-                  className="absolute inset-0 w-full h-full object-cover"
+                  fill className="absolute inset-0 w-full h-full object-cover"
                 />
               ) : (
                 <iframe

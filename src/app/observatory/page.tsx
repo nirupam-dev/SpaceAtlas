@@ -1,34 +1,13 @@
-"use client";
-
-import { useState } from "react";
-import { motion } from "framer-motion";
 import {
-  Eye, Orbit, Sun, Flame, Globe2, Rocket,
-  ChevronDown, Sparkles, Star, Telescope,
+  Eye, Sparkles, Telescope, ChevronDown
 } from "lucide-react";
 import Link from "next/link";
 
 import { SectionHeading } from "@/components/ui/Cards";
-import AsteroidWatch from "@/components/ui/AsteroidWatch";
-import SpaceWeather from "@/components/ui/SpaceWeather";
-import EarthEvents from "@/components/ui/EarthEvents";
-import ExoplanetExplorer from "@/components/ui/ExoplanetExplorer";
-import FireballTracker from "@/components/ui/FireballTracker";
-import LiveLaunches from "@/components/ui/LiveLaunches";
 import PeopleInSpace from "@/components/ui/PeopleInSpace";
+import ObservatoryTabs from "@/components/ui/ObservatoryTabs";
 
 export default function ObservatoryPage() {
-  const [activeTab, setActiveTab] = useState<string>("launches");
-
-  const tabs = [
-    { id: "launches",   label: "Live Launches",     icon: Rocket },
-    { id: "asteroids",  label: "Asteroid Watch",     icon: Orbit },
-    { id: "weather",    label: "Space Weather",      icon: Sun },
-    { id: "exoplanets", label: "Exoplanets",         icon: Star },
-    { id: "earth",      label: "Earth Events",       icon: Globe2 },
-    { id: "fireballs",  label: "Fireballs",          icon: Flame },
-  ];
-
   return (
     <div className="relative">
       {/* ═══ HERO ═══ */}
@@ -43,45 +22,26 @@ export default function ObservatoryPage() {
         <div className="absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,transparent_50%,rgba(15,23,42,0.3)_100%)]" />
 
         <div className="relative z-10 w-full max-w-5xl mx-auto px-6 pt-32 pb-16 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
+          <div className="animate-fade-in-up">
             <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-accent-purple/30 text-accent-purple text-[10px] font-micro uppercase tracking-[3px] bg-accent-purple/5 backdrop-blur-md mb-8">
               <Eye className="w-3.5 h-3.5" />
               Live Data · Real-Time Tracking
             </span>
-          </motion.div>
+          </div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.1 }}
-            className="text-5xl md:text-7xl lg:text-8xl font-display text-white mb-6 leading-[1.05] drop-shadow-[0_4px_24px_rgba(0,0,0,0.7)]"
-          >
+          <h1 className="animate-fade-in-up delay-100 text-5xl md:text-7xl lg:text-8xl font-display text-white mb-6 leading-[1.05] drop-shadow-[0_4px_24px_rgba(0,0,0,0.7)]">
             SPACE
             <br />
             <span className="gradient-text">OBSERVATORY</span>
-          </motion.h1>
+          </h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-[15px] md:text-[17px] text-space-200 leading-[1.8] font-light mb-10 max-w-2xl mx-auto drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)]"
-          >
+          <p className="animate-fade-in-up delay-200 text-[15px] md:text-[17px] text-space-200 leading-[1.8] font-light mb-10 max-w-2xl mx-auto drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)]">
             Your real-time command center for the cosmos. Track asteroids, monitor solar storms,
             discover exoplanets, watch live launches, and observe Earth from space —
             powered by NASA, JPL, and SpaceDevs.
-          </motion.p>
+          </p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-5"
-          >
+          <div className="animate-fade-in-up delay-300 flex flex-col sm:flex-row items-center justify-center gap-5">
             <a href="#explore" className="btn-primary flex items-center justify-center gap-3 text-[13px] px-8 py-3.5 min-w-[200px]">
               <Telescope className="w-4 h-4" />
               START OBSERVING
@@ -89,15 +49,10 @@ export default function ObservatoryPage() {
             <Link href="/technology" className="btn-outline flex items-center justify-center gap-3 text-[13px] px-8 py-3.5 min-w-[200px]">
               NASA TECH LAB
             </Link>
-          </motion.div>
+          </div>
 
           {/* API count badges */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-            className="mt-16 flex flex-wrap items-center justify-center gap-3"
-          >
+          <div className="mt-16 flex flex-wrap items-center justify-center gap-3 animate-fade-in delay-500">
             {[
               "NASA NEO", "NASA DONKI", "Open Notify", "NASA EONET",
               "NASA CNEOS", "Exoplanet Archive", "Launch Library 2", "SpaceFlight News",
@@ -107,19 +62,12 @@ export default function ObservatoryPage() {
                 {api}
               </span>
             ))}
-          </motion.div>
+          </div>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5 }}
-          className="absolute bottom-10 left-1/2 -translate-x-1/2"
-        >
-          <motion.div animate={{ y: [0, 10, 0] }} transition={{ duration: 2, repeat: Infinity }}>
-            <ChevronDown className="w-8 h-8 text-space-400" />
-          </motion.div>
-        </motion.div>
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
+          <ChevronDown className="w-8 h-8 text-space-400" />
+        </div>
       </section>
 
       {/* ═══ PEOPLE IN SPACE LIVE WIDGET ═══ */}
@@ -138,50 +86,14 @@ export default function ObservatoryPage() {
             subtitle="Powered by NASA, JPL & SpaceDevs — updated automatically"
           />
 
-          {/* Tab Navigation */}
-          <div className="flex flex-wrap justify-center gap-2 mb-12">
-            {tabs.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 px-5 py-3 rounded-full text-xs font-micro uppercase tracking-widest transition-all duration-300 cursor-pointer ${
-                  activeTab === tab.id
-                    ? "bg-gradient-to-r from-accent-blue/20 to-accent-purple/20 text-white border border-accent-blue/40 shadow-[0_0_20px_rgba(56,189,248,0.1)]"
-                    : "bg-white/5 text-space-400 border border-white/10 hover:border-white/30 hover:text-white"
-                }`}
-              >
-                <tab.icon className="w-4 h-4" />
-                {tab.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Tab Content */}
-          <motion.div
-            key={activeTab}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-          >
-            {activeTab === "launches" && <LiveLaunches />}
-            {activeTab === "asteroids" && <AsteroidWatch />}
-            {activeTab === "weather" && <SpaceWeather />}
-            {activeTab === "exoplanets" && <ExoplanetExplorer />}
-            {activeTab === "earth" && <EarthEvents />}
-            {activeTab === "fireballs" && <FireballTracker />}
-          </motion.div>
+          <ObservatoryTabs />
         </div>
       </section>
 
       {/* ═══ CTA ═══ */}
       <section className="relative py-32 px-6">
         <div className="max-w-5xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="glass-card p-16 md:p-20 relative overflow-hidden bg-[#0f172a]/90 backdrop-blur-2xl"
-          >
+          <div className="glass-card p-16 md:p-20 relative overflow-hidden bg-[#0f172a]/90 backdrop-blur-2xl">
             <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-accent-purple via-accent-blue to-accent-cyan" />
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
               Want to go deeper?
@@ -198,7 +110,7 @@ export default function ObservatoryPage() {
                 NASA Tech Lab
               </Link>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
     </div>

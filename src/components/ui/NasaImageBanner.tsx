@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Camera, ExternalLink } from "lucide-react";
+import Image from "next/image";
 
 interface NasaImage {
   href: string;
@@ -101,8 +102,7 @@ export default function NasaImageBanner({ query, count = 6, title, cols = 3 }: P
               onClick={() => setSelected(selected?.data[0]?.nasa_id === img.data[0]?.nasa_id ? null : img)}
             >
               {thumbUrl && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
+                                <img
                   src={thumbUrl}
                   alt={imgTitle}
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
@@ -144,8 +144,7 @@ export default function NasaImageBanner({ query, count = 6, title, cols = 3 }: P
         >
           <div className="flex flex-col md:flex-row gap-6">
             <div className="w-full md:w-1/2 aspect-video rounded-xl overflow-hidden">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+                            <img
                 src={selected.links?.find(l => l.rel === "preview")?.href || ""}
                 alt={selected.data[0]?.title || ""}
                 className="w-full h-full object-cover"

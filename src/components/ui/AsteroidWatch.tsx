@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import NasaImageBanner from "./NasaImageBanner";
 import { createLogger } from "@/lib/logger";
+import Image from "next/image";
 
 const log = createLogger("AsteroidWatch");
 
@@ -83,8 +84,7 @@ export default function AsteroidWatch() {
     <div>
       {/* Hero Banner */}
       <div className="relative h-56 md:h-72 rounded-2xl overflow-hidden mb-8 border border-white/[0.06]">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/asteroid-banner.png" alt="Near-Earth Asteroid" className="w-full h-full object-cover" />
+                <Image src="/asteroid-banner.png" alt="Near-Earth Asteroid" fill className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/40 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#0f172a]/80 via-transparent to-transparent" />
         <div className="absolute bottom-0 left-0 p-8">

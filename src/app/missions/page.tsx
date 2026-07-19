@@ -7,6 +7,7 @@ import { SectionHeading } from "@/components/ui/Cards";
 import InlineNasaSearch from "@/components/ui/InlineNasaSearch";
 import { missions } from "@/lib/data";
 import { useState } from "react";
+import Image from "next/image";
 
 const statusColors: Record<string, string> = { COMPLETED: "badge-active", ACTIVE: "badge-development", PLANNED: "badge-retired", FAILED: "badge-retired" };
 

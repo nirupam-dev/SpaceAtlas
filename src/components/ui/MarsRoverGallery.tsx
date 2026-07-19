@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Camera, X, Loader2, ImageIcon, Telescope } from "lucide-react";
+import Image from "next/image";
 
 interface NasaImageItem {
   data: {
@@ -177,11 +178,10 @@ export default function MarsRoverGallery() {
                 onClick={() => setSelected(photo)}
                 className="group relative cursor-pointer rounded-xl overflow-hidden border border-space-500/20 hover:border-orange-500/40 transition-all duration-300 aspect-square"
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                                <Image
                   src={photo.img_src}
                   alt={photo.title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  fill className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                   loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -221,11 +221,10 @@ export default function MarsRoverGallery() {
               </button>
               <div className="flex flex-col lg:flex-row">
                 <div className="lg:w-2/3 relative min-h-[300px] lg:min-h-[500px]">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                                    <Image
                     src={selected.img_src}
                     alt={selected.title}
-                    className="absolute inset-0 w-full h-full object-contain bg-black"
+                    fill className="absolute inset-0 w-full h-full object-contain bg-black"
                   />
                 </div>
                 <div className="lg:w-1/3 p-8 flex flex-col justify-center">

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Telescope, Image as ImageIcon, ExternalLink, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface NasaItem {
   data: {
@@ -85,10 +86,10 @@ export default function NasaSearchFallback({ query, backLink, backText }: NasaSe
                   className="glass-card rounded-2xl overflow-hidden flex flex-col h-full group"
                 >
                   <div className="h-64 relative overflow-hidden">
-                    <img 
+                    <Image 
                       src={imageUrl} 
                       alt={info.title} 
-                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      fill className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                     <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md rounded-full p-2">
                       <ImageIcon className="w-4 h-4 text-white" />

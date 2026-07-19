@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Newspaper, ExternalLink, Calendar, Loader2 } from "lucide-react";
 import { SectionHeading } from "@/components/ui/Cards";
+import Image from "next/image";
 
 interface Article {
   id: number;
@@ -54,8 +55,7 @@ export default function NewsPage() {
                 {/* Image Header */}
                 <div className="relative h-48 sm:h-56 overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-t from-[#020617] to-transparent z-10" />
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img 
+                                    <img 
                     src={article.image_url} 
                     alt={article.title} 
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"

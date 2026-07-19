@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Telescope, X, Loader2, ImageIcon } from "lucide-react";
+import Image from "next/image";
 
 interface ApodItem {
   title: string;
@@ -64,11 +65,10 @@ export default function ApodGallery() {
             onClick={() => setSelected(item)}
             className="break-inside-avoid group relative cursor-pointer rounded-2xl overflow-hidden border border-space-500/20 hover:border-accent-amber/40 transition-all duration-500 hover:shadow-[0_20px_40px_-15px_rgba(251,191,36,0.15)]"
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+                        <Image
               src={item.url}
               alt={item.title}
-              className="w-full object-cover group-hover:scale-105 transition-transform duration-700"
+              fill className="w-full object-cover group-hover:scale-105 transition-transform duration-700"
               loading="lazy"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -105,11 +105,10 @@ export default function ApodGallery() {
               </button>
               <div className="flex flex-col lg:flex-row">
                 <div className="lg:w-2/3 relative min-h-[300px] lg:min-h-[500px]">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                                    <Image
                     src={selected.hdurl || selected.url}
                     alt={selected.title}
-                    className="absolute inset-0 w-full h-full object-cover"
+                    fill className="absolute inset-0 w-full h-full object-cover"
                   />
                 </div>
                 <div className="lg:w-1/3 p-8 flex flex-col justify-center">

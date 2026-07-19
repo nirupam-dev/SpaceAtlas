@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Search, ImageIcon, ExternalLink, X } from "lucide-react";
 import { SectionHeading } from "./Cards";
+import Image from "next/image";
 
 interface NasaImage {
   title: string;
@@ -21,11 +22,13 @@ export default function TechGallery({ embedded = false }: { embedded?: boolean }
   const [searchInput, setSearchInput] = useState("space technology");
   const [selectedImage, setSelectedImage] = useState<NasaImage | null>(null);
 
-  const fetchImages = (q: string) => {
+  useEffect(() => {
+    let active = true;
     setLoading(true);
-    fetch(`/api/nasa-images?q=${encodeURIComponent(q)}&media_type=image`)
+    fetch(`/api/nasa-images?q=${encodeURIComponent(query)}&media_type=image`)
       .then((res) => res.json())
       .then((data) => {
+        if (!active) return;
         if (data.collection?.items) {
           const mapped = data.collection.items
             .filter((item: any) => item.links?.[0]?.href)
@@ -42,11 +45,11 @@ export default function TechGallery({ embedded = false }: { embedded?: boolean }
         }
         setLoading(false);
       })
-      .catch(() => setLoading(false));
-  };
-
-  useEffect(() => {
-    fetchImages(query);
+      .catch(() => {
+        if (active) setLoading(false);
+      });
+      
+    return () => { active = false; };
   }, [query]);
 
   const handleSearch = (e: React.FormEvent) => {
@@ -132,11 +135,10 @@ export default function TechGallery({ embedded = false }: { embedded?: boolean }
                 className="group relative cursor-pointer rounded-2xl overflow-hidden bg-[#0f172a] border border-space-500/20 hover:border-accent-blue/40 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_20px_40px_-15px_rgba(56,189,248,0.15)]"
               >
                 <div className="aspect-[4/3] overflow-hidden">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                                    <Image
                     src={img.thumb}
                     alt={img.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                    fill className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -176,11 +178,10 @@ export default function TechGallery({ embedded = false }: { embedded?: boolean }
               </button>
               <div className="flex flex-col lg:flex-row">
                 <div className="lg:w-2/3 min-h-[300px] lg:min-h-[500px] relative">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                                    <Image
                     src={selectedImage.thumb}
                     alt={selectedImage.title}
-                    className="absolute inset-0 w-full h-full object-cover"
+                    fill className="absolute inset-0 w-full h-full object-cover"
                   />
                 </div>
                 <div className="lg:w-1/3 p-8 flex flex-col justify-center">

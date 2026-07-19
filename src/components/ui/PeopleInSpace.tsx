@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Users, Satellite, Rocket } from "lucide-react";
 import NasaImageBanner from "./NasaImageBanner";
 import { createLogger } from "@/lib/logger";
+import Image from "next/image";
 
 const log = createLogger("PeopleInSpace");
 
@@ -52,8 +53,7 @@ export default function PeopleInSpace() {
     >
       {/* ISS Hero Image Strip */}
       <div className="relative h-48 md:h-56 overflow-hidden">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+                <img
           src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/International_Space_Station_after_undocking_of_STS-132.jpg/1280px-International_Space_Station_after_undocking_of_STS-132.jpg"
           alt="International Space Station in orbit"
           className="w-full h-full object-cover"

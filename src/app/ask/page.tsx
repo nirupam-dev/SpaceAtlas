@@ -166,8 +166,7 @@ export default function AskAIPage() {
                         onClick={() => setLightbox(img)}
                         className="group relative rounded-xl overflow-hidden aspect-video border border-space-500/20 hover:border-accent-blue/50 transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(56,189,248,0.15)]"
                       >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
+                                                <img
                           src={img.url}
                           alt={img.title}
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
@@ -257,8 +256,7 @@ export default function AskAIPage() {
               onClick={(e) => e.stopPropagation()}
               className="relative max-w-4xl w-full rounded-2xl overflow-hidden border border-space-500/30 shadow-2xl"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={lightbox.url} alt={lightbox.title} className="w-full max-h-[75vh] object-contain bg-black" />
+                            <Image src={lightbox.url} alt={lightbox.title} fill className="w-full max-h-[75vh] object-contain bg-black" />
               <div className="bg-[#0f172a] px-6 py-4">
                 <p className="text-white font-semibold text-sm">{lightbox.title}</p>
                 {lightbox.description && (

@@ -7,6 +7,7 @@ import {
   CheckCircle, AlertCircle, Timer, Building2,
 } from "lucide-react";
 import { createLogger } from "@/lib/logger";
+import Image from "next/image";
 
 const log = createLogger("LiveLaunches");
 

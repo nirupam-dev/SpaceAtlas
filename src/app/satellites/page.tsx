@@ -7,6 +7,7 @@ import { SectionHeading } from "@/components/ui/Cards";
 import InlineNasaSearch from "@/components/ui/InlineNasaSearch";
 import { satellites } from "@/lib/data";
 import { useState } from "react";
+import Image from "next/image";
 
 const typeLabels: Record<string, string> = {
   SPACE_STATION: "Space Station",

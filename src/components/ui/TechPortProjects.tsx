@@ -22,45 +22,28 @@ export default function TechPortProjects() {
   const [error, setError] = useState(false);
   const [expandedId, setExpandedId] = useState<number | null>(null);
 
-  const fetchProjects = useCallback(async () => {
+  const loadData = async () => {
     setLoading(true);
     setError(false);
     try {
-      // First get project IDs
       const listRes = await fetch("/api/nasa-techport");
       const listData = await listRes.json();
+      if (listData.error) throw new Error();
 
-      if (listData.error) {
-        setError(true);
-        setLoading(false);
-        return;
-      }
-
-      // Get IDs from the projects list
       const ids: number[] = [];
       const projectList = Array.isArray(listData.projects) ? listData.projects : listData.projects?.projects;
-      
       if (projectList && Array.isArray(projectList)) {
-        // Get 9 random project IDs
         const shuffled = [...projectList].sort(() => 0.5 - Math.random());
         ids.push(...shuffled.slice(0, 9).map((p: { projectId: number }) => p.projectId));
       }
+      if (ids.length === 0) throw new Error();
 
-      if (ids.length === 0) {
-        setError(true);
-        setLoading(false);
-        return;
-      }
-
-      // Fetch details for each project
       const projectPromises = ids.map(async (id) => {
         try {
           const res = await fetch(`/api/nasa-techport?id=${id}`);
           const data = await res.json();
           return data.project || null;
-        } catch {
-          return null;
-        }
+        } catch { return null; }
       });
 
       const results = await Promise.all(projectPromises);
@@ -70,11 +53,11 @@ export default function TechPortProjects() {
       setError(true);
       setLoading(false);
     }
-  }, []);
+  };
 
   useEffect(() => {
-    fetchProjects();
-  }, [fetchProjects]);
+    loadData();
+  }, []); // eslint-disable-next-line react-hooks/exhaustive-deps
 
   if (loading) {
     return (
@@ -92,7 +75,7 @@ export default function TechPortProjects() {
         <AlertCircle className="w-16 h-16 text-space-600 mx-auto mb-4" />
         <p className="text-space-400 text-lg mb-4">Could not load TechPort projects.</p>
         <button
-          onClick={fetchProjects}
+          onClick={loadData}
           className="px-6 py-3 rounded-full bg-accent-blue/20 text-accent-blue border border-accent-blue/40 text-xs font-micro uppercase tracking-widest hover:bg-accent-blue/30 transition-colors"
         >
           Retry

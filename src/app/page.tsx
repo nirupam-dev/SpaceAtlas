@@ -13,6 +13,7 @@ import { SectionHeading, StatCard } from "@/components/ui/Cards";
 import NasaApod from "@/components/ui/NasaApod";
 import PeopleInSpace from "@/components/ui/PeopleInSpace";
 import { rockets, agencies, planets, missions, upcomingLaunches, satellites } from "@/lib/data";
+import Image from "next/image";
 
 interface NewsArticle {
   id: number;
@@ -294,8 +295,7 @@ export default function HomePage() {
                 <Link href={`/rockets/${rocket.slug}`} className="group relative flex flex-col h-full bg-[#0f172a]/40 border border-space-500/30 backdrop-blur-xl rounded-2xl overflow-hidden hover:-translate-y-2 transition-all duration-500 hover:shadow-[0_20px_40px_-15px_rgba(56,189,248,0.15)] hover:border-space-500/60">
                   {/* Photo header */}
                   <div className="relative h-[200px] w-full overflow-hidden bg-black shrink-0">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                                        <img
                       src={rocket.imageUrl || "/placeholder.jpg"}
                       alt={rocket.name}
                       className="object-cover w-full h-full object-center group-hover:scale-105 group-hover:rotate-1 transition-all duration-700 opacity-80 group-hover:opacity-100"
@@ -423,8 +423,7 @@ export default function HomePage() {
                 {/* Image */}
                 <div className="relative h-44 overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-transparent to-transparent z-10" />
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                                    <img
                     src={article.image_url}
                     alt={article.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"

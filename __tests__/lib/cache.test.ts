@@ -1,5 +1,5 @@
 // SpaceAtlas — Cache System Unit Tests
-import { MemoryCache } from '@/lib/cache';
+
 
 // We need to test the class directly, so we re-implement a minimal version
 // since the module only exports instances, not the class.

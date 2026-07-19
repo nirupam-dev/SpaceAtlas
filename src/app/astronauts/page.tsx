@@ -7,6 +7,7 @@ import { SectionHeading } from "@/components/ui/Cards";
 import InlineNasaSearch from "@/components/ui/InlineNasaSearch";
 import { astronauts } from "@/lib/data";
 import { useState } from "react";
+import Image from "next/image";
 
 const statusColors: Record<string, string> = { ACTIVE: "badge-active", RETIRED: "badge-retired", DECEASED: "badge-retired", IN_TRAINING: "badge-development" };
 
