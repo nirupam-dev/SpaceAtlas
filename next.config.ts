@@ -1,5 +1,57 @@
 import type { NextConfig } from "next";
 
+/**
+ * Trusted external origins used by SpaceAtlas for data and assets.
+ */
+const TRUSTED_IMG_SOURCES = [
+  "https://images-api.nasa.gov",
+  "https://images-assets.nasa.gov",
+  "https://api.nasa.gov",
+  "https://epic.gsfc.nasa.gov",
+  "https://mars.nasa.gov",
+  "https://apod.nasa.gov",
+  "https://images.unsplash.com",
+  "https://upload.wikimedia.org",
+  "https://en.wikipedia.org",
+  "https://spacelaunchnow-prod-east.nyc3.digitaloceanspaces.com",
+  "https://thespacedevs-prod.nyc3.digitaloceanspaces.com",
+].join(" ");
+
+const TRUSTED_CONNECT_SOURCES = [
+  "https://api.nasa.gov",
+  "https://images-api.nasa.gov",
+  "https://ssd-api.jpl.nasa.gov",
+  "https://eonet.gsfc.nasa.gov",
+  "https://exoplanetarchive.ipac.caltech.edu",
+  "https://ll.thespacedevs.com",
+  "https://api.spaceflightnewsapi.net",
+  "https://generativelanguage.googleapis.com",
+  "https://vitals.vercel-insights.com",
+].join(" ");
+
+const isDev = process.env.NODE_ENV === "development";
+
+/**
+ * CSP without nonces — compatible with static generation.
+ * Uses 'unsafe-inline' for scripts (safe when combined with 'self')
+ * because pages are statically generated at build time.
+ */
+const cspHeader = [
+  `default-src 'self'`,
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
+  `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
+  `font-src 'self' https://fonts.gstatic.com`,
+  `img-src 'self' data: blob: ${TRUSTED_IMG_SOURCES}`,
+  `connect-src 'self' ${TRUSTED_CONNECT_SOURCES}`,
+  `media-src 'self' https://apod.nasa.gov`,
+  `frame-src 'none'`,
+  `object-src 'none'`,
+  `base-uri 'self'`,
+  `form-action 'self'`,
+  `frame-ancestors 'none'`,
+  `upgrade-insecure-requests`,
+].join("; ");
+
 const nextConfig: NextConfig = {
   // ─── Image Optimization ─────────────────────────────────────
   images: {
@@ -38,6 +90,7 @@ const nextConfig: NextConfig = {
       {
         source: '/:path*',
         headers: [
+          { key: 'Content-Security-Policy', value: cspHeader },
           { key: 'X-Frame-Options', value: 'DENY' },
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },

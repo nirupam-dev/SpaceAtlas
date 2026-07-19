@@ -2,84 +2,23 @@
  * ─── Security Middleware ──────────────────────────────────────
  *
  * Implements enterprise-grade security headers including:
- * - Content Security Policy (CSP) — prevents XSS attacks
  * - Strict-Transport-Security (HSTS) — enforces HTTPS
  * - X-Frame-Options — prevents clickjacking
  * - X-Content-Type-Options — prevents MIME sniffing
  * - Referrer-Policy — controls referrer information
  * - Permissions-Policy — restricts browser features
  *
- * CSP is configured with a nonce-based approach for inline scripts
- * and strict source allowlists for all external resources.
+ * Note: CSP is configured in next.config.ts via static headers
+ * because pages are statically generated (no per-request nonce).
  */
 
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-/**
- * Trusted external origins used by SpaceAtlas for data and assets.
- * These are the ONLY external origins allowed in the CSP.
- */
-const TRUSTED_IMG_SOURCES = [
-  "https://images-api.nasa.gov",
-  "https://images-assets.nasa.gov",
-  "https://api.nasa.gov",
-  "https://epic.gsfc.nasa.gov",
-  "https://mars.nasa.gov",
-  "https://apod.nasa.gov",
-  "https://images.unsplash.com",
-  "https://upload.wikimedia.org",
-  "https://en.wikipedia.org",
-  "https://spacelaunchnow-prod-east.nyc3.digitaloceanspaces.com",
-  "https://thespacedevs-prod.nyc3.digitaloceanspaces.com",
-].join(" ");
-
-const TRUSTED_CONNECT_SOURCES = [
-  "https://api.nasa.gov",
-  "https://images-api.nasa.gov",
-  "https://ssd-api.jpl.nasa.gov",
-  "https://eonet.gsfc.nasa.gov",
-  "https://exoplanetarchive.ipac.caltech.edu",
-  "https://ll.thespacedevs.com",
-  "https://api.spaceflightnewsapi.net",
-  "https://generativelanguage.googleapis.com",
-  "https://vitals.vercel-insights.com",
-].join(" ");
-
 export function middleware(request: NextRequest) {
-  const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
-  const isDev = process.env.NODE_ENV === "development";
-
-  // ─── Content Security Policy ──────────────────────────────
-  const csp = [
-    `default-src 'self'`,
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${isDev ? " 'unsafe-eval'" : ""}`,
-    `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
-    `font-src 'self' https://fonts.gstatic.com`,
-    `img-src 'self' data: blob: ${TRUSTED_IMG_SOURCES}`,
-    `connect-src 'self' ${TRUSTED_CONNECT_SOURCES}`,
-    `media-src 'self' https://apod.nasa.gov`,
-    `frame-src 'none'`,
-    `object-src 'none'`,
-    `base-uri 'self'`,
-    `form-action 'self'`,
-    `frame-ancestors 'none'`,
-    `upgrade-insecure-requests`,
-  ].join("; ");
-
-  // Clone request headers to pass nonce and CSP to Server Components
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set("x-nonce", nonce);
-  requestHeaders.set("Content-Security-Policy", csp);
-
-  const response = NextResponse.next({
-    request: {
-      headers: requestHeaders,
-    },
-  });
+  const response = NextResponse.next();
 
   // ─── Set Security Headers on Response ─────────────────────
-  response.headers.set("Content-Security-Policy", csp);
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("X-Frame-Options", "DENY");
   response.headers.set("X-XSS-Protection", "1; mode=block");
