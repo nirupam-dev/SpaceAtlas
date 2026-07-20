@@ -167,7 +167,7 @@ export default function LiveLaunches() {
                     fill
                     sizes="(max-width: 768px) 100vw, 50vw"
                     className="object-cover group-hover:scale-105 transition-transform duration-700"
-
+                    unoptimized={true}
                   />
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-[#0c1222] via-[#162038] to-[#0f172a] flex items-center justify-center">

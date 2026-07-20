@@ -60,6 +60,7 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'upload.wikimedia.org' },
       { protocol: 'https', hostname: 'en.wikipedia.org' },
       { protocol: 'https', hostname: 'images-api.nasa.gov' },
+      { protocol: 'https', hostname: 'images-assets.nasa.gov' },
       { protocol: 'https', hostname: 'api.nasa.gov' },
       { protocol: 'https', hostname: 'epic.gsfc.nasa.gov' },
       { protocol: 'https', hostname: 'mars.nasa.gov' },
