@@ -161,15 +161,14 @@ export default function LiveLaunches() {
               <div className="relative h-52 overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/30 to-transparent z-10" />
                 {imgSrc ? (
-                  <>{ /* eslint-disable-next-line @next/next/no-img-element */ }
-                  <img
+                  <Image
                     src={imgSrc}
                     alt={launch.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    loading="lazy"
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+                    unoptimized
                   />
-                  </>
                 ) : (
                   <div className="w-full h-full bg-gradient-to-br from-[#0c1222] via-[#162038] to-[#0f172a] flex items-center justify-center">
                     <div className="relative">

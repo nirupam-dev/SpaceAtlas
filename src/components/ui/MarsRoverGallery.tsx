@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Camera, X, Loader2, ImageIcon, Telescope } from "lucide-react";
 import Image from "next/image";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger("MarsRoverGallery");
 
 interface NasaImageItem {
   data: {
@@ -96,7 +99,12 @@ export default function MarsRoverGallery() {
         setPhotos(mapped);
         setLoading(false);
       })
-      .catch(() => {
+      .catch((err: unknown) => {
+        log.error("Failed to fetch Mars rover images", {
+          rover,
+          preset: currentPreset.label,
+          error: err instanceof Error ? err.message : String(err),
+        });
         setError(true);
         setLoading(false);
       });

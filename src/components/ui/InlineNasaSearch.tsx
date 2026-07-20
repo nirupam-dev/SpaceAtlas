@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Telescope, Image as ImageIcon, X, Loader2, ExternalLink } from "lucide-react";
 import Image from "next/image";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger("InlineNasaSearch");
 
 interface NasaImageItem {
   data: {
@@ -61,7 +64,12 @@ export default function InlineNasaSearch({ query, icon, category = "items" }: In
         }
         setLoading(false);
       })
-      .catch(() => {
+      .catch((err: unknown) => {
+        log.error("Failed to search NASA archives", {
+          query,
+          category,
+          error: err instanceof Error ? err.message : String(err),
+        });
         setLoading(false);
       });
   }, [query, category]); // eslint-disable-line react-hooks/exhaustive-deps

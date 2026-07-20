@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { FileText, Code2, Zap, ExternalLink, Loader2 } from "lucide-react";
 import Image from "next/image";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger("NasaPatents");
 
 interface TechItem {
   id: string;
@@ -38,7 +41,13 @@ export default function NasaPatents() {
         }
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch((err: unknown) => {
+        log.error("Failed to fetch NASA tech transfer data", {
+          category,
+          error: err instanceof Error ? err.message : String(err),
+        });
+        setLoading(false);
+      });
   }, [category]);
 
   const categories = [
@@ -95,12 +104,13 @@ export default function NasaPatents() {
               {/* Image if available */}
               {item.imageUrl && (
                 <div className="relative h-40 -mx-6 -mt-6 mb-5 overflow-hidden rounded-t-2xl">
-                                    <img
+                                    <Image
                     src={item.imageUrl}
                     alt={item.title}
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    loading="lazy"
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                    unoptimized
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] to-transparent" />
                 </div>

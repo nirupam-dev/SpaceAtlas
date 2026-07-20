@@ -97,11 +97,13 @@ export default function RocketDetailPage({
           style={{ y: imageY }}
         >
           <div className="absolute inset-0 w-full h-full">
-            <img
+            <Image
               src={rocket.imageUrl || "/placeholder.jpg"}
               alt={rocket.name}
-              className="absolute right-0 top-0 w-full md:w-[60%] h-full object-cover object-center opacity-60 md:opacity-80"
-              onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+              fill
+              sizes="100vw"
+              className="object-cover object-center opacity-60 md:opacity-80"
+              priority
             />
           </div>
           {/* Gradient overlays for readability */}

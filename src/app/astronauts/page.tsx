@@ -85,11 +85,13 @@ export default function AstronautsPage() {
                     
                     {/* Image Area */}
                     <div className="relative h-[220px] w-full overflow-hidden bg-black shrink-0">
-                      <img 
+                      <Image 
                         src={astronaut.imageUrl || "/placeholder.jpg"} 
                         alt={astronaut.name} 
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         className="object-cover w-full h-full object-top group-hover:scale-105 group-hover:rotate-1 transition-all duration-700 opacity-80 group-hover:opacity-100" 
-                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                        unoptimized
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/20 to-transparent" />
                       

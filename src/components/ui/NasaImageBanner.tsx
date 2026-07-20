@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Camera, ExternalLink } from "lucide-react";
 import Image from "next/image";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger("NasaImageBanner");
 
 interface NasaImage {
   href: string;
@@ -40,7 +43,12 @@ export default function NasaImageBanner({ query, count = 6, title, cols = 3 }: P
         );
         setImages(withImages.slice(0, count));
       })
-      .catch(() => {})
+      .catch((err: unknown) => {
+        log.error("Failed to fetch NASA images", {
+          query,
+          error: err instanceof Error ? err.message : String(err),
+        });
+      })
       .finally(() => setLoading(false));
   }, [query, count]);
 
@@ -102,12 +110,13 @@ export default function NasaImageBanner({ query, count = 6, title, cols = 3 }: P
               onClick={() => setSelected(selected?.data[0]?.nasa_id === img.data[0]?.nasa_id ? null : img)}
             >
               {thumbUrl && (
-                                <img
+                <Image
                   src={thumbUrl}
                   alt={imgTitle}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                  loading="lazy"
-                  onError={(e) => { (e.target as HTMLImageElement).parentElement!.style.display = 'none'; }}
+                  fill
+                  sizes="(max-width: 768px) 50vw, 25vw"
+                  className="object-cover group-hover:scale-110 transition-transform duration-700"
+                  unoptimized
                 />
               )}
               {/* Gradient overlay */}
@@ -143,11 +152,14 @@ export default function NasaImageBanner({ query, count = 6, title, cols = 3 }: P
           className="mt-4 glass-card p-6 overflow-hidden"
         >
           <div className="flex flex-col md:flex-row gap-6">
-            <div className="w-full md:w-1/2 aspect-video rounded-xl overflow-hidden">
-                            <img
+            <div className="w-full md:w-1/2 aspect-video rounded-xl overflow-hidden relative">
+              <Image
                 src={selected.links?.find(l => l.rel === "preview")?.href || ""}
                 alt={selected.data[0]?.title || ""}
-                className="w-full h-full object-cover"
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover"
+                unoptimized
               />
             </div>
             <div className="flex-1">

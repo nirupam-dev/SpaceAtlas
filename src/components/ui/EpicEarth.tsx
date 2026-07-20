@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Globe2, ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import Image from "next/image";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger("EpicEarth");
 
 interface EpicImage {
   identifier: string;
@@ -30,7 +33,13 @@ export default function EpicEarth() {
         }
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch((err: unknown) => {
+        log.error("Failed to fetch EPIC Earth imagery", {
+          collection,
+          error: err instanceof Error ? err.message : String(err),
+        });
+        setLoading(false);
+      });
   }, [collection]);
 
   const getEpicImageUrl = (img: EpicImage) => {

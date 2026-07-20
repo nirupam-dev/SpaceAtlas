@@ -124,13 +124,13 @@ export default function SatelliteDetailPage({
           style={{ y: imageY }}
         >
           <div className="absolute inset-0 w-full h-full">
-            <img
+            <Image
               src={satellite.imageUrl || "/placeholder.jpg"}
               alt={satellite.name}
+              fill
+              sizes="100vw"
               className="absolute right-0 top-0 w-full md:w-[60%] h-full object-cover object-center opacity-60 md:opacity-80"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = "none";
-              }}
+              unoptimized
             />
           </div>
           {/* Gradient overlays for readability */}

@@ -5,6 +5,9 @@ import { motion } from "framer-motion";
 import { Newspaper, ExternalLink, Calendar, Loader2 } from "lucide-react";
 import { SectionHeading } from "@/components/ui/SectionCards";
 import Image from "next/image";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger("NewsPage");
 
 interface Article {
   id: number;
@@ -29,7 +32,10 @@ export default function NewsPage() {
         }
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch((err: unknown) => {
+        log.error("Failed to fetch news", { error: err instanceof Error ? err.message : String(err) });
+        setLoading(false);
+      });
   }, []);
 
   return (
@@ -55,12 +61,13 @@ export default function NewsPage() {
                 {/* Image Header */}
                 <div className="relative h-48 sm:h-56 overflow-hidden">
                   <div className="absolute inset-0 bg-gradient-to-t from-[#020617] to-transparent z-10" />
-                                    <img 
+                  <Image 
                     src={article.image_url} 
                     alt={article.title} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    loading="lazy"
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover group-hover:scale-105 transition-transform duration-700"
+                    unoptimized
                   />
                   <div className="absolute top-4 left-4 z-20">
                     <span className="badge badge-active bg-black/60 backdrop-blur-md border-white/10">

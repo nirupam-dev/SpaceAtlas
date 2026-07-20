@@ -40,12 +40,13 @@ export default function PeopleInSpace() {
     >
       {/* ISS Hero Image Strip */}
       <div className="relative h-48 md:h-56 overflow-hidden">
-                <img
+                <Image
           src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/International_Space_Station_after_undocking_of_STS-132.jpg/1280px-International_Space_Station_after_undocking_of_STS-132.jpg"
           alt="International Space Station in orbit"
-          className="w-full h-full object-cover"
-          loading="lazy"
-          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+          fill
+          sizes="100vw"
+          className="object-cover"
+          priority={false}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/50 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#0f172a]/60 via-transparent to-transparent" />

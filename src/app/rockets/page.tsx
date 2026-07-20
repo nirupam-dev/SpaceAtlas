@@ -109,16 +109,12 @@ export default function RocketsPage() {
                   
                   {/* Image Area */}
                   <div className="relative h-[220px] w-full overflow-hidden bg-gradient-to-br from-[#0f172a] to-[#1e293b] shrink-0">
-                    <img 
+                    <Image 
                       src={rocket.imageUrl || "/placeholder.jpg"} 
                       alt={rocket.name} 
-                      className="object-cover w-full h-full object-center group-hover:scale-105 group-hover:rotate-1 transition-all duration-700 opacity-80 group-hover:opacity-100" 
-                      onError={(e) => { 
-                        const img = e.target as HTMLImageElement;
-                        img.style.display = 'none'; 
-                        const fallback = img.parentElement?.querySelector('.img-fallback') as HTMLElement;
-                        if (fallback) fallback.style.display = 'flex';
-                      }}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      className="object-cover object-center group-hover:scale-105 group-hover:rotate-1 transition-all duration-700 opacity-80 group-hover:opacity-100" 
                     />
                     <div className="img-fallback hidden absolute inset-0 items-center justify-center">
                       <Rocket className="w-16 h-16 text-space-500/40" />

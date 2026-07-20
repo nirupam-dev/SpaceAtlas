@@ -161,11 +161,12 @@ export default function SolarSystemPage() {
                     
                     {/* Top 60% Image Area */}
                     <div className="relative h-[320px] w-full overflow-hidden bg-black shrink-0">
-                      <img 
+                      <Image 
                         src={planet.imageUrl || "/placeholder.jpg"} 
                         alt={planet.name} 
-                        className="object-cover w-full h-full group-hover:scale-105 group-hover:rotate-1 transition-all duration-700 opacity-80 group-hover:opacity-100" 
-                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        className="object-cover group-hover:scale-105 group-hover:rotate-1 transition-all duration-700 opacity-80 group-hover:opacity-100" 
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/20 to-transparent" />
                       

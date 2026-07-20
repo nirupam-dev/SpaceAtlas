@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Telescope, X, Loader2, ImageIcon } from "lucide-react";
 import Image from "next/image";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger("ApodGallery");
 
 interface ApodItem {
   title: string;
@@ -30,7 +33,12 @@ export default function ApodGallery() {
         }
         setLoading(false);
       })
-      .catch(() => setLoading(false));
+      .catch((err: unknown) => {
+        log.error("Failed to fetch APOD gallery", {
+          error: err instanceof Error ? err.message : String(err),
+        });
+        setLoading(false);
+      });
   }, []);
 
   if (loading) {

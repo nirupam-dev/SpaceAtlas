@@ -166,11 +166,13 @@ export default function AskAIPage() {
                         onClick={() => setLightbox(img)}
                         className="group relative rounded-xl overflow-hidden aspect-video border border-space-500/20 hover:border-accent-blue/50 transition-all duration-300 shadow-lg hover:shadow-[0_0_20px_rgba(56,189,248,0.15)]"
                       >
-                                                <img
+                                                <Image
                           src={img.url}
                           alt={img.title}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 33vw"
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                          onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                          unoptimized
                         />
                         {/* Overlay */}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3">

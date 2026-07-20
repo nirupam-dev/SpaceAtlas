@@ -101,7 +101,7 @@ class MemoryCache {
         // Fire and forget — don't await
         fetcher()
           .then((fresh) => this.set(key, fresh, ttlMs))
-          .catch(() => {/* keep stale data */});
+          .catch(() => {/* keep stale data — SWR pattern intentionally tolerates this */});
       }
       return cached;
     }

@@ -5,6 +5,9 @@ import { motion } from "framer-motion";
 import { Search, ImageIcon, ExternalLink, X } from "lucide-react";
 import { SectionHeading } from "./SectionCards";
 import Image from "next/image";
+import { createLogger } from "@/lib/logger";
+
+const log = createLogger("TechGallery");
 
 interface NasaImage {
   title: string;
@@ -45,7 +48,11 @@ export default function TechGallery({ embedded = false }: { embedded?: boolean }
         }
         setLoading(false);
       })
-      .catch(() => {
+      .catch((err: unknown) => {
+        log.error("Failed to fetch NASA images", {
+          query,
+          error: err instanceof Error ? err.message : String(err),
+        });
         if (active) setLoading(false);
       });
       
