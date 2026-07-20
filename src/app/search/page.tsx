@@ -81,8 +81,8 @@ function SearchResults() {
       
       const data = await res.json();
       setResponse(data);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Search failed');
     } finally {
       setLoading(false);
     }

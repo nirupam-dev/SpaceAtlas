@@ -82,7 +82,7 @@ export default function CompareRocketsPage() {
                   <tr key={field.key} className="border-b border-space-800 hover:bg-space-800/30 transition-colors">
                     <td className="py-3 px-6 text-space-400">{field.label}</td>
                     {selectedRockets.map((r) => {
-                      const val = (r as Record<string, unknown>)[field.key];
+                      const val = (r as unknown as Record<string, unknown>)[field.key];
                       const formatted = field.format ? field.format(val as number) : String(val ?? "N/A");
                       return <td key={r.id} className="py-3 px-6 text-center text-white font-medium">{formatted}</td>;
                     })}

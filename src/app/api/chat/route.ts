@@ -104,7 +104,7 @@ async function fetchNasaImages(query: string): Promise<NasaImage[]> {
     if (!res.ok) return [];
 
     const data = await res.json();
-    const items: any[] = data?.collection?.items ?? [];
+    const items: { data?: { title?: string; description?: string; nasa_id?: string }[]; links?: { rel: string; href: string }[] }[] = data?.collection?.items ?? [];
 
     // Extract key topic words for relevance filtering
     const topicWords = keyword.split(/\s+/).filter(w => w.length > 2);
@@ -112,8 +112,8 @@ async function fetchNasaImages(query: string): Promise<NasaImage[]> {
     const images: NasaImage[] = [];
     for (const item of items) {
       if (images.length >= 3) break;
-      const links: any[] = item.links ?? [];
-      const imgLink = links.find((l: any) => l.rel === "preview");
+      const links: { rel: string; href: string }[] = item.links ?? [];
+      const imgLink = links.find((l) => l.rel === "preview");
       const meta = item.data?.[0];
       if (!imgLink?.href || !meta?.title) continue;
 
@@ -185,14 +185,14 @@ IMPORTANT: Prefer facts from the reference data above when they are relevant. If
 
     // Format history for Gemini API
     const formattedHistory = history
-      ? history.map((msg: any) => ({
+      ? history.map((msg: { role: string; text: string }) => ({
           role: msg.role === "user" ? "user" : "model",
           parts: [{ text: msg.text }],
         }))
       : [];
 
     // Try models with fallback on 503 errors
-    let lastError: any = null;
+    let lastError: Error | null = null;
     let text = '';
 
     for (const modelName of MODELS) {
@@ -207,9 +207,9 @@ IMPORTANT: Prefer facts from the reference data above when they are relevant. If
         text = response.text();
         lastError = null;
         break; // Success — stop trying models
-      } catch (err: any) {
-        lastError = err;
-        const is503 = err?.message?.includes('503') || err?.status === 503;
+      } catch (err: unknown) {
+        lastError = err instanceof Error ? err : new Error(String(err));
+        const is503 = lastError?.message?.includes('503');
         if (!is503) throw err; // Non-503 errors should not retry
         console.warn(`[Chat] ${modelName} returned 503, trying next model...`);
       }
@@ -234,10 +234,11 @@ IMPORTANT: Prefer facts from the reference data above when they are relevant. If
         matchType: s.matchType,
       })),
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Failed to generate response.';
     console.error("Error with Gemini API:", error);
     return NextResponse.json(
-      { error: error.message || "Failed to generate response." },
+      { error: message },
       { status: 500 }
     );
   }

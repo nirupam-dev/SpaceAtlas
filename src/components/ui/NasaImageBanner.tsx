@@ -116,7 +116,7 @@ export default function NasaImageBanner({ query, count = 6, title, cols = 3 }: P
                   fill
                   sizes="(max-width: 768px) 50vw, 25vw"
                   className="object-cover group-hover:scale-110 transition-transform duration-700"
-                  unoptimized
+
                 />
               )}
               {/* Gradient overlay */}
@@ -159,7 +159,7 @@ export default function NasaImageBanner({ query, count = 6, title, cols = 3 }: P
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover"
-                unoptimized
+
               />
             </div>
             <div className="flex-1">

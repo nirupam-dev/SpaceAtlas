@@ -130,7 +130,7 @@ export default function SatelliteDetailPage({
               fill
               sizes="100vw"
               className="absolute right-0 top-0 w-full md:w-[60%] h-full object-cover object-center opacity-60 md:opacity-80"
-              unoptimized
+
             />
           </div>
           {/* Gradient overlays for readability */}

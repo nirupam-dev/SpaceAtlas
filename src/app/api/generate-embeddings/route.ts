@@ -71,10 +71,12 @@ export async function GET() {
         outputFile: 'src/lib/embeddings.json',
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    const stack = error instanceof Error ? error.stack : undefined;
     console.error('[Embedding Pipeline] Error:', error);
     return NextResponse.json(
-      { error: error.message, stack: process.env.NODE_ENV === 'development' ? error.stack : undefined },
+      { error: message, stack: process.env.NODE_ENV === 'development' ? stack : undefined },
       { status: 500 }
     );
   }

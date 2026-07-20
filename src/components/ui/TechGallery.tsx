@@ -34,9 +34,9 @@ export default function TechGallery({ embedded = false }: { embedded?: boolean }
         if (!active) return;
         if (data.collection?.items) {
           const mapped = data.collection.items
-            .filter((item: any) => item.links?.[0]?.href)
+            .filter((item: { links?: { href: string }[] }) => item.links?.[0]?.href)
             .slice(0, 12)
-            .map((item: any) => ({
+            .map((item: { data?: { title?: string; description?: string; nasa_id?: string; date_created?: string; center?: string }[]; links: { href: string }[] }) => ({
               title: item.data?.[0]?.title || "Untitled",
               description: item.data?.[0]?.description || "",
               nasa_id: item.data?.[0]?.nasa_id || "",

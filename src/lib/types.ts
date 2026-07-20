@@ -72,12 +72,38 @@ export interface Mission extends BaseEntity {
 // ─── Astronauts ────────────────────────────────────────────────
 export type AstronautStatus = 'ACTIVE' | 'RETIRED' | 'DECEASED';
 
-export interface Astronaut extends BaseEntity {
+export interface Astronaut {
+  id: string;
+  name: string;
+  slug: string;
+  imageUrl: string;
   nationality: string;
   status: AstronautStatus;
   spaceWalks: number;
   timeInSpace: number;
   biography: string;
+  description?: string;
+}
+
+// ─── Satellites ────────────────────────────────────────────────
+export type SatelliteType = 'SPACE_STATION' | 'SPACE_TELESCOPE' | 'COMMUNICATION' | 'NAVIGATION' | 'EARTH_OBSERVATION' | 'WEATHER' | 'SCIENTIFIC';
+
+export interface Satellite {
+  id: string;
+  name: string;
+  slug: string;
+  operator: string;
+  country: string;
+  type: SatelliteType;
+  orbit: string;
+  altitude: number;
+  mass: number;
+  launchDate: string;
+  status: 'ACTIVE' | 'DECOMMISSIONED' | 'RETIRED' | 'DEORBITED';
+  lifetime: string;
+  purpose: string;
+  description: string;
+  imageUrl: string;
 }
 
 // ─── News ──────────────────────────────────────────────────────

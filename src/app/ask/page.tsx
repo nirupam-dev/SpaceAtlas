@@ -76,12 +76,12 @@ export default function AskAIPage() {
       }
 
       setMessages([...newMessages, { role: "model", text: data.text, images: data.images ?? [] }]);
-    } catch (error: any) {
+    } catch (error: unknown) {
       setMessages([
         ...newMessages,
         {
           role: "model",
-          text: `**System Error:** ${error.message}. Please verify your GEMINI_API_KEY is properly configured.`,
+          text: `**System Error:** ${error instanceof Error ? error.message : String(error)}. Please verify your GEMINI_API_KEY is properly configured.`,
         },
       ]);
     } finally {
@@ -172,7 +172,7 @@ export default function AskAIPage() {
                           fill
                           sizes="(max-width: 768px) 100vw, 33vw"
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                          unoptimized
+
                         />
                         {/* Overlay */}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3">

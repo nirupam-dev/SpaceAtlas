@@ -67,7 +67,7 @@ export default function NewsPage() {
                     fill
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     className="object-cover group-hover:scale-105 transition-transform duration-700"
-                    unoptimized
+
                   />
                   <div className="absolute top-4 left-4 z-20">
                     <span className="badge badge-active bg-black/60 backdrop-blur-md border-white/10">
