@@ -15,6 +15,7 @@ const TRUSTED_IMG_SOURCES = [
   "https://en.wikipedia.org",
   "https://spacelaunchnow-prod-east.nyc3.digitaloceanspaces.com",
   "https://thespacedevs-prod.nyc3.digitaloceanspaces.com",
+  "https://europeanspaceflight.com",
 ].join(" ");
 
 const TRUSTED_CONNECT_SOURCES = [
@@ -43,7 +44,7 @@ const cspHeader = [
   `font-src 'self' https://fonts.gstatic.com`,
   `img-src 'self' data: blob: ${TRUSTED_IMG_SOURCES}`,
   `connect-src 'self' ${TRUSTED_CONNECT_SOURCES}`,
-  `media-src 'self' https://apod.nasa.gov`,
+  `media-src 'self' https://apod.nasa.gov https://sxcontent9668.azureedge.us https://content.spacex.com`,
   `frame-src 'none'`,
   `object-src 'none'`,
   `base-uri 'self'`,
@@ -67,6 +68,7 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'apod.nasa.gov' },
       { protocol: 'https', hostname: 'spacelaunchnow-prod-east.nyc3.digitaloceanspaces.com' },
       { protocol: 'https', hostname: 'thespacedevs-prod.nyc3.digitaloceanspaces.com' },
+      { protocol: 'https', hostname: 'europeanspaceflight.com' },
     ],
     formats: ['image/avif', 'image/webp'],
     minimumCacheTTL: 86400, // 24 hours
