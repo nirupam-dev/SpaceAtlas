@@ -141,8 +141,8 @@ export default function TechGallery({ embedded = false }: { embedded?: boolean }
                 onClick={() => setSelectedImage(img)}
                 className="group relative cursor-pointer rounded-2xl overflow-hidden bg-[#0f172a] border border-space-500/20 hover:border-accent-blue/40 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_20px_40px_-15px_rgba(56,189,248,0.15)]"
               >
-                <div className="aspect-[4/3] overflow-hidden">
-                                    <Image
+                <div className="relative aspect-[4/3] overflow-hidden">
+                  <Image
                     src={img.thumb}
                     alt={img.title}
                     fill className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
@@ -154,6 +154,9 @@ export default function TechGallery({ embedded = false }: { embedded?: boolean }
                   <h4 className="text-sm font-semibold text-white line-clamp-2 leading-snug mb-2 group-hover:text-accent-blue transition-colors">
                     {img.title}
                   </h4>
+                  <p className="text-[11px] text-space-400 line-clamp-2 mb-3 leading-relaxed">
+                    {img.description || "No description available."}
+                  </p>
                   <div className="flex items-center justify-between text-[10px] font-micro text-space-500 uppercase tracking-widest">
                     <span>{img.center || "NASA"}</span>
                     <span>{img.date_created ? new Date(img.date_created).getFullYear() : ""}</span>
