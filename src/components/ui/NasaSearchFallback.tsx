@@ -73,7 +73,8 @@ export default function NasaSearchFallback({ query, backLink, backText }: NasaSe
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {results.map((item, i) => {
               const info = item.data?.[0];
-              const imageUrl = item.links?.[0]?.href;
+              const rawUrl = item.links?.[0]?.href;
+              const imageUrl = rawUrl ? rawUrl.replace(/^http:/, "https:").replace(/ /g, "%20") : undefined;
               
               if (!info || !imageUrl) return null;
 

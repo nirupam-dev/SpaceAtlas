@@ -91,7 +91,7 @@ export default function MarsRoverGallery() {
             title: item.data[0].title,
             description: item.data[0].description ?? "",
             date: item.data[0].date_created,
-            img_src: item.links![0].href,
+            img_src: item.links![0].href.replace(/^http:/, "https:").replace(/ /g, "%20"),
             rover: rover,
             keyword: currentPreset.label,
           }));

@@ -119,7 +119,8 @@ export default function InlineNasaSearch({ query, icon, category = "items" }: In
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {results.map((item, i) => {
           const info = item.data[0];
-          const imageUrl = item.links?.[0]?.href;
+          const rawUrl = item.links?.[0]?.href;
+          const imageUrl = rawUrl ? rawUrl.replace(/^http:/, "https:").replace(/ /g, "%20") : undefined;
           if (!info || !imageUrl) return null;
 
           return (
@@ -196,9 +197,9 @@ export default function InlineNasaSearch({ query, icon, category = "items" }: In
                 <X className="w-5 h-5" />
               </button>
               <div className="flex flex-col lg:flex-row">
-                <div className="lg:w-2/3 relative min-h-[300px] lg:min-h-[500px]">
+                  <div className="lg:w-2/3 relative min-h-[300px] lg:min-h-[500px]">
                                     <Image
-                    src={selected.links?.[0]?.href || ""}
+                    src={(selected.links?.[0]?.href || "").replace(/^http:/, "https:").replace(/ /g, "%20")}
                     alt={selected.data[0].title}
                     fill className="absolute inset-0 w-full h-full object-contain bg-black"
                   />

@@ -95,7 +95,8 @@ export default function NasaImageBanner({ query, count = 6, title, cols = 3 }: P
       {/* Image Grid */}
       <div className={`grid ${gridClass} gap-3`}>
         {images.map((img, i) => {
-          const thumbUrl = img.links?.find(l => l.rel === "preview")?.href;
+          const rawUrl = img.links?.find(l => l.rel === "preview")?.href;
+          const thumbUrl = rawUrl ? rawUrl.replace(/^http:/, "https:").replace(/ /g, "%20") : undefined;
           const imgTitle = img.data[0]?.title || "";
           const imgDate = img.data[0]?.date_created;
           const center = img.data[0]?.center;
@@ -154,7 +155,7 @@ export default function NasaImageBanner({ query, count = 6, title, cols = 3 }: P
           <div className="flex flex-col md:flex-row gap-6">
             <div className="w-full md:w-1/2 aspect-video rounded-xl overflow-hidden relative">
               <Image
-                src={selected.links?.find(l => l.rel === "preview")?.href || ""}
+                src={(selected.links?.find(l => l.rel === "preview")?.href || "").replace(/^http:/, "https:").replace(/ /g, "%20")}
                 alt={selected.data[0]?.title || ""}
                 fill
                 sizes="(max-width: 768px) 100vw, 50vw"
