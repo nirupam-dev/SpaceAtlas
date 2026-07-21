@@ -42,7 +42,7 @@ const cspHeader = [
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
   `font-src 'self' https://fonts.gstatic.com`,
-  `img-src 'self' data: blob: ${TRUSTED_IMG_SOURCES}`,
+  `img-src 'self' data: blob: https: ${TRUSTED_IMG_SOURCES}`,
   `connect-src 'self' ${TRUSTED_CONNECT_SOURCES}`,
   `media-src 'self' https://apod.nasa.gov https://sxcontent9668.azureedge.us https://content.spacex.com`,
   `frame-src 'none'`,
@@ -57,6 +57,7 @@ const nextConfig: NextConfig = {
   // ─── Image Optimization ─────────────────────────────────────
   images: {
     remotePatterns: [
+      { protocol: 'https', hostname: '**' },
       { protocol: 'https', hostname: 'images.unsplash.com' },
       { protocol: 'https', hostname: 'upload.wikimedia.org' },
       { protocol: 'https', hostname: 'en.wikipedia.org' },
