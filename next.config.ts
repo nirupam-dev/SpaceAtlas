@@ -16,6 +16,16 @@ const TRUSTED_IMG_SOURCES = [
   "https://spacelaunchnow-prod-east.nyc3.digitaloceanspaces.com",
   "https://thespacedevs-prod.nyc3.digitaloceanspaces.com",
   "https://europeanspaceflight.com",
+  "https://i0.wp.com",
+  "https://spaceflightnow.com",
+  "http://spaceflightnow.com",
+  "https://cdn.arstechnica.net",
+  "https://www.esa.int",
+  "https://www.nasaspaceflight.com",
+  "https://spacepolicyonline.com",
+  "https://assets.science.nasa.gov",
+  "https://www.nasa.gov",
+  "https://blogs.nasa.gov",
 ].join(" ");
 
 const TRUSTED_CONNECT_SOURCES = [
@@ -42,7 +52,7 @@ const cspHeader = [
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
   `font-src 'self' https://fonts.gstatic.com`,
-  `img-src 'self' data: blob: https: ${TRUSTED_IMG_SOURCES}`,
+  `img-src 'self' data: blob: ${TRUSTED_IMG_SOURCES}`,
   `connect-src 'self' ${TRUSTED_CONNECT_SOURCES}`,
   `media-src 'self' https://apod.nasa.gov https://sxcontent9668.azureedge.us https://content.spacex.com`,
   `frame-src 'none'`,
@@ -57,7 +67,16 @@ const nextConfig: NextConfig = {
   // ─── Image Optimization ─────────────────────────────────────
   images: {
     remotePatterns: [
-      { protocol: 'https', hostname: '**' },
+      { protocol: 'https', hostname: 'i0.wp.com' },
+      { protocol: 'https', hostname: 'spaceflightnow.com' },
+      { protocol: 'http',  hostname: 'spaceflightnow.com' },
+      { protocol: 'https', hostname: 'cdn.arstechnica.net' },
+      { protocol: 'https', hostname: 'www.esa.int' },
+      { protocol: 'https', hostname: 'www.nasaspaceflight.com' },
+      { protocol: 'https', hostname: 'spacepolicyonline.com' },
+      { protocol: 'https', hostname: 'assets.science.nasa.gov' },
+      { protocol: 'https', hostname: 'www.nasa.gov' },
+      { protocol: 'https', hostname: 'blogs.nasa.gov' },
       { protocol: 'https', hostname: 'images.unsplash.com' },
       { protocol: 'https', hostname: 'upload.wikimedia.org' },
       { protocol: 'https', hostname: 'en.wikipedia.org' },
