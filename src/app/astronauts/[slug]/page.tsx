@@ -1,14 +1,41 @@
-"use client";
-
-import { use } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { Users, ArrowLeft, Globe, Clock, Footprints } from "lucide-react";
 import { astronauts } from "@/lib/data";
+import { MotionFadeIn } from "@/components/ui/MotionWrapper";
 import NasaSearchFallback from "@/components/ui/NasaSearchFallback";
+import type { Metadata } from "next";
 
-export default function AstronautDetailPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = use(params);
+// ─── Static Generation ─────────────────────────────────────────
+export function generateStaticParams() {
+  return astronauts.map((a) => ({ slug: a.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const astronaut = astronauts.find((a) => a.slug === slug);
+  if (!astronaut) return { title: "Astronaut Not Found | SpaceAtlas" };
+  return {
+    title: `${astronaut.name} | SpaceAtlas Astronauts`,
+    description: astronaut.biography.slice(0, 160),
+    openGraph: {
+      title: astronaut.name,
+      description: astronaut.biography.slice(0, 160),
+      images: astronaut.imageUrl ? [astronaut.imageUrl] : [],
+    },
+  };
+}
+
+// ─── Server Component Page ─────────────────────────────────────
+export default async function AstronautDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
   const astronaut = astronauts.find((a) => a.slug === slug);
 
   if (!astronaut) {
@@ -21,7 +48,7 @@ export default function AstronautDetailPage({ params }: { params: Promise<{ slug
         <Link href="/astronauts" className="inline-flex items-center gap-2 text-space-400 hover:text-white transition-colors mb-8">
           <ArrowLeft className="w-4 h-4" /> Back to Astronauts
         </Link>
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+        <MotionFadeIn>
           <div className="glass-card p-8 mb-6">
             <div className="flex items-center gap-4 mb-4">
               <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
@@ -56,7 +83,7 @@ export default function AstronautDetailPage({ params }: { params: Promise<{ slug
             <h2 className="text-xl font-semibold text-white mb-3">Biography</h2>
             <p className="text-space-300 leading-relaxed">{astronaut.biography}</p>
           </div>
-        </motion.div>
+        </MotionFadeIn>
       </div>
     </div>
   );

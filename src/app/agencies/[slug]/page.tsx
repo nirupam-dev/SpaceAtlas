@@ -1,20 +1,52 @@
-"use client";
-
-import { use } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { Building2, ArrowLeft, Globe, DollarSign, Users, Calendar, MapPin } from "lucide-react";
+import { Building2, ArrowLeft, DollarSign, Users, Calendar, MapPin } from "lucide-react";
 import { agencies } from "@/lib/data";
-
+import { MotionFadeIn } from "@/components/ui/MotionWrapper";
 import NasaSearchFallback from "@/components/ui/NasaSearchFallback";
+import type { Metadata } from "next";
 
-export default function AgencyDetailPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = use(params);
+// ─── Static Generation ─────────────────────────────────────────
+export function generateStaticParams() {
+  return agencies.map((a) => ({ slug: a.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const agency = agencies.find((a) => a.slug === slug);
+  if (!agency) return { title: "Agency Not Found | SpaceAtlas" };
+  return {
+    title: `${agency.abbreviation} — ${agency.name} | SpaceAtlas`,
+    description: agency.description.slice(0, 160),
+    openGraph: {
+      title: `${agency.abbreviation} — ${agency.name}`,
+      description: agency.description.slice(0, 160),
+    },
+  };
+}
+
+// ─── Server Component Page ─────────────────────────────────────
+export default async function AgencyDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
   const agency = agencies.find((a) => a.slug === slug);
 
   if (!agency) {
     return <NasaSearchFallback query={slug} backLink="/agencies" backText="Back to Agencies" />;
   }
+
+  const stats = [
+    { icon: Calendar, label: "Founded", value: `${agency.foundedYear}` },
+    { icon: DollarSign, label: "Budget", value: `$${agency.budget}B` },
+    { icon: Users, label: "Employees", value: agency.employees?.toLocaleString() || "N/A" },
+    { icon: MapPin, label: "HQ", value: agency.headquarters.split(",")[0] },
+  ];
 
   return (
     <div className="pt-28 pb-20 px-6 min-h-screen">
@@ -22,7 +54,7 @@ export default function AgencyDetailPage({ params }: { params: Promise<{ slug: s
         <Link href="/agencies" className="inline-flex items-center gap-2 text-space-400 hover:text-white transition-colors mb-8">
           <ArrowLeft className="w-4 h-4" /> Back to Agencies
         </Link>
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+        <MotionFadeIn>
           <div className="glass-card p-8 mb-6">
             <div className="flex items-center gap-4 mb-4">
               <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-accent-blue to-accent-cyan flex items-center justify-center">
@@ -37,17 +69,12 @@ export default function AgencyDetailPage({ params }: { params: Promise<{ slug: s
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            {[
-              { icon: Calendar, label: "Founded", value: `${agency.foundedYear}` },
-              { icon: DollarSign, label: "Budget", value: `$${agency.budget}B` },
-              { icon: Users, label: "Employees", value: agency.employees?.toLocaleString() || "N/A" },
-              { icon: MapPin, label: "HQ", value: agency.headquarters.split(",")[0] },
-            ].map((spec, i) => (
-              <motion.div key={spec.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="glass-card p-5 text-center">
+            {stats.map((spec, i) => (
+              <MotionFadeIn key={spec.label} delay={i * 0.05} className="glass-card p-5 text-center">
                 <spec.icon className="w-6 h-6 text-accent-blue mx-auto mb-2" />
                 <div className="text-lg font-bold text-white">{spec.value}</div>
                 <div className="text-xs text-space-500">{spec.label}</div>
-              </motion.div>
+              </MotionFadeIn>
             ))}
           </div>
 
@@ -60,7 +87,7 @@ export default function AgencyDetailPage({ params }: { params: Promise<{ slug: s
               {agency.administrator && <div className="flex justify-between"><span className="text-space-400">Administrator</span><span className="text-white">{agency.administrator}</span></div>}
             </div>
           </div>
-        </motion.div>
+        </MotionFadeIn>
       </div>
     </div>
   );

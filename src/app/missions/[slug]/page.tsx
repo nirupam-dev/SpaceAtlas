@@ -1,15 +1,42 @@
-"use client";
-
-import { use } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { Telescope, ArrowLeft, MapPin, Calendar, Building2 } from "lucide-react";
 import { missions } from "@/lib/data";
-
+import { notFound } from "next/navigation";
+import { MotionFadeIn } from "@/components/ui/MotionWrapper";
 import NasaSearchFallback from "@/components/ui/NasaSearchFallback";
+import type { Metadata } from "next";
 
-export default function MissionDetailPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = use(params);
+// ─── Static Generation ─────────────────────────────────────────
+export function generateStaticParams() {
+  return missions.map((m) => ({ slug: m.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const mission = missions.find((m) => m.slug === slug);
+  if (!mission) return { title: "Mission Not Found | SpaceAtlas" };
+  return {
+    title: `${mission.name} | SpaceAtlas Missions`,
+    description: mission.description.slice(0, 160),
+    openGraph: {
+      title: `${mission.name} — ${mission.agency}`,
+      description: mission.description.slice(0, 160),
+      images: mission.imageUrl ? [mission.imageUrl] : [],
+    },
+  };
+}
+
+// ─── Server Component Page ─────────────────────────────────────
+export default async function MissionDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
   const mission = missions.find((m) => m.slug === slug);
 
   if (!mission) {
@@ -22,7 +49,7 @@ export default function MissionDetailPage({ params }: { params: Promise<{ slug: 
         <Link href="/missions" className="inline-flex items-center gap-2 text-space-400 hover:text-white transition-colors mb-8">
           <ArrowLeft className="w-4 h-4" /> Back to Missions
         </Link>
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+        <MotionFadeIn>
           <div className="glass-card p-8 mb-6">
             <div className="flex items-center gap-4 mb-4">
               <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
@@ -42,7 +69,7 @@ export default function MissionDetailPage({ params }: { params: Promise<{ slug: 
             <h2 className="text-xl font-semibold text-white mb-3">About This Mission</h2>
             <p className="text-space-300 leading-relaxed">{mission.description}</p>
           </div>
-        </motion.div>
+        </MotionFadeIn>
       </div>
     </div>
   );
