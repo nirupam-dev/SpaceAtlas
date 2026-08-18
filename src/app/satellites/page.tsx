@@ -7,7 +7,7 @@ import { SectionHeading } from "@/components/ui/SectionCards";
 import InlineNasaSearch from "@/components/ui/InlineNasaSearch";
 import { satellites } from "@/lib/data";
 import { useState } from "react";
-import Image from "next/image";
+import SafeImage from "@/components/ui/SafeImage";
 
 const typeLabels: Record<string, string> = {
   SPACE_STATION: "Space Station",
@@ -200,11 +200,11 @@ export default function SatellitesPage() {
                 >
                   {/* Image Area */}
                   <div className="relative h-[220px] w-full overflow-hidden bg-gradient-to-br from-[#0f172a] to-[#1e293b] shrink-0">
-                    <Image
-                      src={sat.imageUrl || "/placeholder.jpg"}
+                    <SafeImage
+                      src={sat.imageUrl}
                       alt={sat.name}
                       fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      fallbackSeed={sat.name}
                       className="object-cover object-center group-hover:scale-105 group-hover:rotate-1 transition-all duration-700 opacity-80 group-hover:opacity-100"
                     />
                     <div className="img-fallback hidden absolute inset-0 items-center justify-center">

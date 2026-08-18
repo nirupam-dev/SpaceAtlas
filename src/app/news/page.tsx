@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Newspaper, ExternalLink, Calendar, Loader2 } from "lucide-react";
+import { Newspaper, ExternalLink, Calendar, Loader2, ImageOff } from "lucide-react";
 import { SectionHeading } from "@/components/ui/SectionCards";
-import Image from "next/image";
 import { createLogger } from "@/lib/logger";
 
 const log = createLogger("NewsPage");
@@ -19,12 +18,26 @@ interface Article {
   published_at: string;
 }
 
+/**
+ * Resilient image component for news articles.
+ *
+ * Uses a plain <img> with `loading="lazy"` instead of next/image because:
+ * - News image URLs come from dozens of unpredictable third-party CDNs.
+ * - Many CDNs (nasaspaceflight.com, etc.) return 403 when the Next.js
+ *   server-side optimizer fetches images on behalf of the client.
+ * - A native <img> lets the browser fetch directly, preserving normal
+ *   referrer / cookie / user-agent headers that CDNs expect.
+ *
+ * Falls back to a styled placeholder on error.
+ */
+import SafeImage from "@/components/ui/SafeImage";
+
 export default function NewsPage() {
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/space-news")
+    fetch("/api/space-news?limit=24")
       .then((res) => res.json())
       .then((data) => {
         if (data.results) {
@@ -59,15 +72,14 @@ export default function NewsPage() {
                 className="glass-card glass-card-hover group flex flex-col h-full overflow-hidden"
               >
                 {/* Image Header */}
-                <div className="relative h-48 sm:h-56 overflow-hidden">
+                <div className="relative h-48 sm:h-56 overflow-hidden bg-slate-950">
                   <div className="absolute inset-0 bg-gradient-to-t from-[#020617] to-transparent z-10" />
-                  <Image 
-                    src={article.image_url} 
-                    alt={article.title} 
+                  <SafeImage
+                    src={article.image_url}
+                    alt={article.title}
                     fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    className="object-cover group-hover:scale-105 transition-transform duration-700"
-
+                    fallbackSeed={article.title}
+                    className="group-hover:scale-105 transition-transform duration-700 object-cover"
                   />
                   <div className="absolute top-4 left-4 z-20">
                     <span className="badge badge-active bg-black/60 backdrop-blur-md border-white/10">

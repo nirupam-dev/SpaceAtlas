@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Calendar, ExternalLink } from "lucide-react";
-import Image from "next/image";
+import SafeImage from "@/components/ui/SafeImage";
 import { createLogger } from "@/lib/logger";
 
 const log = createLogger("SpaceNews");
@@ -51,14 +51,13 @@ export default function SpaceNewsSection() {
           className="glass-card glass-card-hover group flex flex-col h-full overflow-hidden cursor-pointer"
         >
           {/* Image */}
-          <div className="relative h-44 overflow-hidden">
+          <div className="relative h-44 overflow-hidden bg-slate-950">
             <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-transparent to-transparent z-10" />
-            <Image
+            <SafeImage
               src={article.image_url}
               alt={article.title}
               fill
-              unoptimized={true}
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+              fallbackSeed={article.title}
               className="object-cover group-hover:scale-110 transition-transform duration-700"
             />
             <div className="absolute top-3 left-3 z-20">

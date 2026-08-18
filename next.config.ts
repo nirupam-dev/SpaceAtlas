@@ -38,6 +38,7 @@ const TRUSTED_CONNECT_SOURCES = [
   "https://api.spaceflightnewsapi.net",
   "https://generativelanguage.googleapis.com",
   "https://vitals.vercel-insights.com",
+  "https://api.wheretheiss.at",
 ].join(" ");
 
 const isDev = process.env.NODE_ENV === "development";
@@ -52,7 +53,7 @@ const cspHeader = [
   `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
   `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`,
   `font-src 'self' https://fonts.gstatic.com`,
-  `img-src 'self' data: blob: ${TRUSTED_IMG_SOURCES}`,
+  `img-src 'self' data: blob: https: ${TRUSTED_IMG_SOURCES}`,
   `connect-src 'self' ${TRUSTED_CONNECT_SOURCES}`,
   `media-src 'self' https://apod.nasa.gov https://sxcontent9668.azureedge.us https://content.spacex.com`,
   `frame-src 'none'`,

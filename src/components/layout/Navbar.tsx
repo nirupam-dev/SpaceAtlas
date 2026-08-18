@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -143,7 +144,16 @@ export function Navbar() {
             }`}
           >
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 group">
+            <Link href="/" className="flex items-center gap-2.5 group">
+              <Image
+                src="/spaceatlas-logo.png"
+                alt="SpaceAtlas Logo"
+                width={36}
+                height={36}
+                className="rounded-full group-hover:scale-110 transition-transform duration-300"
+                style={{ width: 36, height: 'auto' }}
+                priority
+              />
               <span className="text-lg sm:text-xl lg:text-2xl font-display text-white tracking-[2px]">
                 SPACEATLAS
               </span>

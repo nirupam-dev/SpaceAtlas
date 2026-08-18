@@ -1,5 +1,9 @@
 /**
- * ─── Security Middleware ──────────────────────────────────────
+ * ─── Security Proxy ──────────────────────────────────────
+ *
+ * Migrated from middleware.ts to proxy.ts for Next.js 16.
+ * The "middleware" file convention is deprecated in Next.js 16
+ * and has been renamed to "proxy".
  *
  * Implements enterprise-grade security headers including:
  * - Strict-Transport-Security (HSTS) — enforces HTTPS
@@ -15,7 +19,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const response = NextResponse.next();
 
   // ─── Set Security Headers on Response ─────────────────────

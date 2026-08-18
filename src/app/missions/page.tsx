@@ -7,7 +7,7 @@ import { SectionHeading } from "@/components/ui/SectionCards";
 import InlineNasaSearch from "@/components/ui/InlineNasaSearch";
 import { missions } from "@/lib/data";
 import { useState } from "react";
-import Image from "next/image";
+import SafeImage from "@/components/ui/SafeImage";
 
 const statusColors: Record<string, string> = { COMPLETED: "badge-active", ACTIVE: "badge-development", PLANNED: "badge-retired", FAILED: "badge-retired" };
 
@@ -82,11 +82,11 @@ export default function MissionsPage() {
                   
                   {/* Image Area */}
                   <div className="relative h-[220px] w-full overflow-hidden bg-black shrink-0">
-                    <Image 
-                      src={mission.imageUrl || "/placeholder.jpg"} 
+                    <SafeImage 
+                      src={mission.imageUrl} 
                       alt={mission.name} 
                       fill
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      fallbackSeed={mission.name}
                       className="object-cover group-hover:scale-105 group-hover:rotate-1 transition-all duration-700 opacity-80 group-hover:opacity-100" 
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0f172a] via-[#0f172a]/20 to-transparent" />
