@@ -43,3 +43,16 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# ML - datasets (too large for git)
+ml/cv/dataset/
+ml/cv/dataset_v2/
+
+# ML - trained model weights
+ml/models/*.pth
+ml/models/*.onnx
+
+# ML - Python cache
+__pycache__/
+*.pyc
+*.pyo
