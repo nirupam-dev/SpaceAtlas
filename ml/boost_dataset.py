@@ -3,9 +3,9 @@ import sys, io
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
 sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
 
-"""Boost low classes with extra search queries."""
+"""Boost low classes with extra search queries. Generates YOLO annotations."""
 
-import os, hashlib, time, requests
+import os, hashlib, time, json, requests
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from tqdm import tqdm
@@ -14,6 +14,7 @@ DATASET_DIR = Path(__file__).parent / "cv" / "dataset_v2"
 NASA_API_URL = "https://images-api.nasa.gov/search"
 TARGET = 40  # Minimum threshold
 MAX_WORKERS = 5
+BBOX_COVERAGE = 0.85
 
 # Extra queries for classes that came in too low
 BOOST = {
@@ -78,6 +79,22 @@ BOOST = {
 }
 
 
+def _get_class_idx(class_name):
+    """Get the YOLO class index for a class name."""
+    mapping_path = DATASET_DIR / "class_mapping.json"
+    if mapping_path.exists():
+        with open(mapping_path, "r", encoding="utf-8") as f:
+            mapping = json.load(f)
+        for idx_str, info in mapping.items():
+            if info["name"] == class_name:
+                return int(idx_str)
+    # Fallback: compute from sorted dir list
+    all_dirs = sorted(d.name for d in DATASET_DIR.iterdir() if d.is_dir())
+    if class_name in all_dirs:
+        return all_dirs.index(class_name)
+    return 0
+
+
 def search_nasa(query, page_size=100):
     try:
         resp = requests.get(NASA_API_URL, params={
@@ -108,11 +125,20 @@ def download(url, path):
         return False
 
 
+def write_yolo_annotation(img_path, class_idx):
+    """Write a YOLO-format .txt annotation file for the image."""
+    label_path = img_path.with_suffix(".txt")
+    annotation = f"{class_idx} 0.500000 0.500000 {BBOX_COVERAGE:.6f} {BBOX_COVERAGE:.6f}\n"
+    label_path.write_text(annotation, encoding="utf-8")
+
+
 def boost(name, queries):
     d = DATASET_DIR / name
     d.mkdir(parents=True, exist_ok=True)
     existing = set(f.name for f in d.iterdir() if f.suffix in (".jpg", ".png", ".jpeg"))
     current = len(existing)
+
+    class_idx = _get_class_idx(name)
 
     if current >= TARGET:
         print(f"  [OK]  {name:25s} {current} images (already enough)")
@@ -142,10 +168,13 @@ def boost(name, queries):
     ok = 0
     if tasks:
         with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
-            futs = {pool.submit(download, u, p): 1 for u, p in tasks}
+            futs = {pool.submit(download, u, p): (u, p) for u, p in tasks}
             for f in tqdm(as_completed(futs), total=len(futs), desc=f"    {name:20s}", leave=False):
                 if f.result():
                     ok += 1
+                    # Write YOLO annotation
+                    _, img_path = futs[f]
+                    write_yolo_annotation(img_path, class_idx)
 
     final = current + ok
     print(f"  [{'OK' if final >= TARGET else '!!':3s}] {name:25s} {final} images (+{ok} new)")
@@ -154,7 +183,7 @@ def boost(name, queries):
 
 def main():
     print("=" * 55)
-    print("  Boosting low classes")
+    print("  Boosting low classes (with YOLO annotations)")
     print("=" * 55 + "\n")
 
     for name, queries in BOOST.items():

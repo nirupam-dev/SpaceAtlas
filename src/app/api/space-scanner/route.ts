@@ -32,11 +32,16 @@ const CLASS_MAPPINGS: Record<string, ObjectMapping> = {
   neptune: { slug: "neptune", source: "planets", displayName: "Neptune", wikiTitle: "Neptune" },
   pluto: { slug: "pluto", source: "planets", displayName: "Pluto", wikiTitle: "Pluto" },
 
-  // ── Moons (in SpaceAtlas planets array as type MOON) ──
+  // ── Moons (in SpaceAtlas planets array as type MOON or Wikipedia) ──
   moon: { slug: "moon", source: "planets", displayName: "The Moon", wikiTitle: "Moon" },
   europa: { slug: "europa", source: "planets", displayName: "Europa", wikiTitle: "Europa_(moon)" },
   titan: { slug: "titan", source: "planets", displayName: "Titan", wikiTitle: "Titan_(moon)" },
   io: { slug: "io", source: "wikipedia", displayName: "Io", wikiTitle: "Io_(moon)" },
+  ganymede: { slug: "ganymede", source: "wikipedia", displayName: "Ganymede", wikiTitle: "Ganymede_(moon)" },
+  callisto: { slug: "callisto", source: "wikipedia", displayName: "Callisto", wikiTitle: "Callisto_(moon)" },
+  enceladus: { slug: "enceladus", source: "wikipedia", displayName: "Enceladus", wikiTitle: "Enceladus" },
+  triton: { slug: "triton", source: "wikipedia", displayName: "Triton", wikiTitle: "Triton_(moon)" },
+  phobos: { slug: "phobos", source: "wikipedia", displayName: "Phobos", wikiTitle: "Phobos_(moon)" },
 
   // ── Sun ──
   sun: { slug: "sun", source: "wikipedia", displayName: "The Sun", wikiTitle: "Sun" },

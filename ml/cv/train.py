@@ -4,377 +4,204 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='repla
 sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
 
 """
-SpaceAtlas -- CV Model Training Script (v2)
-============================================
-Trains a ResNet-18 classifier on 34 specific space objects.
-Handles class imbalance with weighted sampling.
-Optimized for RTX 2050 (4GB VRAM) with mixed precision.
+SpaceAtlas -- YOLOv8 Object Detection Training Script
+======================================================
+Trains a YOLOv8n (nano) detector on 39 space object classes.
+Produces bounding box predictions with class labels and confidence.
+Optimized for RTX 2050 (4GB VRAM).
+
+Prerequisites:
+    1. Run annotate_dataset.py first to convert dataset → YOLO format
+    2. pip install -r ml/requirements.txt
 
 Usage:
     python ml/cv/train.py
 """
 
-import os, json, time, copy, random
-import numpy as np
+import os, json, time, shutil
 from pathlib import Path
-from collections import Counter
 
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 import torch
-import torch.nn as nn
-import torch.optim as optim
-from torch.utils.data import DataLoader, random_split, WeightedRandomSampler
-from torchvision import datasets, transforms, models
-from torch.amp import GradScaler, autocast
-from sklearn.metrics import classification_report, confusion_matrix
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-import seaborn as sns
+from ultralytics import YOLO
 
-# ---- Config ---------------------------------------------------------------
+# ── Config ──────────────────────────────────────────────────────
 
-DATASET_DIR = Path(__file__).parent / "dataset_v2"
+DATASET_YAML = Path(__file__).parent / "dataset_yolo" / "dataset.yaml"
 MODELS_DIR = Path(__file__).parent.parent / "models"
 MODELS_DIR.mkdir(parents=True, exist_ok=True)
 
-BATCH_SIZE = 16
-NUM_EPOCHS = 30
-LEARNING_RATE = 0.001
-LR_STEP_SIZE = 10
-LR_GAMMA = 0.1
-IMG_SIZE = 224
-NUM_WORKERS = 2
-TRAIN_SPLIT = 0.8
+# Training hyperparameters — tuned for RTX 2050 (4GB VRAM)
+IMG_SIZE = 640
+BATCH_SIZE = 8          # Conservative for 4GB VRAM
+NUM_EPOCHS = 50
+PATIENCE = 10           # Early stopping patience
+BASE_MODEL = "yolov8n.pt"  # Nano variant — fast, lightweight (~6MB)
+
 SEED = 42
 
-random.seed(SEED)
-np.random.seed(SEED)
-torch.manual_seed(SEED)
-if torch.cuda.is_available():
-    torch.cuda.manual_seed_all(SEED)
+
+def check_prerequisites():
+    """Verify dataset exists and is in YOLO format."""
+    if not DATASET_YAML.exists():
+        print("\n  ERROR: Dataset YAML not found!")
+        print(f"  Expected: {DATASET_YAML.resolve()}")
+        print("  Run 'python ml/cv/annotate_dataset.py' first to convert the dataset.\n")
+        return False
+
+    dataset_dir = DATASET_YAML.parent
+    train_imgs = dataset_dir / "images" / "train"
+    val_imgs = dataset_dir / "images" / "val"
+
+    if not train_imgs.exists() or not val_imgs.exists():
+        print("\n  ERROR: YOLO dataset directories not found!")
+        print(f"  Expected: {train_imgs} and {val_imgs}")
+        print("  Run 'python ml/cv/annotate_dataset.py' first.\n")
+        return False
+
+    train_count = len(list(train_imgs.glob("*.[jJ][pP][gG]")) + 
+                      list(train_imgs.glob("*.[pP][nN][gG]")) +
+                      list(train_imgs.glob("*.[jJ][pP][eE][gG]")))
+    val_count = len(list(val_imgs.glob("*.[jJ][pP][gG]")) + 
+                    list(val_imgs.glob("*.[pP][nN][gG]")) +
+                    list(val_imgs.glob("*.[jJ][pP][eE][gG]")))
+
+    print(f"  Dataset: {train_count} train + {val_count} val images")
+    return True
 
 
-# ---- Transforms -----------------------------------------------------------
+def train():
+    """Train YOLOv8n detector."""
+    print(f"\n  Loading base model: {BASE_MODEL}")
+    model = YOLO(BASE_MODEL)
 
-train_transform = transforms.Compose([
-    transforms.Resize((IMG_SIZE + 32, IMG_SIZE + 32)),
-    transforms.RandomCrop(IMG_SIZE),
-    transforms.RandomHorizontalFlip(0.5),
-    transforms.RandomRotation(20),
-    transforms.ColorJitter(brightness=0.3, contrast=0.3, saturation=0.3, hue=0.1),
-    transforms.RandomGrayscale(0.05),
-    transforms.ToTensor(),
-    transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
-])
+    print(f"  Starting training for {NUM_EPOCHS} epochs...")
+    print(f"  Image size: {IMG_SIZE}")
+    print(f"  Batch size: {BATCH_SIZE}")
+    print(f"  Patience:   {PATIENCE}")
+    print("-" * 65)
 
-val_transform = transforms.Compose([
-    transforms.Resize((IMG_SIZE, IMG_SIZE)),
-    transforms.ToTensor(),
-    transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
-])
-
-
-class TransformSubset(torch.utils.data.Dataset):
-    def __init__(self, subset, transform):
-        self.subset = subset
-        self.transform = transform
-
-    def __len__(self):
-        return len(self.subset)
-
-    def __getitem__(self, idx):
-        img, label = self.subset[idx]
-        img = transforms.ToPILImage()(img)
-        if self.transform:
-            img = self.transform(img)
-        return img, label
-
-
-# ---- Load Data -------------------------------------------------------------
-
-def load_data():
-    print("  Loading dataset from:", DATASET_DIR.resolve())
-
-    basic = transforms.Compose([transforms.Resize((IMG_SIZE, IMG_SIZE)), transforms.ToTensor()])
-    full = datasets.ImageFolder(str(DATASET_DIR), transform=basic)
-    classes = full.classes
-    num_classes = len(classes)
-
-    # Load display names from mapping
-    mapping_path = DATASET_DIR / "class_mapping.json"
-    display_names = {}
-    if mapping_path.exists():
-        with open(mapping_path, "r", encoding="utf-8") as f:
-            mapping = json.load(f)
-        for v in mapping.values():
-            display_names[v["name"]] = v["display_name"]
-
-    print(f"\n  {num_classes} classes, {len(full)} total images:")
-    for i, cls in enumerate(classes):
-        count = sum(1 for _, l in full.samples if l == i)
-        dname = display_names.get(cls, cls)
-        print(f"    {dname:30s} {count:>4d} images")
-
-    # Split
-    train_size = int(TRAIN_SPLIT * len(full))
-    val_size = len(full) - train_size
-    train_sub, val_sub = random_split(full, [train_size, val_size],
-                                       generator=torch.Generator().manual_seed(SEED))
-
-    train_ds = TransformSubset(train_sub, train_transform)
-    val_ds = TransformSubset(val_sub, val_transform)
-
-    # Weighted sampler to handle class imbalance
-    train_labels = [full.targets[i] for i in train_sub.indices]
-    class_counts = Counter(train_labels)
-    weights = [1.0 / class_counts[l] for l in train_labels]
-    sampler = WeightedRandomSampler(weights, len(weights), replacement=True)
-
-    train_loader = DataLoader(train_ds, batch_size=BATCH_SIZE, sampler=sampler,
-                               num_workers=NUM_WORKERS, pin_memory=True, drop_last=True)
-    val_loader = DataLoader(val_ds, batch_size=BATCH_SIZE, shuffle=False,
-                             num_workers=NUM_WORKERS, pin_memory=True)
-
-    print(f"\n  Train: {len(train_ds)} | Val: {len(val_ds)}")
-    print(f"  Using weighted sampling to balance classes")
-
-    return train_loader, val_loader, classes, num_classes, display_names
-
-
-# ---- Model -----------------------------------------------------------------
-
-def create_model(num_classes, device):
-    print("\n  Model: ResNet-18 (ImageNet pretrained)")
-    model = models.resnet18(weights=models.ResNet18_Weights.IMAGENET1K_V1)
-
-    # Freeze all except layer4 + fc
-    for param in model.parameters():
-        param.requires_grad = False
-    for param in model.layer4.parameters():
-        param.requires_grad = True
-
-    model.fc = nn.Sequential(
-        nn.Dropout(0.3),
-        nn.Linear(model.fc.in_features, 256),
-        nn.ReLU(),
-        nn.Dropout(0.2),
-        nn.Linear(256, num_classes),
+    results = model.train(
+        data=str(DATASET_YAML.resolve()),
+        epochs=NUM_EPOCHS,
+        imgsz=IMG_SIZE,
+        batch=BATCH_SIZE,
+        patience=PATIENCE,
+        seed=SEED,
+        device=0 if torch.cuda.is_available() else "cpu",
+        workers=2,
+        # Augmentation
+        augment=True,
+        hsv_h=0.015,
+        hsv_s=0.5,
+        hsv_v=0.3,
+        degrees=15.0,
+        translate=0.1,
+        scale=0.4,
+        fliplr=0.5,
+        mosaic=0.8,
+        mixup=0.1,
+        # Output
+        project=str(MODELS_DIR),
+        name="yolo_train",
+        exist_ok=True,
+        save=True,
+        plots=True,
+        verbose=True,
     )
-    model = model.to(device)
 
-    total = sum(p.numel() for p in model.parameters())
-    trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    print(f"  Parameters: {total:,} total, {trainable:,} trainable")
-    return model
+    return model, results
 
 
-# ---- Train -----------------------------------------------------------------
+def export_and_save(model):
+    """Export trained model to deployable formats and save artifacts."""
+    # The best model is saved by ultralytics during training
+    train_dir = MODELS_DIR / "yolo_train"
+    best_pt = train_dir / "weights" / "best.pt"
 
-def train(model, train_loader, val_loader, device):
-    criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()),
-                           lr=LEARNING_RATE, weight_decay=1e-4)
-    scheduler = optim.lr_scheduler.StepLR(optimizer, LR_STEP_SIZE, LR_GAMMA)
-    scaler = GradScaler("cuda")
+    if not best_pt.exists():
+        print("  WARNING: best.pt not found, using last.pt")
+        best_pt = train_dir / "weights" / "last.pt"
 
-    best_wts = copy.deepcopy(model.state_dict())
-    best_acc = 0.0
-    history = {"train_loss": [], "val_loss": [], "train_acc": [], "val_acc": []}
+    if not best_pt.exists():
+        print("  ERROR: No trained weights found!")
+        return
 
-    print(f"\n  Training: {NUM_EPOCHS} epochs, batch={BATCH_SIZE}, lr={LEARNING_RATE}")
-    print("-" * 65)
+    # Copy best weights to models dir
+    final_pt = MODELS_DIR / "space-detector.pt"
+    shutil.copy2(best_pt, final_pt)
+    print(f"\n  Saved PyTorch model: {final_pt}")
+    print(f"  Size: {final_pt.stat().st_size / (1024*1024):.1f} MB")
 
-    t0 = time.time()
-    for epoch in range(NUM_EPOCHS):
-        te = time.time()
-
-        # Train
-        model.train()
-        rloss, rcorr, rtotal = 0.0, 0, 0
-        for x, y in train_loader:
-            x, y = x.to(device, non_blocking=True), y.to(device, non_blocking=True)
-            optimizer.zero_grad()
-            with autocast("cuda"):
-                out = model(x)
-                loss = criterion(out, y)
-            scaler.scale(loss).backward()
-            scaler.step(optimizer)
-            scaler.update()
-            _, p = torch.max(out, 1)
-            rloss += loss.item() * x.size(0)
-            rcorr += (p == y).sum().item()
-            rtotal += x.size(0)
-
-        tl, ta = rloss / rtotal, rcorr / rtotal
-
-        # Val
-        model.eval()
-        vloss, vcorr, vtotal = 0.0, 0, 0
-        with torch.no_grad():
-            for x, y in val_loader:
-                x, y = x.to(device, non_blocking=True), y.to(device, non_blocking=True)
-                with autocast("cuda"):
-                    out = model(x)
-                    loss = criterion(out, y)
-                _, p = torch.max(out, 1)
-                vloss += loss.item() * x.size(0)
-                vcorr += (p == y).sum().item()
-                vtotal += x.size(0)
-
-        vl, va = vloss / vtotal, vcorr / vtotal
-        scheduler.step()
-
-        history["train_loss"].append(tl)
-        history["val_loss"].append(vl)
-        history["train_acc"].append(ta)
-        history["val_acc"].append(va)
-
-        mark = ""
-        if va > best_acc:
-            best_acc = va
-            best_wts = copy.deepcopy(model.state_dict())
-            mark = " << BEST"
-
-        elapsed = time.time() - te
-        print(f"  Epoch {epoch+1:>2}/{NUM_EPOCHS} | "
-              f"Train: {tl:.4f}/{ta:.3f} | Val: {vl:.4f}/{va:.3f} | "
-              f"{elapsed:.1f}s{mark}")
-
-    print("-" * 65)
-    print(f"  Done in {(time.time()-t0)/60:.1f} min | Best val acc: {best_acc:.1%}")
-
-    model.load_state_dict(best_wts)
-    return model, history, best_acc
-
-
-# ---- Evaluate --------------------------------------------------------------
-
-def evaluate(model, val_loader, classes, display_names, device):
-    print("\n  Evaluating...")
-    model.eval()
-    preds, labels = [], []
-    with torch.no_grad():
-        for x, y in val_loader:
-            x = x.to(device, non_blocking=True)
-            with autocast("cuda"):
-                out = model(x)
-            _, p = torch.max(out, 1)
-            preds.extend(p.cpu().numpy())
-            labels.extend(y.numpy())
-
-    preds, labels = np.array(preds), np.array(labels)
-    names = [display_names.get(c, c) for c in classes]
-
-    report = classification_report(labels, preds, target_names=names,
-                                    output_dict=True, zero_division=0)
-    print("\n" + classification_report(labels, preds, target_names=names, zero_division=0))
-
-    cm = confusion_matrix(labels, preds)
-    return report, cm
-
-
-# ---- Save ------------------------------------------------------------------
-
-def save_plots(history, cm, classes, display_names):
-    # Training curves
-    fig, (a1, a2) = plt.subplots(1, 2, figsize=(14, 5))
-    ep = range(1, len(history["train_loss"]) + 1)
-    a1.plot(ep, history["train_loss"], "b-", label="Train", lw=2)
-    a1.plot(ep, history["val_loss"], "r-", label="Val", lw=2)
-    a1.set(xlabel="Epoch", ylabel="Loss", title="Loss Curves")
-    a1.legend(); a1.grid(alpha=0.3)
-    a2.plot(ep, history["train_acc"], "b-", label="Train", lw=2)
-    a2.plot(ep, history["val_acc"], "r-", label="Val", lw=2)
-    a2.set(xlabel="Epoch", ylabel="Accuracy", title="Accuracy Curves")
-    a2.legend(); a2.grid(alpha=0.3)
-    plt.tight_layout()
-    plt.savefig(MODELS_DIR / "training_curves.png", dpi=150)
-    plt.close()
-    print(f"  Saved: {MODELS_DIR / 'training_curves.png'}")
-
-    # Confusion matrix
-    names = [display_names.get(c, c) for c in classes]
-    fig, ax = plt.subplots(figsize=(16, 14))
-    sns.heatmap(cm, annot=True, fmt="d", cmap="Blues",
-                xticklabels=names, yticklabels=names, ax=ax)
-    ax.set(xlabel="Predicted", ylabel="Actual")
-    ax.set_title("SpaceAtlas - Confusion Matrix", fontsize=14)
-    plt.xticks(rotation=45, ha="right", fontsize=7)
-    plt.yticks(rotation=0, fontsize=7)
-    plt.tight_layout()
-    plt.savefig(MODELS_DIR / "confusion_matrix.png", dpi=150)
-    plt.close()
-    print(f"  Saved: {MODELS_DIR / 'confusion_matrix.png'}")
-
-
-def export_onnx(model, num_classes, classes, display_names, device):
+    # Export to ONNX
     print("\n  Exporting to ONNX...")
-    model.eval()
-    dummy = torch.randn(1, 3, IMG_SIZE, IMG_SIZE).to(device)
-    path = MODELS_DIR / "space-classifier.onnx"
+    best_model = YOLO(str(final_pt))
+    onnx_path_str = best_model.export(format="onnx", imgsz=IMG_SIZE, opset=17, simplify=True)
+    
+    # Move ONNX to models dir if needed
+    onnx_src = Path(onnx_path_str)
+    onnx_dst = MODELS_DIR / "space-detector.onnx"
+    if onnx_src != onnx_dst:
+        shutil.move(str(onnx_src), str(onnx_dst))
+    print(f"  Saved ONNX model: {onnx_dst}")
+    print(f"  Size: {onnx_dst.stat().st_size / (1024*1024):.1f} MB")
 
-    torch.onnx.export(model, dummy, str(path), export_params=True,
-                       opset_version=17, do_constant_folding=True,
-                       input_names=["image"], output_names=["predictions"],
-                       dynamic_axes={"image": {0: "batch"}, "predictions": {0: "batch"}})
+    # Read class names from dataset yaml and save as labels JSON
+    import yaml
+    with open(DATASET_YAML, "r", encoding="utf-8") as f:
+        ds_config = yaml.safe_load(f)
+
+    class_names = ds_config.get("names", {})
+    labels_data = {
+        "model": "YOLOv8n",
+        "task": "detection",
+        "num_classes": ds_config.get("nc", len(class_names)),
+        "classes": class_names,
+        "img_size": IMG_SIZE,
+    }
 
     labels_path = MODELS_DIR / "class_labels.json"
-    labels_data = {
-        "classes": classes,
-        "num_classes": num_classes,
-        "display_names": {c: display_names.get(c, c) for c in classes},
-    }
     with open(labels_path, "w", encoding="utf-8") as f:
         json.dump(labels_data, f, indent=2)
+    print(f"  Saved class labels: {labels_path}")
 
-    sz = path.stat().st_size / (1024 * 1024)
-    print(f"  ONNX: {path} ({sz:.1f} MB)")
-    print(f"  Labels: {labels_path}")
+    # Copy training plots if they exist
+    for plot_name in ["results.png", "confusion_matrix.png", "P_curve.png", "R_curve.png"]:
+        src = train_dir / plot_name
+        if src.exists():
+            shutil.copy2(src, MODELS_DIR / plot_name)
 
+    return final_pt, onnx_dst
 
-# ---- Main ------------------------------------------------------------------
 
 def main():
     print("=" * 65)
-    print("  SpaceAtlas -- Space Object Classifier (34 classes)")
-    print("  ResNet-18 | Transfer Learning | Mixed Precision")
+    print("  SpaceAtlas -- Space Object Detector (YOLOv8n)")
+    print("  39 Classes | Transfer Learning | Object Detection")
     print("=" * 65)
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = "CPU"
     if torch.cuda.is_available():
         name = torch.cuda.get_device_name(0)
         mem = torch.cuda.get_device_properties(0).total_memory / (1024**3)
-        print(f"\n  GPU: {name} ({mem:.1f} GB)")
-    else:
-        print("\n  WARNING: No GPU, training on CPU")
+        device = f"{name} ({mem:.1f} GB)"
+    print(f"\n  Device: {device}")
 
-    train_loader, val_loader, classes, num_classes, display_names = load_data()
-    model = create_model(num_classes, device)
-    model, history, best_acc = train(model, train_loader, val_loader, device)
-    report, cm = evaluate(model, val_loader, classes, display_names, device)
+    if not check_prerequisites():
+        return
 
-    # Save model
-    torch.save({"model_state_dict": model.state_dict(), "classes": classes,
-                "num_classes": num_classes, "best_acc": best_acc, "img_size": IMG_SIZE,
-                "display_names": {c: display_names.get(c, c) for c in classes}},
-               MODELS_DIR / "space-classifier.pth")
-    print(f"\n  Model saved: {MODELS_DIR / 'space-classifier.pth'}")
+    t0 = time.time()
+    model, results = train()
+    elapsed = (time.time() - t0) / 60
 
-    # Save metrics
-    metrics = {"best_val_accuracy": best_acc, "classes": classes, "num_classes": num_classes,
-               "epochs": NUM_EPOCHS, "model": "ResNet-18", "history": history,
-               "classification_report": report}
-    with open(MODELS_DIR / "training_metrics.json", "w", encoding="utf-8") as f:
-        json.dump(metrics, f, indent=2)
+    print(f"\n  Training complete in {elapsed:.1f} minutes")
 
-    save_plots(history, cm, classes, display_names)
-    export_onnx(model, num_classes, classes, display_names, device)
+    export_and_save(model)
 
     print("\n" + "=" * 65)
-    print(f"  DONE | Accuracy: {best_acc:.1%} | Classes: {num_classes}")
-    print(f"  Files: {MODELS_DIR.resolve()}")
+    print(f"  DONE | Training time: {elapsed:.1f} min")
+    print(f"  Model files: {MODELS_DIR.resolve()}")
     print("=" * 65 + "\n")
 
 

@@ -8,6 +8,8 @@ SpaceAtlas -- Complete Space Object Dataset Collector (v3)
 ==========================================================
 ~35 specific classes covering planets, rockets, structures,
 celestial objects, moons, and phenomena.
+
+Downloads images AND generates YOLO-format annotation files.
 """
 
 import os
@@ -23,6 +25,9 @@ DATASET_DIR = Path(__file__).parent / "cv" / "dataset_v2"
 NASA_API_URL = "https://images-api.nasa.gov/search"
 TARGET_PER_CLASS = 80
 MAX_WORKERS = 5
+
+# Bounding box coverage for auto-annotation (centered bbox)
+BBOX_COVERAGE = 0.85
 
 OBJECTS = {
     # ═══ PLANETS (8) ═══
@@ -191,17 +196,40 @@ OBJECTS = {
 
     # ═══ PHENOMENA (3) ═══
     "black_hole": {
-        "queries": ["black hole M87", "black hole event horizon", "black hole NASA", "supermassive black hole"],
+        "queries": [
+            "black hole M87 event horizon telescope",
+            "black hole Sagittarius A star",
+            "black hole accretion disk",
+            "black hole simulation NASA",
+            "black hole X-ray chandra",
+            "supermassive black hole visualization",
+        ],
         "display": "Black Hole",
         "path": "/solar-system",
     },
     "comet": {
-        "queries": ["comet NEOWISE", "comet NASA", "comet tail space", "comet halley"],
+        "queries": [
+            "comet NEOWISE night sky",
+            "comet 67P churyumov rosetta",
+            "comet 67P surface rosetta",
+            "comet hale bopp",
+            "comet tempel deep impact",
+            "comet tail astrophotography",
+        ],
         "display": "Comet",
         "path": "/solar-system",
     },
     "asteroid": {
-        "queries": ["asteroid bennu", "asteroid ryugu", "asteroid NASA", "asteroid belt closeup"],
+        "queries": [
+            "bennu asteroid surface OSIRIS-REx",
+            "bennu asteroid closeup",
+            "ryugu asteroid surface",
+            "eros asteroid NEAR surface",
+            "vesta asteroid Dawn surface",
+            "ceres dawn asteroid surface",
+            "ida asteroid galileo",
+            "itokawa asteroid",
+        ],
         "display": "Asteroid",
         "path": "/solar-system",
     },
@@ -251,7 +279,14 @@ def download(url, path):
         return False
 
 
-def collect_class(class_name, config):
+def write_yolo_annotation(img_path, class_idx):
+    """Write a YOLO-format .txt annotation file for the image."""
+    label_path = img_path.with_suffix(".txt")
+    annotation = f"{class_idx} 0.500000 0.500000 {BBOX_COVERAGE:.6f} {BBOX_COVERAGE:.6f}\n"
+    label_path.write_text(annotation, encoding="utf-8")
+
+
+def collect_class(class_name, config, class_idx):
     class_dir = DATASET_DIR / class_name
     class_dir.mkdir(parents=True, exist_ok=True)
 
@@ -260,6 +295,8 @@ def collect_class(class_name, config):
 
     if current >= TARGET_PER_CLASS:
         print(f"  [OK]  {config['display']:30s} {current} images")
+        # Ensure annotations exist for all existing images
+        _ensure_annotations(class_dir, class_idx)
         return current
 
     needed = TARGET_PER_CLASS - current
@@ -293,6 +330,12 @@ def collect_class(class_name, config):
             for f in tqdm(as_completed(futs), total=len(futs), desc=f"    {class_name:20s}", leave=False):
                 if f.result():
                     ok += 1
+                    # Write YOLO annotation for the downloaded image
+                    _, img_path = futs[f]
+                    write_yolo_annotation(img_path, class_idx)
+
+    # Ensure all existing images have annotations too
+    _ensure_annotations(class_dir, class_idx)
 
     final = current + ok
     status = "OK" if final >= TARGET_PER_CLASS * 0.4 else "LOW"
@@ -300,11 +343,23 @@ def collect_class(class_name, config):
     return final
 
 
+def _ensure_annotations(class_dir, class_idx):
+    """Make sure every image in the class dir has a matching .txt annotation."""
+    for img_path in class_dir.iterdir():
+        if img_path.suffix.lower() in (".jpg", ".jpeg", ".png", ".webp"):
+            label_path = img_path.with_suffix(".txt")
+            if not label_path.exists():
+                write_yolo_annotation(img_path, class_idx)
+
+
 def main():
     print("=" * 60)
     print("  SpaceAtlas -- Complete Space Object Dataset (v3)")
-    print("  35 specific objects from NASA's public image library")
+    print("  35 specific objects | YOLO detection annotations")
     print("=" * 60 + "\n")
+
+    sorted_names = sorted(OBJECTS.keys())
+    class_to_idx = {name: idx for idx, name in enumerate(sorted_names)}
 
     print(f"  Classes: {len(OBJECTS)}")
     print(f"  Target: {TARGET_PER_CLASS} images per class")
@@ -330,11 +385,10 @@ def main():
     for cat_name, class_names in categories.items():
         print(f"\n  --- {cat_name} ---")
         for cn in class_names:
-            stats[cn] = collect_class(cn, OBJECTS[cn])
+            stats[cn] = collect_class(cn, OBJECTS[cn], class_to_idx[cn])
 
     # Save class mapping
     mapping = {}
-    sorted_names = sorted(OBJECTS.keys())
     for i, class_name in enumerate(sorted_names):
         mapping[str(i)] = {
             "name": class_name,
@@ -360,7 +414,9 @@ def main():
     print("-" * 60)
     print(f"  Total: {total} images | Classes: {len(OBJECTS)}")
     print("=" * 60)
-    print("\n  Done! Now run: python ml/cv/train.py\n")
+    print("\n  Done! Next steps:")
+    print("    1. python ml/cv/annotate_dataset.py  (convert to YOLO format)")
+    print("    2. python ml/cv/train.py             (train YOLOv8 detector)\n")
 
 
 if __name__ == "__main__":

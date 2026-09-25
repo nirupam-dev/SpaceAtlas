@@ -47,10 +47,15 @@ next-env.d.ts
 # ML - datasets (too large for git)
 ml/cv/dataset/
 ml/cv/dataset_v2/
+ml/cv/dataset_yolo/
 
 # ML - trained model weights
 ml/models/*.pth
+ml/models/*.pt
 ml/models/*.onnx
+
+# ML - YOLO training runs
+ml/models/yolo_train/
 
 # ML - Python cache
 __pycache__/

@@ -26,6 +26,7 @@ import {
   Star,
   BarChart3,
   Eye,
+  ScanSearch,
 } from "lucide-react";
 
 /* ─── top‑bar links (visible in the header on large screens) ─── */
@@ -38,6 +39,7 @@ const topBarLinks = [
   { href: "/technology",   label: "Technology",   icon: Cpu },
   { href: "/solar-system", label: "Solar System", icon: Globe2 },
   { href: "/ask",          label: "Ask AI",       icon: BrainCircuit },
+  { href: "/space-scanner",label: "Scanner",      icon: ScanSearch },
 ];
 
 /* ─── full menu: all destinations, grouped ─── */
@@ -66,6 +68,7 @@ const menuSections = [
     title: "Tools",
     links: [
       { href: "/ask",          label: "Ask AI",       icon: BrainCircuit, desc: "AI-powered Q&A" },
+      { href: "/space-scanner",label: "Space Scanner",icon: ScanSearch,   desc: "Click-to-identify visual search" },
       { href: "/iss",          label: "ISS Tracker",  icon: Satellite,    desc: "Live position of the ISS" },
       { href: "/compare",      label: "Compare",      icon: BarChart3,    desc: "Side-by-side comparisons" },
       { href: "/search",       label: "Search",       icon: Search,       desc: "Search the entire atlas" },
