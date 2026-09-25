@@ -9,7 +9,12 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { rockets, planets, missions } from "@/lib/data";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
-const GEMINI_MODELS = ["gemini-2.5-flash", "gemini-2.0-flash"] as const;
+const GEMINI_MODELS = [
+  "gemini-3.5-flash",
+  "gemini-3.5-flash-lite",
+  "gemini-3.1-flash-lite",
+  "gemini-3.8-flash",
+] as const;
 
 // ── Known Class Mappings ──────────────────────────────────────
 

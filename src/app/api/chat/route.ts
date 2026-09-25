@@ -140,7 +140,12 @@ async function fetchNasaImages(query: string): Promise<NasaImage[]> {
 
 // ─── Main Chat Endpoint ───────────────────────────────────────
 
-const MODELS = ["gemini-2.5-flash", "gemini-2.0-flash"] as const;
+const MODELS = [
+  "gemini-3.5-flash",
+  "gemini-3.5-flash-lite",
+  "gemini-3.1-flash-lite",
+  "gemini-3.8-flash",
+] as const;
 
 export async function POST(req: Request) {
   if (!process.env.GEMINI_API_KEY) {
@@ -209,9 +214,7 @@ IMPORTANT: Prefer facts from the reference data above when they are relevant. If
         break; // Success — stop trying models
       } catch (err: unknown) {
         lastError = err instanceof Error ? err : new Error(String(err));
-        const is503 = lastError?.message?.includes('503');
-        if (!is503) throw err; // Non-503 errors should not retry
-        console.warn(`[Chat] ${modelName} returned 503, trying next model...`);
+        console.warn(`[Chat] ${modelName} failed (${lastError.message}), trying next model...`);
       }
     }
 

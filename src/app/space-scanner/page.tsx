@@ -18,7 +18,6 @@ import {
   Send,
   MousePointerClick,
   ScanSearch,
-  ArrowLeft,
 } from "lucide-react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
@@ -40,7 +39,7 @@ interface IdentifiedObject {
   displayName: string;
   className: string;
   confidence: number;
-  bbox: [number, number, number, number]; // [x_min, y_min, x_max, y_max]
+  bbox: [number, number, number, number];
   category: string;
   observation: string;
 }
@@ -57,6 +56,8 @@ type ScannerState =
   | "OBJECT_FOUND"
   | "NO_OBJECT"
   | "CHATTING";
+
+const OVERVIEW_MAX = 200;
 
 // ── Constants ─────────────────────────────────────────────────
 
@@ -123,8 +124,6 @@ function DetailRow({ label, value }: { label: string; value: string | number | b
   );
 }
 
-// ── Click Ripple Animation ────────────────────────────────────
-
 function ClickRipple({ x, y, active }: { x: number; y: number; active: boolean }) {
   if (!active) return null;
   return (
@@ -138,31 +137,16 @@ function ClickRipple({ x, y, active }: { x: number; y: number; active: boolean }
   );
 }
 
-// ── Bounding Box Overlay ──────────────────────────────────────
-
 function BoundingBox({
-  bbox,
-  label,
-  confidence,
-}: {
-  bbox: [number, number, number, number];
-  label: string;
-  confidence: number;
-}) {
+  bbox, label, confidence,
+}: { bbox: [number, number, number, number]; label: string; confidence: number }) {
   const [xMin, yMin, xMax, yMax] = bbox;
-  const left = xMin * 100;
-  const top = yMin * 100;
-  const width = (xMax - xMin) * 100;
-  const height = (yMax - yMin) * 100;
-
   return (
     <div
       className="absolute pointer-events-none z-10 transition-all duration-700 ease-out animate-in fade-in"
       style={{
-        left: `${left}%`,
-        top: `${top}%`,
-        width: `${width}%`,
-        height: `${height}%`,
+        left: `${xMin * 100}%`, top: `${yMin * 100}%`,
+        width: `${(xMax - xMin) * 100}%`, height: `${(yMax - yMin) * 100}%`,
         border: "2px solid #22d3ee",
         boxShadow: "0 0 16px #22d3ee60, inset 0 0 12px #22d3ee15",
         borderRadius: "6px",
@@ -187,15 +171,14 @@ export default function SpaceScannerPage() {
   const [isDragging, setIsDragging] = useState(false);
   const [scanError, setScanError] = useState<string | null>(null);
 
-  // Click-to-identify state
   const [clickPos, setClickPos] = useState<{ x: number; y: number } | null>(null);
   const [showRipple, setShowRipple] = useState(false);
   const [identifiedObject, setIdentifiedObject] = useState<IdentifiedObject | null>(null);
   const [knowledge, setKnowledge] = useState<KnowledgeResult | null>(null);
   const [suggestedQuestions, setSuggestedQuestions] = useState<string[]>([]);
   const [noObjectMessage, setNoObjectMessage] = useState<string | null>(null);
+  const [overviewExpanded, setOverviewExpanded] = useState(false);
 
-  // Chat state
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [chatInput, setChatInput] = useState("");
   const [chatLoading, setChatLoading] = useState(false);
@@ -229,6 +212,7 @@ export default function SpaceScannerPage() {
     setChatMessages([]);
     setShowChat(false);
     setScanError(null);
+    setOverviewExpanded(false);
   };
 
   const handleReset = useCallback(() => {
@@ -252,12 +236,8 @@ export default function SpaceScannerPage() {
       if (!uploadedImage || state === "IDENTIFYING") return;
 
       const rect = e.currentTarget.getBoundingClientRect();
-      const x = (e.clientX - rect.left) / rect.width;
-      const y = (e.clientY - rect.top) / rect.height;
-
-      // Clamp to [0, 1]
-      const clickX = Math.max(0, Math.min(1, x));
-      const clickY = Math.max(0, Math.min(1, y));
+      const clickX = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+      const clickY = Math.max(0, Math.min(1, (e.clientY - rect.top) / rect.height));
 
       setClickPos({ x: clickX, y: clickY });
       setShowRipple(true);
@@ -266,10 +246,10 @@ export default function SpaceScannerPage() {
       setNoObjectMessage(null);
       setChatMessages([]);
       setShowChat(false);
+      setOverviewExpanded(false);
       setState("IDENTIFYING");
       setScanError(null);
 
-      // Kill ripple after animation
       setTimeout(() => setShowRipple(false), 1500);
 
       try {
@@ -278,8 +258,7 @@ export default function SpaceScannerPage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             image: uploadedImage,
-            clickX,
-            clickY,
+            clickX, clickY,
             mimeType: uploadedImage.startsWith("data:")
               ? uploadedImage.substring(uploadedImage.indexOf(":") + 1, uploadedImage.indexOf(";"))
               : "image/jpeg",
@@ -297,7 +276,6 @@ export default function SpaceScannerPage() {
         if (data.noObject) {
           setNoObjectMessage(data.message || "No identifiable object at this location.");
           setState("NO_OBJECT");
-          // Auto-reset to IMAGE_LOADED after 3s
           setTimeout(() => {
             setState((s) => (s === "NO_OBJECT" ? "IMAGE_LOADED" : s));
             setNoObjectMessage(null);
@@ -341,6 +319,7 @@ export default function SpaceScannerPage() {
                 category: identifiedObject.category,
                 observation: identifiedObject.observation,
                 knowledgeSummary: knowledge?.description,
+                knowledgeDetails: knowledge?.details,
               },
               previousMessages: chatMessages,
             },
@@ -370,6 +349,13 @@ export default function SpaceScannerPage() {
     [identifiedObject, knowledge, chatMessages, chatLoading]
   );
 
+  // Overview truncation
+  const overviewText = knowledge?.description || "";
+  const isOverviewLong = overviewText.length > OVERVIEW_MAX;
+  const displayOverview = overviewExpanded || !isOverviewLong
+    ? overviewText
+    : overviewText.slice(0, OVERVIEW_MAX).trimEnd() + "…";
+
   // ── Render ──
   return (
     <div className="relative min-h-screen">
@@ -379,9 +365,9 @@ export default function SpaceScannerPage() {
         <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] rounded-full bg-accent-blue/5 blur-[100px]" />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-12">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-20 pb-12">
         {/* ── Hero ── */}
-        <header className="text-center mb-10">
+        <header className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-purple/10 border border-accent-purple/20 text-accent-purple text-xs font-micro mb-5">
             <ScanSearch className="w-3.5 h-3.5" />
             CLICK-TO-IDENTIFY VISUAL SEARCH ENGINE
@@ -484,12 +470,10 @@ export default function SpaceScannerPage() {
                       }`}
                     />
 
-                    {/* Click ripple */}
                     {clickPos && (
                       <ClickRipple x={clickPos.x * 100} y={clickPos.y * 100} active={showRipple} />
                     )}
 
-                    {/* Bounding box */}
                     {identifiedObject && state !== "IDENTIFYING" && (
                       <BoundingBox
                         bbox={identifiedObject.bbox}
@@ -498,7 +482,6 @@ export default function SpaceScannerPage() {
                       />
                     )}
 
-                    {/* Scanning overlay */}
                     {state === "IDENTIFYING" && (
                       <div className="absolute inset-0 pointer-events-none flex flex-col items-center justify-center bg-black/40 backdrop-blur-[1px]">
                         <div className="relative w-14 h-14 mb-3">
@@ -511,7 +494,6 @@ export default function SpaceScannerPage() {
                       </div>
                     )}
 
-                    {/* No object toast */}
                     {state === "NO_OBJECT" && noObjectMessage && (
                       <div className="absolute inset-x-4 bottom-4 p-3 rounded-xl bg-space-900/90 backdrop-blur-md border border-space-700/50 text-center animate-in slide-in-from-bottom z-30">
                         <p className="text-space-300 text-sm">{noObjectMessage}</p>
@@ -519,7 +501,6 @@ export default function SpaceScannerPage() {
                       </div>
                     )}
 
-                    {/* Close button */}
                     <button onClick={(e) => { e.stopPropagation(); handleReset(); }} type="button"
                       className="absolute top-3 right-3 p-2 rounded-lg bg-black/60 backdrop-blur-md text-space-300 hover:text-white hover:bg-black/80 transition-colors z-30">
                       <X className="w-4 h-4" />
@@ -567,7 +548,6 @@ export default function SpaceScannerPage() {
                       </button>
                     </div>
 
-                    {/* Messages */}
                     <div className="max-h-80 overflow-y-auto space-y-3 mb-4 pr-1">
                       {chatMessages.map((msg, i) => (
                         <div key={`msg-${i}`} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
@@ -597,7 +577,6 @@ export default function SpaceScannerPage() {
                       <div ref={chatEndRef} />
                     </div>
 
-                    {/* Suggested questions */}
                     {suggestedQuestions.length > 0 && chatMessages.length === 0 && (
                       <div className="flex flex-wrap gap-2 mb-3">
                         {suggestedQuestions.map((q, i) => (
@@ -609,7 +588,6 @@ export default function SpaceScannerPage() {
                       </div>
                     )}
 
-                    {/* Input */}
                     <div className="flex gap-2">
                       <input
                         type="text"
@@ -647,7 +625,6 @@ export default function SpaceScannerPage() {
                     : "Upload a space image, then click on any object to identify it. Works with planets, rockets, nebulae, galaxies, spacecraft, and more."}
                 </p>
 
-                {/* How it works */}
                 <div className="w-full pt-6 border-t border-space-800/80 space-y-3">
                   <p className="text-[11px] font-micro text-space-500 uppercase tracking-wider">HOW IT WORKS</p>
                   {[
@@ -667,10 +644,11 @@ export default function SpaceScannerPage() {
                 </div>
               </div>
             ) : (
-              <div className="glass-card overflow-hidden border-space-700/50 shadow-2xl">
+              /* ── Knowledge card with FIXED max-height and scroll ── */
+              <div className="glass-card overflow-hidden border-space-700/50 shadow-2xl lg:max-h-[calc(100vh-120px)]  flex flex-col">
                 {/* Header image */}
                 {knowledge?.imageUrl && (
-                  <div className="relative h-48 overflow-hidden bg-space-950">
+                  <div className="relative h-44 shrink-0 overflow-hidden bg-space-950">
                     <img src={knowledge.imageUrl} alt={knowledge.displayName} className="w-full h-full object-cover" />
                     <div className="absolute inset-0 bg-gradient-to-t from-space-950 via-space-950/40 to-transparent" />
                     <div className="absolute bottom-4 left-5 right-5">
@@ -682,8 +660,8 @@ export default function SpaceScannerPage() {
                   </div>
                 )}
 
-                <div className="p-5 space-y-5">
-                  {/* Fallback title if no image */}
+                {/* Scrollable content */}
+                <div className="flex-1 overflow-y-auto overscroll-contain p-5 space-y-5">
                   {!knowledge?.imageUrl && (
                     <div className="border-b border-space-800 pb-4">
                       <span className="text-[10px] font-micro px-2 py-0.5 rounded bg-space-800 text-cyan-300 uppercase">
@@ -714,26 +692,28 @@ export default function SpaceScannerPage() {
                     <p className="text-space-300 text-xs leading-relaxed">{identifiedObject.observation}</p>
                   </div>
 
-                  {/* Bbox coordinates */}
-                  <div className="p-3 rounded-lg bg-space-900/50 border border-space-800/60">
-                    <div className="flex items-center gap-1.5 text-xs text-space-400 font-micro mb-1.5">
-                      <Box className="w-3 h-3" /> DETECTION BOX
-                    </div>
-                    <div className="grid grid-cols-4 gap-2 text-[11px] font-mono">
-                      {["X₁", "Y₁", "X₂", "Y₂"].map((l, i) => (
-                        <div key={l}>
-                          <span className="text-space-500">{l}</span>
-                          <span className="text-space-200 ml-1">{identifiedObject.bbox[i].toFixed(3)}</span>
-                        </div>
+                  {/* Detection Box */}
+                  <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-space-900/50 border border-space-800/60">
+                    <Box className="w-3 h-3 text-space-500 shrink-0" />
+                    <span className="text-[10px] text-space-500 font-micro shrink-0">BBOX</span>
+                    <div className="flex gap-3 text-[11px] font-mono ml-auto">
+                      {["X₁","Y₁","X₂","Y₂"].map((l, i) => (
+                        <span key={l}><span className="text-space-500">{l}</span> <span className="text-space-200">{identifiedObject.bbox[i].toFixed(2)}</span></span>
                       ))}
                     </div>
                   </div>
 
-                  {/* Overview */}
-                  {knowledge?.description && (
+                  {/* Overview — TRUNCATED */}
+                  {overviewText && (
                     <div>
                       <h4 className="text-xs font-micro text-space-400 mb-1.5 uppercase tracking-wider">OVERVIEW</h4>
-                      <p className="text-space-300 text-sm leading-relaxed">{knowledge.description}</p>
+                      <p className="text-space-300 text-sm leading-relaxed">{displayOverview}</p>
+                      {isOverviewLong && (
+                        <button onClick={() => setOverviewExpanded(!overviewExpanded)} type="button"
+                          className="text-cyan-400 text-xs mt-1.5 hover:text-cyan-300 transition-colors font-medium">
+                          {overviewExpanded ? "Show less" : "Read more"}
+                        </button>
+                      )}
                     </div>
                   )}
 
@@ -751,7 +731,6 @@ export default function SpaceScannerPage() {
 
                   {/* Actions */}
                   <div className="space-y-2 pt-2">
-                    {/* Chat button */}
                     <button onClick={() => setShowChat(true)} type="button"
                       className="w-full py-2.5 text-xs rounded-xl flex items-center justify-center gap-2 bg-accent-purple/15 border border-accent-purple/30 text-purple-300 hover:bg-accent-purple/25 transition-colors">
                       <MessageCircle className="w-3.5 h-3.5" />

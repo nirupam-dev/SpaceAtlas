@@ -6,7 +6,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
-const GEMINI_MODELS = ["gemini-2.5-flash", "gemini-2.0-flash"] as const;
+const GEMINI_MODELS = [
+  "gemini-3.5-flash",
+  "gemini-3.5-flash-lite",
+  "gemini-3.1-flash-lite",
+  "gemini-3.8-flash",
+] as const;
 
 interface ChatMessage {
   role: "user" | "assistant";
@@ -19,6 +24,7 @@ interface ObjectContext {
   category?: string;
   observation?: string;
   knowledgeSummary?: string;
+  knowledgeDetails?: Record<string, string | number | boolean | undefined>;
 }
 
 export async function POST(req: NextRequest) {
@@ -27,16 +33,12 @@ export async function POST(req: NextRequest) {
     const {
       message,
       context,
-      image: rawImage,
-      mimeType = "image/jpeg",
     }: {
       message: string;
       context: {
         object: ObjectContext;
         previousMessages?: ChatMessage[];
       };
-      image?: string;
-      mimeType?: string;
     } = body;
 
     if (!message || !context?.object?.objectName) {
@@ -53,15 +55,24 @@ export async function POST(req: NextRequest) {
       .map((msg) => `${msg.role === "user" ? "User" : "SpaceAtlas AI"}: ${msg.text}`)
       .join("\n\n");
 
+    // Build specifications string from details
+    const specsString = object.knowledgeDetails
+      ? Object.entries(object.knowledgeDetails)
+          .filter(([, v]) => v !== undefined && v !== null && v !== "")
+          .map(([k, v]) => `- ${k}: ${v}`)
+          .join("\n")
+      : "";
+
     const systemPrompt = `You are SpaceAtlas AI — an expert astronomical knowledge assistant integrated into the SpaceAtlas visual search system.
 
 CONTEXT: The user has identified **${object.objectName}** (${object.category || "space object"}) in an uploaded image using our visual scanner.
 ${object.observation ? `VISUAL OBSERVATION: ${object.observation}` : ""}
-${object.knowledgeSummary ? `KNOWN DATA: ${object.knowledgeSummary}` : ""}
+${object.knowledgeSummary ? `DESCRIPTION: ${object.knowledgeSummary}` : ""}
+${specsString ? `\nSPECIFICATIONS:\n${specsString}` : ""}
 
 RULES:
 1. Answer questions specifically about ${object.objectName} and related topics.
-2. Be precise, factual, and cite numerical data when available (distances, masses, temperatures, dates).
+2. Be precise, factual, and ALWAYS cite the numerical data from SPECIFICATIONS when available (distances, masses, temperatures, dates). Never say "data is not provided" if it exists in SPECIFICATIONS above.
 3. Use markdown formatting for clarity — bold key terms, use bullet points for lists.
 4. Keep answers concise but comprehensive — aim for 2-4 paragraphs max.
 5. If the user asks about something unrelated to ${object.objectName} or space/astronomy, gently redirect them back to the astronomical context.
@@ -73,38 +84,36 @@ ${conversationHistory ? `CONVERSATION SO FAR:\n${conversationHistory}\n` : ""}`;
     let responseText = "";
     let lastError: unknown = null;
 
-    for (const modelName of GEMINI_MODELS) {
-      try {
-        const model = genAI.getGenerativeModel({
-          model: modelName,
-          generationConfig: {
-            temperature: 0.4,
-            maxOutputTokens: 2048,
-          },
-        });
+    // Try each model with a retry per model
+    const modelsToTry = GEMINI_MODELS;
 
-        // Build content parts
-        const parts: Array<string | { inlineData: { data: string; mimeType: string } }> = [
-          systemPrompt + `\n\nUser: ${message}`,
-        ];
+    for (const modelName of modelsToTry) {
+      for (let attempt = 0; attempt < 2; attempt++) {
+        try {
+          const model = genAI.getGenerativeModel({
+            model: modelName,
+            generationConfig: {
+              temperature: 0.4,
+              maxOutputTokens: 1024,
+            },
+          });
 
-        // Include image if provided (for visual reference)
-        if (rawImage) {
-          let base64Image = rawImage;
-          if (rawImage.startsWith("data:")) {
-            base64Image = rawImage.split(",")[1];
-          }
-          if (base64Image && !rawImage.startsWith("http")) {
-            parts.push({ inlineData: { data: base64Image, mimeType } });
-          }
+          // Build content parts (text only — no image for chat, keeps it fast)
+          const parts: Array<string | { inlineData: { data: string; mimeType: string } }> = [
+            systemPrompt + `\n\nUser: ${message}`,
+          ];
+
+          const result = await model.generateContent(parts);
+          responseText = result.response.text();
+          if (responseText) break;
+        } catch (err) {
+          lastError = err;
+          console.error(`[CHAT] ${modelName} attempt ${attempt + 1} failed:`, (err as Error)?.message);
+          // Wait before retry
+          if (attempt === 0) await new Promise((r) => setTimeout(r, 1500));
         }
-
-        const result = await model.generateContent(parts);
-        responseText = result.response.text();
-        if (responseText) break;
-      } catch (err) {
-        lastError = err;
       }
+      if (responseText) break;
     }
 
     if (!responseText) {
