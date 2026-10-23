@@ -59,6 +59,59 @@ type ScannerState =
 
 const OVERVIEW_MAX = 200;
 
+// ── Image Compression ─────────────────────────────────────────
+// Resize uploaded images before sending to the API.
+// Raw images can be 5-20MB; resizing to 1024px max dimension
+// and converting to JPEG reduces payload by ~80%, cutting
+// both upload time and Gemini processing latency significantly.
+
+const MAX_DIMENSION = 1024;
+const JPEG_QUALITY = 0.7;
+
+function resizeImageForIdentification(
+  dataUrl: string
+): Promise<{ base64: string; mimeType: string }> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      let { width, height } = img;
+
+      // Only resize if the image exceeds MAX_DIMENSION
+      if (width <= MAX_DIMENSION && height <= MAX_DIMENSION) {
+        // Already small — strip the data URL prefix and return
+        const parts = dataUrl.split(",");
+        const mime = dataUrl.substring(dataUrl.indexOf(":") + 1, dataUrl.indexOf(";"));
+        resolve({ base64: parts[1], mimeType: mime });
+        return;
+      }
+
+      // Scale down proportionally
+      const scale = MAX_DIMENSION / Math.max(width, height);
+      width = Math.round(width * scale);
+      height = Math.round(height * scale);
+
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext("2d")!;
+      ctx.drawImage(img, 0, 0, width, height);
+
+      const compressedDataUrl = canvas.toDataURL("image/jpeg", JPEG_QUALITY);
+      resolve({
+        base64: compressedDataUrl.split(",")[1],
+        mimeType: "image/jpeg",
+      });
+    };
+    img.onerror = () => {
+      // Fallback — send original
+      const parts = dataUrl.split(",");
+      const mime = dataUrl.substring(dataUrl.indexOf(":") + 1, dataUrl.indexOf(";"));
+      resolve({ base64: parts[1] || dataUrl, mimeType: mime || "image/jpeg" });
+    };
+    img.src = dataUrl;
+  });
+}
+
 // ── Constants ─────────────────────────────────────────────────
 
 const SAMPLE_IMAGES = [
@@ -78,7 +131,7 @@ const SAMPLE_IMAGES = [
     hint: "Event Horizon • EHT",
   },
   {
-    url: "https://upload.wikimedia.org/wikipedia/commons/f/f3/Orion_Nebula_-_Hubble_2006_mosaic_18000.jpg",
+    url: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Orion_Nebula_-_Hubble_2006_mosaic_18000.jpg/1280px-Orion_Nebula_-_Hubble_2006_mosaic_18000.jpg",
     label: "Orion Nebula",
     hint: "Stellar Nursery • M42",
   },
@@ -88,7 +141,7 @@ const SAMPLE_IMAGES = [
     hint: "Red Planet • Valles Marineris",
   },
   {
-    url: "https://upload.wikimedia.org/wikipedia/commons/b/be/GPN-2000-001437.jpg",
+    url: "https://upload.wikimedia.org/wikipedia/commons/7/7d/Apollo_11_Saturn_V_lifting_off_on_July_16%2C_1969.jpg",
     label: "Saturn V Launch",
     hint: "Apollo 11 • Rocket",
   },
@@ -253,15 +306,30 @@ export default function SpaceScannerPage() {
       setTimeout(() => setShowRipple(false), 1500);
 
       try {
+        // Compress image before sending — biggest latency saver
+        let imagePayload: string;
+        let payloadMimeType: string;
+
+        if (uploadedImage.startsWith("data:")) {
+          // Uploaded file — resize client-side
+          const compressed = await resizeImageForIdentification(uploadedImage);
+          imagePayload = compressed.base64;
+          payloadMimeType = compressed.mimeType;
+        } else {
+          // Remote URL (sample images) — send URL directly, server fetches
+          imagePayload = uploadedImage;
+          payloadMimeType = "image/jpeg";
+        }
+
         const res = await fetch("/api/space-scanner/identify", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            image: uploadedImage,
+            image: uploadedImage.startsWith("data:")
+              ? imagePayload      // Send compressed base64 (not the full data URL)
+              : uploadedImage,    // Send remote URL as-is
             clickX, clickY,
-            mimeType: uploadedImage.startsWith("data:")
-              ? uploadedImage.substring(uploadedImage.indexOf(":") + 1, uploadedImage.indexOf(";"))
-              : "image/jpeg",
+            mimeType: payloadMimeType,
           }),
         });
 
@@ -343,7 +411,7 @@ export default function SpaceScannerPage() {
         ]);
       } finally {
         setChatLoading(false);
-        setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: "smooth" }), 100);
+        setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" }), 100);
       }
     },
     [identifiedObject, knowledge, chatMessages, chatLoading]
