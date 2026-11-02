@@ -10,7 +10,8 @@
  * - Loading state rendering
  */
 import React from "react";
-import { render, screen, waitFor, within, cleanup, fireEvent, act } from "@testing-library/react";
+import { render, cleanup, act } from "@testing-library/react";
+import { screen, waitFor, within, fireEvent } from "@testing-library/dom";
 import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -242,7 +243,7 @@ describe("AsteroidWatch", () => {
 
     await waitFor(() => {
       const cards = screen.getAllByRole("button", { name: /asteroid/i });
-      cards.forEach((card) => {
+      cards.forEach((card: HTMLElement) => {
         expect(card).toHaveAttribute("tabindex", "0");
         expect(card).toHaveAttribute("aria-expanded");
         expect(card).toHaveAttribute("aria-label");

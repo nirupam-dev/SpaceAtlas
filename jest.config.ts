@@ -1,11 +1,10 @@
-import type { JestConfigWithTsJest } from 'ts-jest';
 import nextJest from 'next/jest.js';
 
 const createJestConfig = nextJest({
   dir: './',
 });
 
-const config: JestConfigWithTsJest = {
+const config = {
   // ─── Environment ───────────────────────────────────────────
   testEnvironment: 'jsdom',
 
@@ -45,7 +44,7 @@ const config: JestConfigWithTsJest = {
   transform: {
     '^.+\\.(ts|tsx)$': ['ts-jest', {
       tsconfig: 'tsconfig.json',
-    }],
+    }] as [string, Record<string, unknown>],
   },
   transformIgnorePatterns: [
     '/node_modules/(?!(@google/generative-ai)/)',
