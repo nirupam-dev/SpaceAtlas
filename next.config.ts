@@ -39,6 +39,7 @@ const TRUSTED_CONNECT_SOURCES = [
   "https://generativelanguage.googleapis.com",
   "https://vitals.vercel-insights.com",
   "https://api.wheretheiss.at",
+  "https://cdn.jsdelivr.net",
 ].join(" ");
 
 const isDev = process.env.NODE_ENV === "development";
@@ -55,7 +56,7 @@ const cspHeader = [
   `font-src 'self' https://fonts.gstatic.com`,
   `img-src 'self' data: blob: https: ${TRUSTED_IMG_SOURCES}`,
   `connect-src 'self' ${TRUSTED_CONNECT_SOURCES}`,
-  `media-src 'self' https://apod.nasa.gov https://sxcontent9668.azureedge.us https://content.spacex.com`,
+  `media-src 'self' https://apod.nasa.gov https://sxcontent9668.azureedge.us https://content.spacex.com https://cdn.jsdelivr.net`,
   `frame-src 'none'`,
   `object-src 'none'`,
   `base-uri 'self'`,
