@@ -24,6 +24,7 @@ const TRUSTED_IMG_SOURCES = [
   "https://www.nasaspaceflight.com",
   "https://spacepolicyonline.com",
   "https://assets.science.nasa.gov",
+  "https://science.nasa.gov",
   "https://www.nasa.gov",
   "https://blogs.nasa.gov",
 ].join(" ");
@@ -77,6 +78,8 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'www.nasaspaceflight.com' },
       { protocol: 'https', hostname: 'spacepolicyonline.com' },
       { protocol: 'https', hostname: 'assets.science.nasa.gov' },
+      { protocol: 'https', hostname: 'science.nasa.gov' },
+      { protocol: 'https', hostname: '**.nasa.gov' },
       { protocol: 'https', hostname: 'www.nasa.gov' },
       { protocol: 'https', hostname: 'blogs.nasa.gov' },
       { protocol: 'https', hostname: 'images.unsplash.com' },
