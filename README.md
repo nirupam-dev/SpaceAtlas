@@ -28,7 +28,7 @@ SpaceAtlas is a comprehensive space encyclopedia and rocket information platform
 npm install
 ```
 
-2. **Configure Environment**
+2. **Configure Environment**    
 Copy `.env.example` to `.env.local` and add your database URL (if using PostgreSQL).
 
 ```bash
