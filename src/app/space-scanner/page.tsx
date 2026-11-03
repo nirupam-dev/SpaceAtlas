@@ -6,7 +6,6 @@ import { motion } from "framer-motion";
 import {
   Upload,
   Camera,
-  Sparkles,
   ExternalLink,
   ChevronRight,
   X,
@@ -253,6 +252,20 @@ export default function SpaceScannerPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imageRef = useRef<HTMLDivElement>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const scannerUploadRef = useRef<HTMLDivElement>(null);
+
+  function resetDetection() {
+    setClickPos(null);
+    setShowRipple(false);
+    setIdentifiedObject(null);
+    setKnowledge(null);
+    setSuggestedQuestions([]);
+    setNoObjectMessage(null);
+    setChatMessages([]);
+    setShowChat(false);
+    setScanError(null);
+    setOverviewExpanded(false);
+  }
 
   // ── Image upload ──
   const processFile = useCallback((file: File) => {
@@ -268,19 +281,6 @@ export default function SpaceScannerPage() {
     reader.readAsDataURL(file);
   }, []);
 
-  const resetDetection = () => {
-    setClickPos(null);
-    setShowRipple(false);
-    setIdentifiedObject(null);
-    setKnowledge(null);
-    setSuggestedQuestions([]);
-    setNoObjectMessage(null);
-    setChatMessages([]);
-    setShowChat(false);
-    setScanError(null);
-    setOverviewExpanded(false);
-  };
-
   const handleReset = useCallback(() => {
     setUploadedImage(null);
     setFileName("");
@@ -294,6 +294,10 @@ export default function SpaceScannerPage() {
     setFileName(label);
     setState("IMAGE_LOADED");
     resetDetection();
+  }, []);
+
+  const handleScrollToScanner = useCallback(() => {
+    scannerUploadRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, []);
 
   // ── Click-to-Identify ──
@@ -466,18 +470,20 @@ export default function SpaceScannerPage() {
               transition={{ delay: 2.1, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
               className="flex flex-col sm:flex-row gap-4 pointer-events-auto"
             >
-              <a
-                href="#scanner-upload"
+              <button
+                type="button"
+                onClick={handleScrollToScanner}
                 className="px-8 py-4 font-bold transition-transform hover:scale-105 active:scale-95 bg-white text-black rounded-full shadow-[0_0_20px_rgba(255,255,255,0.2)]"
               >
                 Get Started
-              </a>
-              <a
-                href="#scanner-upload"
+              </button>
+              <button
+                type="button"
+                onClick={handleScrollToScanner}
                 className="px-8 py-4 font-bold transition-transform hover:scale-105 active:scale-95 bg-transparent text-white border border-white/20 rounded-full hover:bg-white/10"
               >
                 Open Scanner
-              </a>
+              </button>
             </motion.div>
           </div>
         </VolumetricStudio>
@@ -520,7 +526,7 @@ export default function SpaceScannerPage() {
         </header>
 
         {/* ── Main Grid ── */}
-        <div id="scanner-upload" className="grid lg:grid-cols-5 gap-8 scroll-mt-24">
+        <div id="scanner-upload" ref={scannerUploadRef} className="grid lg:grid-cols-5 gap-8 scroll-mt-24">
           {/* ═══ LEFT: Upload & Image Canvas (3 cols) ═══ */}
           <div className="lg:col-span-3 space-y-6">
             {state === "IDLE" ? (

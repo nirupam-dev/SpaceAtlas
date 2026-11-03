@@ -27,6 +27,26 @@ interface ObjectContext {
   knowledgeDetails?: Record<string, string | number | boolean | undefined>;
 }
 
+function buildFallbackAnswer(message: string, object: ObjectContext): string {
+  const details = object.knowledgeDetails
+    ? Object.entries(object.knowledgeDetails)
+        .filter(([, v]) => v !== undefined && v !== null && v !== "")
+        .slice(0, 6)
+        .map(([k, v]) => `- **${k}:** ${v}`)
+        .join("\n")
+    : "";
+
+  return [
+    `I can still help with **${object.objectName}** using local context while the AI model is unavailable.`,
+    object.knowledgeSummary ? `\n${object.knowledgeSummary}` : "",
+    details ? `\n\n**Known facts:**\n${details}` : "",
+    `\n\nYour question was: "${message.trim()}"`,
+    "\n\nTry asking one of these next:",
+    `- What are the most important characteristics of ${object.objectName}?`,
+    `- How does ${object.objectName} compare to similar objects?`,
+  ].join("");
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -81,43 +101,49 @@ RULES:
 
 ${conversationHistory ? `CONVERSATION SO FAR:\n${conversationHistory}\n` : ""}`;
 
+    const hasGeminiKey = Boolean(process.env.GEMINI_API_KEY);
     let responseText = "";
     let lastError: unknown = null;
 
     // Try each model with a retry per model
     const modelsToTry = GEMINI_MODELS;
 
-    for (const modelName of modelsToTry) {
-      for (let attempt = 0; attempt < 2; attempt++) {
-        try {
-          const model = genAI.getGenerativeModel({
-            model: modelName,
-            generationConfig: {
-              temperature: 0.4,
-              maxOutputTokens: 1024,
-            },
-          });
+    if (hasGeminiKey) {
+      for (const modelName of modelsToTry) {
+        for (let attempt = 0; attempt < 2; attempt++) {
+          try {
+            const model = genAI.getGenerativeModel({
+              model: modelName,
+              generationConfig: {
+                temperature: 0.4,
+                maxOutputTokens: 1024,
+              },
+            });
 
-          // Build content parts (text only — no image for chat, keeps it fast)
-          const parts: Array<string | { inlineData: { data: string; mimeType: string } }> = [
-            systemPrompt + `\n\nUser: ${message}`,
-          ];
+            // Build content parts (text only — no image for chat, keeps it fast)
+            const parts: Array<string | { inlineData: { data: string; mimeType: string } }> = [
+              systemPrompt + `\n\nUser: ${message}`,
+            ];
 
-          const result = await model.generateContent(parts);
-          responseText = result.response.text();
-          if (responseText) break;
-        } catch (err) {
-          lastError = err;
-          console.error(`[CHAT] ${modelName} attempt ${attempt + 1} failed:`, (err as Error)?.message);
-          // Wait before retry
-          if (attempt === 0) await new Promise((r) => setTimeout(r, 1500));
+            const result = await model.generateContent(parts);
+            responseText = result.response.text();
+            if (responseText) break;
+          } catch (err) {
+            lastError = err;
+            console.error(`[CHAT] ${modelName} attempt ${attempt + 1} failed:`, (err as Error)?.message);
+            // Wait before retry
+            if (attempt === 0) await new Promise((r) => setTimeout(r, 1500));
+          }
         }
+        if (responseText) break;
       }
-      if (responseText) break;
     }
 
     if (!responseText) {
-      throw new Error(`Chat failed: ${(lastError as Error)?.message || "Unknown error"}`);
+      responseText = buildFallbackAnswer(message, object);
+      if (lastError) {
+        console.warn("[CHAT_FALLBACK] Gemini unavailable, using local response:", (lastError as Error)?.message);
+      }
     }
 
     // Extract suggested follow-ups from the response

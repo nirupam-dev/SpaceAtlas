@@ -93,6 +93,61 @@ const CLASS_MAPPINGS: Record<string, ObjectMapping> = {
   lunar_lander: { slug: "lunar-lander", source: "wikipedia", displayName: "Lunar Lander", wikiTitle: "Lunar_lander" },
 };
 
+const KEYWORD_TO_CLASS: Array<{ keyword: string; canonicalClass: string; objectName: string; category: string }> = [
+  { keyword: "jupiter", canonicalClass: "jupiter", objectName: "Jupiter", category: "planet" },
+  { keyword: "saturn", canonicalClass: "saturn", objectName: "Saturn", category: "planet" },
+  { keyword: "mars", canonicalClass: "mars", objectName: "Mars", category: "planet" },
+  { keyword: "earth", canonicalClass: "earth", objectName: "Earth", category: "planet" },
+  { keyword: "moon", canonicalClass: "moon", objectName: "Moon", category: "moon" },
+  { keyword: "orion", canonicalClass: "orion_nebula", objectName: "Orion Nebula", category: "nebula" },
+  { keyword: "carina", canonicalClass: "carina_nebula", objectName: "Carina Nebula", category: "nebula" },
+  { keyword: "crab", canonicalClass: "crab_nebula", objectName: "Crab Nebula", category: "nebula" },
+  { keyword: "andromeda", canonicalClass: "andromeda_galaxy", objectName: "Andromeda Galaxy", category: "galaxy" },
+  { keyword: "black_hole", canonicalClass: "black_hole", objectName: "Black Hole", category: "phenomenon" },
+  { keyword: "black-hole", canonicalClass: "black_hole", objectName: "Black Hole", category: "phenomenon" },
+  { keyword: "falcon", canonicalClass: "falcon_9", objectName: "Falcon 9", category: "rocket" },
+  { keyword: "saturn_v", canonicalClass: "saturn_v", objectName: "Saturn V", category: "rocket" },
+  { keyword: "saturn-v", canonicalClass: "saturn_v", objectName: "Saturn V", category: "rocket" },
+  { keyword: "iss", canonicalClass: "iss", objectName: "International Space Station", category: "spacecraft" },
+  { keyword: "hubble", canonicalClass: "hubble_telescope", objectName: "Hubble Space Telescope", category: "telescope" },
+  { keyword: "jwst", canonicalClass: "jwst", objectName: "James Webb Space Telescope", category: "telescope" },
+  { keyword: "webb", canonicalClass: "jwst", objectName: "James Webb Space Telescope", category: "telescope" },
+];
+
+function getHeuristicIdentification(rawImage: string, clickX: number, clickY: number) {
+  const normalized = String(rawImage || "").toLowerCase();
+  const matched = KEYWORD_TO_CLASS.find((item) => normalized.includes(item.keyword));
+
+  const objectName = matched?.objectName || "Celestial Object";
+  const canonicalClass = matched?.canonicalClass || "celestial_object";
+  const category = matched?.category || "celestial";
+
+  const halfWidth = 0.16;
+  const halfHeight = 0.16;
+  const bbox: [number, number, number, number] = [
+    Math.max(0, clickX - halfWidth),
+    Math.max(0, clickY - halfHeight),
+    Math.min(1, clickX + halfWidth),
+    Math.min(1, clickY + halfHeight),
+  ];
+
+  return {
+    objectName,
+    canonicalClass,
+    confidence: matched ? 0.72 : 0.58,
+    category,
+    bbox,
+    observation: matched
+      ? `Heuristic mode matched this image to ${objectName}. For highest accuracy, configure GEMINI_API_KEY.`
+      : "Heuristic mode estimated a likely object at the clicked position. Configure GEMINI_API_KEY for higher-precision visual identification.",
+    suggestedQuestions: [
+      `What is ${objectName}?`,
+      `How was ${objectName} discovered?`,
+      `Why is ${objectName} important in space science?`,
+    ],
+  };
+}
+
 // ── Knowledge Resolution ──────────────────────────────────────
 
 async function fetchWikipediaKnowledge(wikiTitle: string, fallbackName: string) {
@@ -228,8 +283,7 @@ async function resolveKnowledge(canonicalKey: string, displayName: string) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { clickX, clickY, mimeType: rawMimeType } = body;
-    let { image: rawImage } = body;
+    const { clickX, clickY, mimeType: rawMimeType, image: rawImage } = body;
     let mimeType = rawMimeType || "image/jpeg";
     let base64Image = "";
 
@@ -272,6 +326,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Could not process image" }, { status: 400 });
     }
 
+    const hasGeminiKey = Boolean(process.env.GEMINI_API_KEY);
+
     // ──────────────────────────────────────────────────────────
     // TIER 2: Gemini Multimodal Vision — Click-to-Identify
     // (Tier 1 YOLO integration will be added once model is trained)
@@ -297,34 +353,38 @@ Respond in JSON ONLY:
 
 Or if empty area: {"noObject":true,"message":"reason"}`;
 
-    for (const modelName of GEMINI_MODELS) {
-      try {
-        const model = genAI.getGenerativeModel({
-          model: modelName,
-          generationConfig: {
-            responseMimeType: "application/json",
-            temperature: 0.1,   // Lower = faster, more deterministic
-            maxOutputTokens: 300, // Cap output length for speed
-          },
-        });
+    if (hasGeminiKey) {
+      for (const modelName of GEMINI_MODELS) {
+        try {
+          const model = genAI.getGenerativeModel({
+            model: modelName,
+            generationConfig: {
+              responseMimeType: "application/json",
+              temperature: 0.1,   // Lower = faster, more deterministic
+              maxOutputTokens: 300, // Cap output length for speed
+            },
+          });
 
-        const result = await model.generateContent([
-          prompt,
-          { inlineData: imagePayload },
-        ]);
+          const result = await model.generateContent([
+            prompt,
+            { inlineData: imagePayload },
+          ]);
 
-        geminiResponseText = result.response.text();
-        if (geminiResponseText) break;
-      } catch (err) {
-        lastError = err;
+          geminiResponseText = result.response.text();
+          if (geminiResponseText) break;
+        } catch (err) {
+          lastError = err;
+        }
       }
     }
 
-    if (!geminiResponseText) {
-      throw new Error(`Vision AI failed: ${(lastError as Error)?.message || "Unknown error"}`);
-    }
+    const parsed = geminiResponseText
+      ? JSON.parse(geminiResponseText)
+      : getHeuristicIdentification(rawImage, clickX, clickY);
 
-    const parsed = JSON.parse(geminiResponseText);
+    if (!geminiResponseText && lastError) {
+      console.warn("[IDENTIFY_FALLBACK] Gemini unavailable, using heuristic mode:", (lastError as Error)?.message);
+    }
 
     // ── Handle: No object at click point ──
     if (parsed.noObject) {
