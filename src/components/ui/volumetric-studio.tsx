@@ -221,6 +221,7 @@ function Room({
               camera={{ position: [0, 0, 10], fov: 45 }}
               shadows={false}
               gl={{ alpha: true }}
+              style={{ pointerEvents: "none" }}
             >
               <ambientLight intensity={0.5} />
               <SpotLight
@@ -441,7 +442,7 @@ export const VolumetricStudio = ({
         spots={[35, 50, 65]}
         isFlickering={isFlickering}
       />
-      <div className="relative z-10 w-full h-full pointer-events-none">
+      <div className="relative z-10 w-full h-full pointer-events-auto">
         {children}
       </div>
     </section>
