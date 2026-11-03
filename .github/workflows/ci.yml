@@ -7,10 +7,11 @@ on:
     branches: [main]
 
 env:
-  NODE_VERSION: '20'
+  DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/spaceatlas?schema=public"
+  NODE_VERSION: '24'
 
 jobs:
-  # ─── Lint & Type Check ──────────────────────────────────────
+  # â”€â”€â”€ Lint & Type Check â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   quality:
     name: Code Quality
     runs-on: ubuntu-latest
@@ -24,7 +25,7 @@ jobs:
       - run: npx tsc --noEmit
       - run: npm run lint
 
-  # ─── Unit & Integration Tests ───────────────────────────────
+  # â”€â”€â”€ Unit & Integration Tests â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   test:
     name: Unit Tests
     runs-on: ubuntu-latest
@@ -42,7 +43,7 @@ jobs:
           name: coverage-report
           path: coverage/
 
-  # ─── E2E Tests (Playwright) ─────────────────────────────────
+  # â”€â”€â”€ E2E Tests (Playwright) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   e2e:
     name: E2E Tests
     runs-on: ubuntu-latest
@@ -69,7 +70,7 @@ jobs:
           path: playwright-report/
           retention-days: 14
 
-  # ─── Build Verification ─────────────────────────────────────
+  # â”€â”€â”€ Build Verification â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   build:
     name: Production Build
     runs-on: ubuntu-latest

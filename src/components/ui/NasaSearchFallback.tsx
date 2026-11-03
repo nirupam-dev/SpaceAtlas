@@ -1,8 +1,8 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Telescope, Image as ImageIcon, ExternalLink, ArrowLeft } from "lucide-react";
+import { Telescope, Image as ImageIcon, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -24,27 +24,39 @@ interface NasaSearchFallbackProps {
   backText: string;
 }
 
-export default function NasaSearchFallback({ query, backLink, backText }: NasaSearchFallbackProps) {
+export default function NasaSearchFallback({
+  query,
+  backLink,
+  backText,
+}: NasaSearchFallbackProps) {
   const [results, setResults] = useState<NasaItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Replace hyphens with spaces for better search query
+    const controller = new AbortController();
     const searchQuery = query.replace(/-/g, " ");
-    
-    fetch(`https://images-api.nasa.gov/search?q=${encodeURIComponent(searchQuery)}&media_type=image`)
-      .then((res) => res.json())
+
+    fetch(
+      `https://images-api.nasa.gov/search?q=${encodeURIComponent(searchQuery)}&media_type=image`,
+      { signal: controller.signal }
+    )
+      .then((res) => {
+        if (!res.ok) throw new Error("NASA search request failed");
+        return res.json();
+      })
       .then((data) => {
         if (data?.collection?.items) {
-          // Get top 6 results
           setResults(data.collection.items.slice(0, 6));
         }
         setLoading(false);
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
+        if (err instanceof Error && err.name === "AbortError") return;
         console.error(err);
         setLoading(false);
       });
+
+    return () => controller.abort();
   }, [query]);
 
   const displayQuery = query.replace(/-/g, " ").toUpperCase();
@@ -52,16 +64,22 @@ export default function NasaSearchFallback({ query, backLink, backText }: NasaSe
   return (
     <div className="pt-28 pb-20 px-6 min-h-screen">
       <div className="max-w-7xl mx-auto">
-        <Link href={backLink} className="inline-flex items-center gap-2 text-space-400 hover:text-white transition-colors mb-8">
+        <Link
+          href={backLink}
+          className="inline-flex items-center gap-2 text-space-400 hover:text-white transition-colors mb-8"
+        >
           <ArrowLeft className="w-4 h-4" /> {backText}
         </Link>
-        
+
         <div className="text-center mb-12">
           <h1 className="text-3xl md:text-5xl font-display text-white mb-4">
-            Searching NASA Archives for <span className="gradient-text">"{displayQuery}"</span>
+            Searching NASA Archives for{" "}
+            <span className="gradient-text">&quot;{displayQuery}&quot;</span>
           </h1>
           <p className="text-space-300 max-w-2xl mx-auto">
-            This item isn't in our local database yet, but we've automatically connected to the live NASA Image and Video Library to see what we can find.
+            This item isn&apos;t in our local database yet, but we&apos;ve
+            automatically connected to the live NASA Image and Video Library
+            to see what we can find.
           </p>
         </div>
 
@@ -74,12 +92,14 @@ export default function NasaSearchFallback({ query, backLink, backText }: NasaSe
             {results.map((item, i) => {
               const info = item.data?.[0];
               const rawUrl = item.links?.[0]?.href;
-              const imageUrl = rawUrl ? rawUrl.replace(/^http:/, "https:").replace(/ /g, "%20") : undefined;
-              
+              const imageUrl = rawUrl
+                ? rawUrl.replace(/^http:/, "https:").replace(/ /g, "%20")
+                : undefined;
+
               if (!info || !imageUrl) return null;
 
               return (
-                <motion.div 
+                <motion.div
                   key={info.nasa_id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -87,10 +107,11 @@ export default function NasaSearchFallback({ query, backLink, backText }: NasaSe
                   className="glass-card rounded-2xl overflow-hidden flex flex-col h-full group"
                 >
                   <div className="h-64 relative overflow-hidden">
-                    <Image 
-                      src={imageUrl} 
-                      alt={info.title} 
-                      fill className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    <Image
+                      src={imageUrl}
+                      alt={info.title}
+                      fill
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                     <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md rounded-full p-2">
                       <ImageIcon className="w-4 h-4 text-white" />
@@ -101,7 +122,9 @@ export default function NasaSearchFallback({ query, backLink, backText }: NasaSe
                       <Telescope className="w-3 h-3" />
                       NASA ARCHIVE • {new Date(info.date_created).getFullYear()}
                     </div>
-                    <h3 className="text-xl font-semibold text-white mb-3 line-clamp-2">{info.title}</h3>
+                    <h3 className="text-xl font-semibold text-white mb-3 line-clamp-2">
+                      {info.title}
+                    </h3>
                     <p className="text-space-300 text-sm line-clamp-4 flex-grow">
                       {info.description}
                     </p>
@@ -113,8 +136,13 @@ export default function NasaSearchFallback({ query, backLink, backText }: NasaSe
         ) : (
           <div className="text-center py-20 glass-card rounded-2xl max-w-2xl mx-auto">
             <Telescope className="w-16 h-16 text-space-600 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-white mb-2">No Archives Found</h2>
-            <p className="text-space-400">We couldn't find any data for "{displayQuery}" in the local database or the live NASA archives.</p>
+            <h2 className="text-2xl font-bold text-white mb-2">
+              No Archives Found
+            </h2>
+            <p className="text-space-400">
+              We couldn&apos;t find any data for &quot;{displayQuery}&quot; in
+              the local database or the live NASA archives.
+            </p>
           </div>
         )}
       </div>
