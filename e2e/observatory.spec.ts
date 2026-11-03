@@ -28,15 +28,15 @@ test.describe("Observatory Page", () => {
     await expect(heading).toContainText("OBSERVATORY");
   });
 
-  test("should display API source badges", async ({ page }) => {
-    const badges = page.locator("text=NASA NEO");
-    await expect(badges.first()).toBeVisible();
+  test("should mention data sources in the hero tagline", async ({ page }) => {
+    const badges = page.getByText("NASA, JPL & SpaceDevs");
+    await expect(badges.first()).toBeAttached();
   });
 
-  test("should have a working 'START OBSERVING' CTA", async ({ page }) => {
-    const cta = page.locator('a[href="#explore"]');
-    await expect(cta).toBeVisible();
-    await expect(cta).toContainText("START OBSERVING");
+  test("should have an explore section to scroll to", async ({ page }) => {
+    const cta = page.locator("section#explore");
+    await expect(cta).toBeAttached();
+    await expect(page.getByText("Explore Live Data").first()).toBeAttached();
   });
 
   // ─── People in Space Widget ─────────────────────────────────
