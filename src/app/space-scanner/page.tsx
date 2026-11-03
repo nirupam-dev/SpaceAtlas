@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useCallback, useRef } from "react";
+import dynamic from "next/dynamic";
+import { motion } from "framer-motion";
 import {
   Upload,
   Camera,
@@ -21,6 +23,17 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import ReactMarkdown from "react-markdown";
+
+const VolumetricStudio = dynamic(
+  () =>
+    import("@/components/ui/volumetric-studio").then(
+      (mod) => mod.VolumetricStudio
+    ),
+  {
+    ssr: false,
+    loading: () => <div className="w-full h-full min-h-[600px] bg-black" />,
+  }
+);
 
 // ── Types ─────────────────────────────────────────────────────
 
@@ -426,23 +439,59 @@ export default function SpaceScannerPage() {
 
   // ── Render ──
   return (
-    <div className="relative min-h-screen">
-      {/* Background ambient */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-[600px] h-[600px] rounded-full bg-accent-purple/5 blur-[120px]" />
-        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] rounded-full bg-accent-blue/5 blur-[100px]" />
+    <div className="relative min-h-screen bg-black">
+      <div className="relative w-full h-[640px] sm:h-[800px] overflow-hidden">
+        <VolumetricStudio className="h-full min-h-full">
+          <div className="flex flex-col items-center justify-center w-full h-full text-center px-4 relative z-10 pointer-events-none">
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.7, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+              className="text-5xl md:text-7xl lg:text-[92px] leading-none mb-6 font-bold tracking-tight text-transparent bg-clip-text bg-linear-to-b from-white to-white/40 drop-shadow-2xl"
+            >
+              Space in a<br />new dimension.
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.9, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+              className="text-lg md:text-xl max-w-2xl mb-10 text-white/50 font-medium"
+            >
+              Upload any space image, click an object, and Space Scanner identifies
+              planets, spacecraft, and deep-sky targets.
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 2.1, duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+              className="flex flex-col sm:flex-row gap-4 pointer-events-auto"
+            >
+              <a
+                href="#scanner-upload"
+                className="px-8 py-4 font-bold transition-transform hover:scale-105 active:scale-95 bg-white text-black rounded-full shadow-[0_0_20px_rgba(255,255,255,0.2)]"
+              >
+                Get Started
+              </a>
+              <a
+                href="#scanner-upload"
+                className="px-8 py-4 font-bold transition-transform hover:scale-105 active:scale-95 bg-transparent text-white border border-white/20 rounded-full hover:bg-white/10"
+              >
+                Open Scanner
+              </a>
+            </motion.div>
+          </div>
+        </VolumetricStudio>
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-20 pb-12">
-        {/* ── Hero ── */}
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 pt-12 pb-12">
         <header className="text-center mb-12">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent-purple/10 border border-accent-purple/20 text-accent-purple text-xs font-micro mb-5">
             <ScanSearch className="w-3.5 h-3.5" />
             CLICK-TO-IDENTIFY VISUAL SEARCH ENGINE
           </div>
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-display gradient-text mb-4">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display gradient-text mb-4">
             SPACE SCANNER
-          </h1>
+          </h2>
           <p className="text-space-400 max-w-2xl mx-auto text-base sm:text-lg">
             Upload any space image and <strong className="text-space-200">click on any object</strong> to
             identify it. Our multimodal AI engine detects planets, moons, spacecraft, nebulae, and
@@ -471,7 +520,7 @@ export default function SpaceScannerPage() {
         </header>
 
         {/* ── Main Grid ── */}
-        <div className="grid lg:grid-cols-5 gap-8">
+        <div id="scanner-upload" className="grid lg:grid-cols-5 gap-8 scroll-mt-24">
           {/* ═══ LEFT: Upload & Image Canvas (3 cols) ═══ */}
           <div className="lg:col-span-3 space-y-6">
             {state === "IDLE" ? (

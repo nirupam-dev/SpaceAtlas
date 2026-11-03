@@ -104,6 +104,7 @@ const nextConfig: NextConfig = {
   // ─── Performance ────────────────────────────────────────────
   reactStrictMode: true,
   poweredByHeader: false,
+  transpilePackages: ["three", "@react-three/fiber", "@react-three/drei"],
 
   // ─── Headers for Caching & Security ─────────────────────────
   async headers() {
