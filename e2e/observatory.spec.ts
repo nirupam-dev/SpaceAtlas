@@ -92,7 +92,7 @@ test.describe("Observatory Page", () => {
     await expect(asteroidHeading).toBeVisible({ timeout: 15000 });
 
     // Should show the summary cards
-    const objectsTracked = page.locator("text=Objects Tracked");
+    const objectsTracked = page.getByText("Objects Tracked", { exact: true });
     await expect(objectsTracked).toBeVisible({ timeout: 15000 });
   });
 
@@ -105,7 +105,7 @@ test.describe("Observatory Page", () => {
     await expect(weatherHeading).toBeVisible({ timeout: 15000 });
 
     // Should show the sub-tabs (CMEs, Flares, Storms)
-    const cmesTab = page.locator("text=CMEs");
+    const cmesTab = page.getByRole("button", { name: "CMEs" });
     await expect(cmesTab).toBeVisible({ timeout: 15000 });
   });
 
