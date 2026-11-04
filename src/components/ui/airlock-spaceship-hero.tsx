@@ -96,6 +96,8 @@ const SANS = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, 
 const SEEK_FPS = 30
 const SEEK_EPSILON = 1 / SEEK_FPS
 const PAINT_EPSILON = 0.0008
+const MOBILE_SEEK_FPS = 24
+const MOBILE_FRAME_MS = 1000 / 45
 
 /** Keyboard fallback, so a reader without a wheel is never stuck. */
 const KEY_STEPS: Record<string, number> = {
@@ -150,6 +152,10 @@ export default function AirlockHero({
         const reduceMotion =
             typeof window !== "undefined" &&
             (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false)
+        const isMobileLike =
+            typeof window !== "undefined" &&
+            ((window.matchMedia?.("(max-width: 900px)").matches ?? false) ||
+                (window.matchMedia?.("(pointer: coarse)").matches ?? false))
 
         let duration = 0
         let rafId = 0
@@ -161,6 +167,7 @@ export default function AirlockHero({
         let lastSeekTime = -1
         let lastPaint = -1
         let lastFrameTs = performance.now()
+        let lastRenderTs = 0
         let locked = false
         let lockedY = 0
         let touchY = 0
@@ -168,14 +175,17 @@ export default function AirlockHero({
         let released = false
         let lastY = 0
 
-        const totalDistance = scrubDistance + holdDistance
+        const effectiveScrubDistance = isMobileLike ? Math.max(1600, Math.round(scrubDistance * 0.62)) : scrubDistance
+        const effectiveHoldDistance = isMobileLike ? Math.max(650, Math.round(holdDistance * 0.65)) : holdDistance
+        const seekEpsilon = 1 / (isMobileLike ? MOBILE_SEEK_FPS : SEEK_FPS)
+        const totalDistance = effectiveScrubDistance + effectiveHoldDistance
         /** How much of the input axis the film itself occupies. */
-        const scrubShare = scrubDistance / totalDistance
+        const scrubShare = effectiveScrubDistance / totalDistance
 
         /* --- Seeking ------------------------------------------------------- */
 
         function seekTo(t: number) {
-            if (Math.abs(t - lastSeekTime) < SEEK_EPSILON) return
+            if (Math.abs(t - lastSeekTime) < seekEpsilon) return
             if (seeking) {
                 queued = t
                 return
@@ -218,7 +228,8 @@ export default function AirlockHero({
             const taglineAlpha = clamp((videoP - 0.82) / 0.18, 0, 1)
 
             if (videoRef.current) {
-                videoRef.current.style.transform = `scale(${1 + videoP * 0.06})`
+                const scaleBoost = isMobileLike ? 0.03 : 0.06
+                videoRef.current.style.transform = `scale(${1 + videoP * scaleBoost})`
             }
             if (scrimRef.current) {
                 // The scrim exists to keep type legible over a daylit planet, so
@@ -369,6 +380,11 @@ export default function AirlockHero({
 
             const frame = () => {
                 const now = performance.now()
+                if (isMobileLike && now - lastRenderTs < MOBILE_FRAME_MS) {
+                    rafId = requestAnimationFrame(frame)
+                    return
+                }
+                lastRenderTs = now
                 const dt = Math.min((now - lastFrameTs) / 16.67, 3)
                 lastFrameTs = now
                 const smoothing = 1 - Math.pow(0.82, dt)
