@@ -93,6 +93,9 @@ const CDN = "https://cdn.jsdelivr.net/gh/yuraoak/airlock-hero-assets@main"
 const DEFAULT_VIDEO = `${CDN}/iss-hero-1080p.mp4`
 const DEFAULT_POSTER = `${CDN}/iss-hero-poster.jpg`
 const SANS = "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif"
+const SEEK_FPS = 30
+const SEEK_EPSILON = 1 / SEEK_FPS
+const PAINT_EPSILON = 0.0008
 
 /** Keyboard fallback, so a reader without a wheel is never stuck. */
 const KEY_STEPS: Record<string, number> = {
@@ -155,6 +158,9 @@ export default function AirlockHero({
         let moved = false
         let seeking = false
         let queued: number | null = null
+        let lastSeekTime = -1
+        let lastPaint = -1
+        let lastFrameTs = performance.now()
         let locked = false
         let lockedY = 0
         let touchY = 0
@@ -169,11 +175,13 @@ export default function AirlockHero({
         /* --- Seeking ------------------------------------------------------- */
 
         function seekTo(t: number) {
+            if (Math.abs(t - lastSeekTime) < SEEK_EPSILON) return
             if (seeking) {
                 queued = t
                 return
             }
             seeking = true
+            lastSeekTime = t
             video!.currentTime = t
         }
 
@@ -183,6 +191,7 @@ export default function AirlockHero({
                 const t = queued
                 queued = null
                 seeking = true
+                lastSeekTime = t
                 video!.currentTime = t
             }
         }
@@ -196,6 +205,9 @@ export default function AirlockHero({
          * a held frame. Ending the moment the film does reads as an abrupt cut.
          */
         function paint(p: number) {
+            if (Math.abs(p - lastPaint) < PAINT_EPSILON) return
+            lastPaint = p
+
             const videoP = clamp(p / scrubShare, 0, 1)
 
             // Stop a hair short of the duration: seeking to the very end lands
@@ -217,7 +229,6 @@ export default function AirlockHero({
                 const t = titleAlpha
                 titleRef.current.style.opacity = String(t)
                 titleRef.current.style.transform = `translateY(${(1 - t) * -24}px) scale(${0.96 + t * 0.04})`
-                titleRef.current.style.filter = `blur(${(1 - t) * 10}px)`
             }
             if (hintRef.current) {
                 hintRef.current.style.opacity = moved ? "0" : "1"
@@ -228,7 +239,6 @@ export default function AirlockHero({
                 const t = taglineAlpha
                 taglineRef.current.style.opacity = String(t)
                 taglineRef.current.style.transform = `translateY(${(1 - t) * 20}px) scale(${0.97 + t * 0.03})`
-                taglineRef.current.style.filter = `blur(${(1 - t) * 8}px)`
             }
             if (barRef.current) {
                 barRef.current.style.transform = `scaleX(${p})`
@@ -358,7 +368,11 @@ export default function AirlockHero({
             window.addEventListener("scroll", onScroll, { passive: true })
 
             const frame = () => {
-                shown += (target - shown) * 0.18
+                const now = performance.now()
+                const dt = Math.min((now - lastFrameTs) / 16.67, 3)
+                lastFrameTs = now
+                const smoothing = 1 - Math.pow(0.82, dt)
+                shown += (target - shown) * smoothing
                 paint(shown)
                 rafId = requestAnimationFrame(frame)
             }
@@ -433,7 +447,7 @@ export default function AirlockHero({
                         fontSize: "clamp(30px, 7vw, 96px)",
                         color: palette.text,
                         textShadow: "0 4px 30px rgba(0,0,0,0.55)",
-                        willChange: "transform, filter, opacity",
+                        willChange: "transform, opacity",
                     }}
                 >
                     {title}
