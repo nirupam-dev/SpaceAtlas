@@ -156,6 +156,7 @@ export default function AirlockHero({
             typeof window !== "undefined" &&
             ((window.matchMedia?.("(max-width: 900px)").matches ?? false) ||
                 (window.matchMedia?.("(pointer: coarse)").matches ?? false))
+        const useLiteMode = isMobileLike && !reduceMotion
 
         let duration = 0
         let rafId = 0
@@ -175,8 +176,8 @@ export default function AirlockHero({
         let released = false
         let lastY = 0
 
-        const effectiveScrubDistance = isMobileLike ? Math.max(1600, Math.round(scrubDistance * 0.62)) : scrubDistance
-        const effectiveHoldDistance = isMobileLike ? Math.max(650, Math.round(holdDistance * 0.65)) : holdDistance
+        const effectiveScrubDistance = useLiteMode ? Math.max(1200, Math.round(scrubDistance * 0.5)) : scrubDistance
+        const effectiveHoldDistance = useLiteMode ? 0 : holdDistance
         const seekEpsilon = 1 / (isMobileLike ? MOBILE_SEEK_FPS : SEEK_FPS)
         const totalDistance = effectiveScrubDistance + effectiveHoldDistance
         /** How much of the input axis the film itself occupies. */
@@ -222,7 +223,7 @@ export default function AirlockHero({
 
             // Stop a hair short of the duration: seeking to the very end lands
             // past the last decodable frame in some browsers and paints black.
-            if (duration > 0) seekTo(Math.min(videoP * duration, duration - 0.04))
+            if (!useLiteMode && duration > 0) seekTo(Math.min(videoP * duration, duration - 0.04))
 
             const titleAlpha = 1 - clamp(videoP / 0.35, 0, 1)
             const taglineAlpha = clamp((videoP - 0.82) / 0.18, 0, 1)
@@ -363,13 +364,35 @@ export default function AirlockHero({
                 target = shown = 1
                 moved = true
                 paint(1)
+                return
+            }
+            if (useLiteMode) {
+                target = shown = 0
+                paint(0)
+                void video!.play().catch(() => {})
             }
         }
 
-        video.addEventListener("loadeddata", onLoadedData)
-        video.addEventListener("seeked", onSeeked)
+        const onTimeUpdate = () => {
+            if (!useLiteMode || duration <= 0) return
+            const p = clamp(video!.currentTime / duration, 0, 1)
+            if (p > 0.01) moved = true
+            paint(p)
+        }
 
-        if (!reduceMotion) {
+        const onEnded = () => {
+            if (!useLiteMode) return
+            paint(1)
+        }
+
+        video.addEventListener("loadeddata", onLoadedData)
+        if (!useLiteMode) video.addEventListener("seeked", onSeeked)
+        if (useLiteMode) {
+            video.addEventListener("timeupdate", onTimeUpdate)
+            video.addEventListener("ended", onEnded)
+        }
+
+        if (!reduceMotion && !useLiteMode) {
             if (window.scrollY <= section.offsetTop + 1) engageLock()
 
             window.addEventListener("wheel", onWheel, { passive: false })
@@ -398,6 +421,8 @@ export default function AirlockHero({
         return () => {
             video.removeEventListener("loadeddata", onLoadedData)
             video.removeEventListener("seeked", onSeeked)
+            video.removeEventListener("timeupdate", onTimeUpdate)
+            video.removeEventListener("ended", onEnded)
             window.removeEventListener("wheel", onWheel)
             window.removeEventListener("touchstart", onTouchStart)
             window.removeEventListener("touchmove", onTouchMove)
