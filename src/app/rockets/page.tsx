@@ -34,10 +34,10 @@ export default function RocketsPage() {
           loop
           muted
           playsInline
-          className="absolute inset-0 z-0 w-full h-full object-cover"
+          className="absolute inset-0 z-0 w-full h-full object-cover bg-black"
         >
           <source
-            src="https://sxcontent9668.azureedge.us/cms-assets/assets/Space_X_Falcon_Heavy_UAS_Landing_DESKTOP_compress_b4568daf9c_5e2026727a.mp4"
+            src="https://content.spacex.com/cms-assets/assets/Space_X_Falcon_Heavy_UAS_Landing_DESKTOP_compress_b4568daf9c_5e2026727a.mp4"
             type="video/mp4"
           />
         </video>

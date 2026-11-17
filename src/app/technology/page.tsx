@@ -39,15 +39,15 @@ export default function TechnologyPage() {
           loop
           muted
           playsInline
-          className="absolute inset-0 z-0 w-full h-full object-cover"
+          className="absolute inset-0 z-0 w-full h-full object-cover bg-[#030f16]"
         >
           <source
-            src="https://sxcontent9668.azureedge.us/cms-assets/assets/20260522_Starship_Flight12_web1920_v2_71d68b5ee9.mp4"
+            src="https://content.spacex.com/cms-assets/assets/20260522_Starship_Flight12_web1920_v2_71d68b5ee9.mp4"
             type="video/mp4"
           />
         </video>
         <div className="absolute inset-0 z-0 bg-gradient-to-r from-black/40 via-transparent to-transparent" />
-        <div className="absolute inset-0 z-0 bg-gradient-to-t from-[#0f172a]/60 via-transparent to-transparent" />
+        <div className="absolute inset-0 z-0 bg-gradient-to-t from-[#030f16]/60 via-transparent to-transparent" />
 
         <div className="absolute inset-0 z-10 flex flex-col justify-center pt-24 px-8 md:px-[8%] lg:px-[10%]">
           <div className="max-w-2xl">
@@ -166,7 +166,7 @@ export default function TechnologyPage() {
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="glass-card p-16 md:p-20 relative overflow-hidden bg-[#0f172a]/90 backdrop-blur-2xl"
+            className="glass-card p-16 md:p-20 relative overflow-hidden bg-[#030f16]/90 backdrop-blur-2xl"
           >
             <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-violet-500 via-accent-blue to-accent-cyan" />
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
