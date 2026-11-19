@@ -202,6 +202,9 @@ body {
   height: 100dvh;
   pointer-events: none;
   z-index: 1;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  will-change: transform;
 }
 
 .hero-content {
@@ -214,6 +217,9 @@ body {
   justify-content: center;
   pointer-events: none;
   padding-inline: 1rem;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  will-change: transform;
 }
 
 .hero-title {

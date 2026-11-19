@@ -203,7 +203,7 @@ export function HorizonHeroSection() {
           void main() {
             vUv = uv;
             vec3 pos = position;
-            float elevation = sin(pos.x * 0.01 + time) * cos(pos.y * 0.01 + time) * 20.0;
+            float elevation = sin(pos.x * 0.002 + time) * cos(pos.y * 0.002 + time) * 20.0;
             pos.z += elevation;
             vElevation = elevation;
             gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
@@ -218,13 +218,13 @@ export function HorizonHeroSection() {
           varying float vElevation;
 
           void main() {
-            float mixFactor = sin(vUv.x * 10.0 + time) * cos(vUv.y * 10.0 + time);
+            float mixFactor = sin(vUv.x * 2.5 + time) * cos(vUv.y * 2.5 + time);
             vec3 color = mix(color1, color2, mixFactor * 0.5 + 0.5);
 
-            float alpha = opacity * (1.0 - length(vUv - 0.5) * 2.0);
+            float alpha = opacity * (1.0 - smoothstep(0.2, 0.9, length(vUv - 0.5) * 2.0));
             alpha *= 1.0 + vElevation * 0.01;
 
-            gl_FragColor = vec4(color, alpha);
+            gl_FragColor = vec4(color, clamp(alpha, 0.0, 1.0));
           }
         `,
         transparent: true,
@@ -372,12 +372,25 @@ export function HorizonHeroSection() {
       antialias: true,
       alpha: true,
     });
+    const dpr = Math.min(window.devicePixelRatio, 2);
     refs.renderer.setSize(window.innerWidth, window.innerHeight);
-    refs.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    refs.renderer.setPixelRatio(dpr);
     refs.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     refs.renderer.toneMappingExposure = 0.5;
 
-    refs.composer = new EffectComposer(refs.renderer);
+    const renderTarget = new THREE.WebGLRenderTarget(
+      Math.round(window.innerWidth * dpr),
+      Math.round(window.innerHeight * dpr),
+      {
+        minFilter: THREE.LinearFilter,
+        magFilter: THREE.LinearFilter,
+        format: THREE.RGBAFormat,
+        type: THREE.HalfFloatType,
+      }
+    );
+    refs.composer = new EffectComposer(refs.renderer, renderTarget);
+    refs.composer.setPixelRatio(1);
+    refs.composer.setSize(window.innerWidth, window.innerHeight);
     refs.composer.addPass(new RenderPass(refs.scene, refs.camera));
     refs.composer.addPass(
       new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 0.8, 0.4, 0.85)
@@ -529,8 +542,9 @@ export function HorizonHeroSection() {
         const targetZ = mountain.userData.baseZ + scrollY * speed * 0.5;
 
         if (progress > 0.7) {
-          mountain.position.z = 600000;
+          mountain.visible = false;
         } else {
+          mountain.visible = true;
           mountain.position.z = refs.locations[i] ?? mountain.userData.baseZ;
         }
 
@@ -540,7 +554,7 @@ export function HorizonHeroSection() {
       });
 
       if (refs.nebula && refs.mountains[3]) {
-        refs.nebula.position.z = refs.mountains[3].position.z;
+        refs.nebula.position.z = (refs.locations[3] ?? -200) - 200;
       }
     };
 
